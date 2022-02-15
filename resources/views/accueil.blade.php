@@ -43,10 +43,10 @@
                 <h3 class="l1-txt1 p-b-34 respon3">
                     {{ config('app.name') }}
                 </h3>
-                
+
                 @if (Route::has('login'))
                     @auth
-                  
+
                         @if (isset($getRole) === true && $getRole === false)
                             <form class="contact100-form m-t-10 m-b-10" action="{{route('logout')}}" method="POST" id="deconnexion">
                                 @csrf
@@ -59,20 +59,28 @@
                                 </div>
                             </form>
                         @else
-                        <form class="contact100-form m-t-10 m-b-10" action="{{route('home')}}" method="GET" id="dashboard">
-                            <div class="wrap-input100 m-lr-auto-lg" >
-                                <button type="submit" form="dashboard" class="s2-txt1 placeholder0 input100 trans-04" style="color: #40A8DF"><strong style="font-size: large">Dashboard</strong></button>
 
-                                <button type="submit" form="dashboard" class="flex-c-m ab-t-r size2 hov1">
-                                    <i class="zmdi zmdi-long-arrow-right fs-30 cl1 trans-04"></i>
-                                </button>
-                            </div>
-                        </form>
-                            
+                            {{-- Masquer le texte d'acceder u dashboard si l'utilisateur n'a pas de type --}}
+                            @can('acceder-dashboard')
+                                <form class="contact100-form m-t-10 m-b-10" action="{{route('home')}}" method="GET" id="dashboard">
+                                    <div class="wrap-input100 m-lr-auto-lg" >
+                                        <button type="submit" form="dashboard" class="s2-txt1 placeholder0 input100 trans-04" style="color: #40A8DF"><strong style="font-size: large">Dashboard</strong></button>
+
+                                        <button type="submit" form="dashboard" class="flex-c-m ab-t-r size2 hov1">
+                                            <i class="zmdi zmdi-long-arrow-right fs-30 cl1 trans-04"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            @endcan
+
+                            @cannot('acceder-dashboard')
+                                <h5>Vous ne pouvez pas acceder au dashboard</h5>
+                            @endcannot
+
                         @endif
-                    
+
                     @else
-                    
+
                         <form class="contact100-form m-t-10 m-b-10" action="{{route('login')}}" method="GET" id="login">
                             <div class="wrap-input100 m-lr-auto-lg" >
                                 <button type="submit" form="login" class="s2-txt1 placeholder0 input100 trans-04" style="color: #40A8DF"><strong style="font-size: large">Connexion</strong></button>
@@ -83,14 +91,14 @@
                             </div>
                         </form>
 
-                        
+
                     @endauth
                  @endif
 
             </div>
         </div>
     </div>
-    
+
 </div>
 
 

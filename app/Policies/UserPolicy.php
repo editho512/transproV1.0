@@ -19,11 +19,16 @@ class UserPolicy
         //
     }
 
-    public function viewAny(User $user)
+    /**
+     * Methode qui vérifie si l'utilisateur peur voir la liste de tous les autres utilisateur
+     *
+     * @param User $user L'utilisateur en question, A verifier l'access
+     * @return bool true si l'utilisateur a l'acces, false sinon
+     */
+    public function viewAny(User $user) : bool
     {
-       
-
-        return true;
+        if ($user->estSuperAdmin()) return true;
+        else return false;
     }
 
     public function update(User $user, Post $post)

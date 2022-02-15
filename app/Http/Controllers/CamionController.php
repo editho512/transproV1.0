@@ -7,24 +7,32 @@ use Session;
 use App\Models\Camion;
 use App\Models\Carburant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class CamionController extends Controller
 {
     //
-    
+
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('super-admin')->except(['add', 'index', 'voir']);
     }
 
     public function index(){
+
+        // Verifier si l'utilisateur peut acceder au dashboard
+        if (!Gate::allows('acceder-dashboard'))
+        {
+            return redirect()->route('index');
+        }
+
         $camions = Camion::all();
         $active_camion_index = "active";
         return view("Camion.camionIndex", compact("active_camion_index", "camions" ));
     }
 
-  
+
     public function add(Request $request){
         $data = $request->except("photo");
         $camion = Camion::create($data);
@@ -32,19 +40,19 @@ class CamionController extends Controller
         if( $request->file('photo') !== null){
 
             $validator = Validator::make($request->all(), [
-                                'photo' => 'mimes:jpeg,png,bmp,tiff |max:4096',
-                            ],
-                            $messages = [
-                                'required' => 'Le :attribute est obligatoire.',
-                                'mimes' => 'Seul jpeg, png, bmp,tiff  est accepté.'
-                                ]
-                        );
-    
+                'photo' => 'mimes:jpeg,png,bmp,tiff |max:4096',
+            ],
+            $messages = [
+                'required' => 'Le :attribute est obligatoire.',
+                'mimes' => 'Seul jpeg, png, bmp,tiff  est accepté.'
+                ]
+            );
+
             if ($validator->passes()) {
-               
+
                 $name = $request->file('photo')->getClientOriginalName();
                 $path = $request->file('photo')->store('camions', 'public');
-        
+
                 $camion->photo = $path;
                 $camion->update();
             }
@@ -68,21 +76,21 @@ class CamionController extends Controller
         $camion->annee = $data["annee"];
         $camion->numero_chassis = $data["numero_chassis"];
 
-        
+
         if( $request->file('photo') !== null){
-            
-            
+
+
             $validator = Validator::make($request->all(), [
-                    'photo' => 'mimes:jpeg,png,bmp,tiff |max:4096',
-                ],
-                $messages = [
-                    'required' => 'Le :attribute est obligatoire.',
-                    'mimes' => 'Seul jpeg, png, bmp,tiff est accepté.'
-                    ]
+                'photo' => 'mimes:jpeg,png,bmp,tiff |max:4096',
+            ],
+            $messages = [
+                'required' => 'Le :attribute est obligatoire.',
+                'mimes' => 'Seul jpeg, png, bmp,tiff est accepté.'
+                ]
             );
-            
+
             if ($validator->passes()) {
-                
+
                 if(File::exists(public_path('storage/'.$camion->photo))){
                     File::delete(public_path('storage/'.$camion->photo));
                 }
@@ -91,12 +99,12 @@ class CamionController extends Controller
                 $camion->photo = $path;
             }
 
-           
+
         }
         $camion->update();
         Session::put("notification", ["value" => "Camion modifié" , "status" => "success" ]);
         return redirect()->back();
-   
+
     }
 
     public function supprimer(Camion $camion){
@@ -151,7 +159,7 @@ class CamionController extends Controller
                 $sortie = doubleval($value["quantite"]);
             }
         }
-       
+
         return (doubleval($entre) - doubleval($sortie));
     }
 

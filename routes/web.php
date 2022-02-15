@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('accueil');
 
-});
+})->name('index');
 
 
 
@@ -66,14 +66,18 @@ Route::get('/Camion', [App\Http\Controllers\CamionController::class, 'index'])->
 
 // --------------------- UTILISATEUR -------------//
 
-Route::delete('/Utilisateur/delete/{user}', [App\Http\Controllers\UserController::class, 'delete'])->name('utilisateur.delete');
+Route::prefix('Utilisateur')->middleware('super-admin')->group(function () {
 
-Route::patch('/Utilisateur/update/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('utilisateur.update');
+    Route::get('/', [App\Http\Controllers\UserController::class, 'index'])->name('utilisateur.liste');
 
-Route::get('/Utilisateur/afficher/{user}', [App\Http\Controllers\UserController::class, 'afficher'])->name('utilisateur.afficher');
+    Route::delete('/delete/{user}', [App\Http\Controllers\UserController::class, 'delete'])->name('utilisateur.delete');
 
-Route::get('/Utilisateur', [App\Http\Controllers\UserController::class, 'index'])->name('utilisateur.liste');
+    Route::patch('/update/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('utilisateur.update');
 
-Route::post('/Utilisateur/ajouter', [App\Http\Controllers\UserController::class, 'add'])->name('utilisateur.ajouter');
+    Route::get('/afficher/{user}', [App\Http\Controllers\UserController::class, 'afficher'])->name('utilisateur.afficher');
+
+    Route::post('/ajouter', [App\Http\Controllers\UserController::class, 'add'])->name('utilisateur.ajouter');
+
+});
 
 // --------------------- UTILISATEUR -------------//

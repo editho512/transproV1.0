@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,12 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // Verifier si l'utilisateur peut acceder au dashboard ou non en fonction de son type
+        if (!Gate::allows('acceder-dashboard'))
+        {
+            return redirect()->route('index');
+        }
+
         return redirect()->route('camion.liste');
     }
 }

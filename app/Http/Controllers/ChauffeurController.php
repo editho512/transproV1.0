@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Validator;
 
 class ChauffeurController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('super-admin')->except(['index', 'add']);
+    }
+
     //
     public function index(){
         $chauffeurs = Chauffeur::all();
@@ -22,7 +27,7 @@ class ChauffeurController extends Controller
         $chauffeur = Chauffeur::create($data);
 
         if( $request->file('permis') !== null){
-            
+
             $validator = Validator::make($request->all(), [
                         'permis' => 'mimes:pdf,jpeg,png,bmp,tiff,pdf |max:10096',
                     ],
@@ -31,18 +36,18 @@ class ChauffeurController extends Controller
                         'mimes' => 'Seul jpeg, png, bmp,tiff et pdf sont acceptés.'
                         ]
                 );
-            
+
             if ($validator->passes()) {
-            
+
                 $name = $request->file('permis')->getClientOriginalName();
                 $path = $request->file('permis')->store('permis', 'public');
-        
+
                 $chauffeur->permis = $path;
                 $chauffeur->update();
             }
 
 
-          
+
         }
         Session::put("notification", ["value" => "Chauffeur ajouté" , "status" => "success" ]);
         return redirect()->back();
@@ -59,7 +64,7 @@ class ChauffeurController extends Controller
         $chauffeur->phone = $data["phone"];
         $chauffeur->cin = $data["cin"];
 
-        
+
         if( $request->file('permis') !== null){
 
             $validator = Validator::make($request->all(), [
@@ -77,17 +82,17 @@ class ChauffeurController extends Controller
                 if(File::exists(public_path('storage/'.$chauffeur->permis))){
                     File::delete(public_path('storage/'.$chauffeur->permis));
                 }
-    
+
                 $name = $request->file('permis')->getClientOriginalName();
                 $path = $request->file('permis')->store('permis', 'public');
-        
+
                 $chauffeur->permis = $path;
             }
         }
         $chauffeur->update();
         Session::put("notification", ["value" => "Chauffeur modifié" , "status" => "success" ]);
         return redirect()->back();
-   
+
     }
 
     public function delete(Chauffeur $chauffeur, $type = 1){
@@ -112,6 +117,6 @@ class ChauffeurController extends Controller
 
         return redirect()->back();
     }
-    
+
 
 }

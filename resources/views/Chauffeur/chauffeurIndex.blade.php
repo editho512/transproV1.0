@@ -32,7 +32,7 @@
         <!-- /.content-header -->
 
         <!-- Main content -->
-       
+
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -64,9 +64,14 @@
                                                 <td>
                                                     <div class="row" style="text-align: center;">
                                                         <div class="col-sm-12">
-                                                            <button class="btn btn-xs btn-info" style="display: none;" ><span class="fa fa-eye"></span></button>
-                                                            <button class="btn btn-xs btn-primary modifier-chauffeur" data-show-url="{{route('chauffeur.modifier', ['chauffeur' => $chauffeur->id])}}"  data-url="{{route('chauffeur.update', ['chauffeur' => $chauffeur->id])}}" ><span class="fa fa-edit"></span></button>
-                                                            <button class="btn btn-xs btn-danger supprimer-chauffeur" data-url="{{route('chauffeur.delete', ['chauffeur' => $chauffeur->id])}}"><span class="fa fa-trash"></span></button>
+                                                            <button class="btn btn-xs btn-info"><span class="fa fa-eye"></span></button>
+                                                            @can('update', $chauffeur)
+                                                                <button class="btn btn-xs btn-primary modifier-chauffeur" data-show-url="{{route('chauffeur.modifier', ['chauffeur' => $chauffeur->id])}}"  data-url="{{route('chauffeur.update', ['chauffeur' => $chauffeur->id])}}" ><span class="fa fa-edit"></span></button>
+                                                            @endcan
+
+                                                            @can('delete', $chauffeur)
+                                                                <button class="btn btn-xs btn-danger supprimer-chauffeur" data-url="{{route('chauffeur.delete', ['chauffeur' => $chauffeur->id])}}"><span class="fa fa-trash"></span></button>
+                                                            @endcan
                                                         </div>
                                                     </div>
                                                 </td>
@@ -143,7 +148,7 @@
                                 <input type="text" name="cin" placeholder="CIN" class="form-control" required>
                             </div>
                         </div>
-                        
+
                         <div class="row mt-3">
                             <div class="col-sm-4">
                                 <label for="permis">Permis</label>
@@ -213,7 +218,7 @@
                                 <input type="text" name="cin" id="modifier_cin" placeholder="CIN" class="form-control" required>
                             </div>
                         </div>
-                        
+
                         <div class="row mt-3">
                             <div class="col-sm-4">
                                 <label for="permis">Permis</label>
@@ -283,7 +288,7 @@
                                 <input type="text" name="cin" id="supprimer_cin" placeholder="CIN" class="form-control" required>
                             </div>
                         </div>
-                        
+
                     </form>
                 </div>
                 <div class="modal-footer row">
@@ -344,7 +349,7 @@
     })
 
     $(document).on("click", ".supprimer-chauffeur", function (e) {
-        $("#modal-supprimer-chauffeur").modal("show"); 
+        $("#modal-supprimer-chauffeur").modal("show");
 
         let url = $(this).prev().attr("data-show-url");
         let url_delete = $(this).attr("data-url");
@@ -365,7 +370,7 @@
         })
     })
 
-        
-        
+
+
     </script>
 @endsection

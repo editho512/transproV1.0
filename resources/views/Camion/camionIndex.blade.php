@@ -10,8 +10,6 @@
 
 @section('content')
 
-
-
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper teste" style="min-height: inherit!important;">
         <!-- Content Header (Page header) -->
@@ -32,7 +30,7 @@
         <!-- /.content-header -->
 
         <!-- Main content -->
-       
+
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -75,8 +73,15 @@
                                                             @else
                                                                 <button class="btn btn-sm btn-info" disabled><span class="fa fa-eye"></span></button>
                                                             @endif
-                                                            <button class="btn btn-sm btn-primary modifier-camion" data-update-url="{{route('camion.update', ['camion' => $camion->id])}}" data-show-url="{{route('camion.modifier', ['camion' => $camion->id])}}" data-update-url=""><span class="fa fa-edit"></span></button>
-                                                            <button class="btn btn-sm btn-danger supprimer-camion" data-url="{{route('camion.supprimer', ['camion' => $camion->id])}}" data-delete-url="{{route('camion.delete', ['camion' => $camion->id])}}"><span class="fa fa-trash"></span></button>
+
+                                                            @can('update', $camion)
+                                                                <button class="btn btn-sm btn-primary modifier-camion" data-update-url="{{route('camion.update', ['camion' => $camion->id])}}" data-show-url="{{route('camion.modifier', ['camion' => $camion->id])}}" data-update-url=""><span class="fa fa-edit"></span></button>
+                                                            @endcan
+
+                                                            @can('delete', $camion)
+                                                                <button class="btn btn-sm btn-danger supprimer-camion" data-url="{{route('camion.supprimer', ['camion' => $camion->id])}}" data-delete-url="{{route('camion.delete', ['camion' => $camion->id])}}"><span class="fa fa-trash"></span></button>
+                                                            @endcan
+
                                                         </div>
                                                     </div>
                                                 </td>
@@ -342,8 +347,8 @@
                                 <input type="text" name="numero_chassis" id="supprimer_numero_chassis" placeholder="Numéro châssis" class="form-control" required>
                             </div>
                         </div>
-                       
-                        
+
+
 
                     </form>
                 </div>
@@ -394,7 +399,7 @@
             $("#modal-supprimer-camion").modal("show");
 
             let url = $(this).attr("data-url");
-            let url_delete = $(this).attr("data-delete-url"); 
+            let url_delete = $(this).attr("data-delete-url");
 
             $("#btn-supprimer-camion").attr("href", url_delete).prev().attr("href", url_delete+"/2");
 
@@ -421,7 +426,7 @@
 
             $.ajax(url, {}, dataType ="HTML").done(function (data) {
                 console.log(data);
-              
+
                 $("#modal-modifier-camion #name").val(data.name);
                 $("#modal-modifier-camion #marque").val(data.marque);
                 $("#modal-modifier-camion #model").val(data.model);
@@ -429,6 +434,6 @@
                 $("#modal-modifier-camion #numero_chassis").val(data.numero_chassis);
             })
         })
-        
+
     </script>
 @endsection
