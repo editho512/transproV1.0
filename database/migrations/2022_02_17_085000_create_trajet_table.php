@@ -18,7 +18,7 @@ class CreateTrajetTable extends Migration
             $table->string('depart', 255);
             $table->string('arrivee', 255);
             $table->dateTime('date_heure_depart');
-            $table->dateTime('date_heure_arrivee');
+            $table->dateTime('date_heure_arrivee')->nullable();
             $table->string('etat')->nullable('false')->default('En  cours');
             $table->bigInteger('camion_id')->unsigned();
             $table->bigInteger('chauffeur_id')->unsigned();

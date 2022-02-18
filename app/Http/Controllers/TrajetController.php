@@ -2,40 +2,98 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Camion;
+use App\Models\Chauffeur;
 use App\Models\Trajet;
 use App\Models\Itineraire;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class TrajetController extends Controller
 {
+    /**
+     * Methode qui ajoute un nouveau trajet dans la base de données
+     *
+     * @param Request $request Contenant tous les champs
+     * @return RedirectResponse Redirection vers la page precedente
+     */
     public function add(Request $request) : RedirectResponse
     {
+        // Validation des données reçues
         $request->validate([
             "camion_id" => ['required', 'numeric', 'exists:camions,id'],
+            "etat" => ['required', Rule::in(Trajet::getEtat())],
             "chauffeur" => ['required', 'exists:chauffeurs,id'],
             "date_heure_depart" => ['required', 'date'],
-            "date_heure_arrivee" => ['required', 'date'],
-            "numero" => ['nullable', 'numeric', 'min:1', 'max:999999999'],
+            "date_heure_arrivee" => ['nullable', 'date'],
         ]);
+
+        $date_depart = Carbon::parse($request->date_heure_depart, 'EAT');
+        $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse($request->date_heure_arrivee, 'EAT');
+
+        // Verifier si le camion a un trajet en cours ou non
+        $camion = Camion::findOrFail($request->camion_id);
+
+        // Verifier l'etat en fonction de la trajet en cours: Si a un trajet en cours, l'état ne doit pas etre en cours aussi, ou terminé
+        if ($camion->aUnTrajetEnCours() AND ($request->etat === Trajet::getEtat(1) OR $request->etat === Trajet::getEtat(2)))
+        {
+            dd('Vous devez choisir l\'état a prévoir pour ce trajet');
+            return back()->withErrors('Vous devez choisir l\'état a prévoir pour ce trajet');
+        }
+
+        if (Carbon::now('EAT')->greaterThanOrEqualTo($date_depart) AND $request->etat === Trajet::getEtat(0))
+        {
+            dd('La date de depart doit être spérieur a ce moment précis si la status est aprévoir');
+        }
+
+        $verifierDate = true;
+
+        foreach ($camion->trajets as $trajet)
+        {
+            $date_dpart_trajet = Carbon::parse($trajet->date_heure_depart, 'EAT');
+            $date_arrivee_trajet = Carbon::parse($trajet->date_heure_arrivee, 'EAT');
+
+            if ($date_dpart_trajet->greaterThan($date_depart))
+            {
+                $verifierDate = ($verifierDate AND false);
+            }
+            else
+            {
+                if ($date_arrivee_trajet !== null AND $date_arrivee_trajet->greaterThan($date_depart))
+                {
+                    $verifierDate = ($verifierDate AND false);
+                }
+                else
+                {
+                    $verifierDate = ($verifierDate AND true);
+                }
+            }
+        }
 
         $itineraires = json_decode($request->itineraire, true);
 
         // Si l'itinéraire est inférieur a deux
-        if (count($itineraires) < 2) return back()->withErrors('Veillez choisir au moins deux itinéraires', 'error');
-
-        $date_depart = Carbon::parse($request->date_heure_debut);
-        $date_arrivee = Carbon::parse($request->date_heure_arrivee);
+        if (count($itineraires) < 2)
+        {
+            dd('Veillez choisir au moins deux itinéraires');
+            return back()->withErrors('Veillez choisir au moins deux itinéraires', 'error');
+        }
 
         // Si la date de depart est supérieur a la date d'arrivée
-        if ($date_depart->greaterThan($date_arrivee)) return back()->withErrors('La date de depart doit etrer inférieur a la date d\'arrivée');
+        if ($date_arrivee !== null AND $date_depart->greaterThan($date_arrivee))
+        {
+            dd('La date de depart doit etrer inférieur a la date d\'arrivée');
+            return back()->withErrors('La date de depart doit etrer inférieur a la date d\'arrivée');
+        }
 
         $etat = 'En cours';
 
         // Si la d'ate de départ est superieur a la date et heure actuel, l'etat sera a prévoir
-        if ($date_depart->greaterThan(Carbon::now())) $etat = "A prévoir";
+        if ($date_depart->greaterThan(Carbon::now('EAT'))) $etat = "A prévoir";
 
         $depart = ucfirst($itineraires[0]['nom_itineraire']);
         $arrivee = ucfirst(end($itineraires)['nom_itineraire']);
@@ -44,7 +102,7 @@ class TrajetController extends Controller
             'depart' => $depart,
             'date_heure_depart' => $date_depart->toDateTimeString(),
             'arrivee' => $arrivee,
-            'date_heure_arrivee' => $date_arrivee->toDateTimeString(),
+            'date_heure_arrivee' => $date_arrivee === null ? null : $date_arrivee->toDateTimeString(),
             'etat' => $etat,
             'camion_id' => intval($request->camion_id),
             'chauffeur_id' => intval($request->chauffeur),
@@ -52,6 +110,7 @@ class TrajetController extends Controller
 
         if ($trajet->save())
         {
+            // Enregistrement de tous les itinéraires
             foreach ($itineraires as $itineraire)
             {
                 $itineraire = Itineraire::create([
@@ -76,8 +135,16 @@ class TrajetController extends Controller
         return redirect()->back();
     }
 
-    public function modifier(Trajet $carburant){
-        return response()->json($carburant);
+
+    /**
+     * Modifier un trajer
+     *
+     * @param Trajet $trajet Trajet a modifier
+     * @return JsonResponse JSON contenant les ifons contenant le trajet
+     */
+    public function modifier(Trajet $trajet) : JsonResponse
+    {
+        return response()->json($trajet);
     }
 
     public function update(Request $request, Trajet $carburant){

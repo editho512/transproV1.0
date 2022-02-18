@@ -61,9 +61,9 @@
                             <span class="info-box-text">Chauffeur</span>
                             <h5 class="info-box-number">
                                 @if ($camion->dernierTrajet() !== null)
-                                    {{ $camion->dernierTrajet()->chauffeur->name }}
+                                {{ $camion->dernierTrajet()->chauffeur->name }}
                                 @else
-                                    Aucun chauffeur
+                                Aucun chauffeur
                                 @endif
                             </h5>
                         </div>
@@ -91,9 +91,9 @@
                             <span class="info-box-text">Trajet</span>
                             <h5 class="info-box-number">
                                 @if ($camion->dernierTrajet(true) !== null)
-                                    {{ $camion->dernierTrajet(true)->nomItineraire() }}
+                                {{ $camion->dernierTrajet(true)->nomItineraire() }}
                                 @else
-                                    Aucun trajet en cours
+                                Aucun trajet en cours
                                 @endif
                             </h5>
                         </div>
@@ -106,6 +106,7 @@
 
 
     </div>
+
     <div class="row">
         <div class="col-sm-12 px-3">
             <div class="card">
@@ -178,9 +179,7 @@
                     <div class="tab-pane fade " id="nav-trajet" role="tabpanel" aria-labelledby="nav-trajet-tab">
                         <div class="card-header">
                             <h3 class="card-title" style="color: gray;display:none;" >Liste des trajets</h3>
-                            @if ($camion->aUnTrajetEnCours())
-                                <button class="float-right btn btn-success" id="btn-modal-trajet" data-toggle="modal" data-target="#modal-trajet"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
-                            @endif
+                            <button class="float-right btn btn-success" id="btn-modal-trajet" data-toggle="modal" data-target="#modal-trajet"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -204,14 +203,27 @@
                                         <td>{{ $trajet->date_heure_depart }}</td>
                                         <td>{{ $trajet->date_heure_arrivee }}</td>
                                         <td>{{ $trajet->chauffeur->name }}</td>
-                                        <td>{{ $trajet->etat }}</td>
+                                        <td>
+                                            <div class="
+                                                @if ($trajet->etat === App\Models\Trajet::getEtat(1)) badge badge-info
+                                                @elseif ($trajet->etat === App\Models\Trajet::getEtat(0)) badge badge-warning
+                                                @else badge badge-success
+                                                @endif
+                                            ">
+                                                {{ $trajet->etat }}
+                                            </div>
+
+                                            @if ($trajet->ordreExecution() !== null)
+                                                <span style="color:{{ $trajet->couleurs() }}">{{ $trajet->ordreExecution() }}</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if ($trajet->blocked == false)
-                                                <a href="{{route('trajet.voir', ['trajet' => $trajet->id])}}">
-                                                    <button class="btn btn-sm btn-info" ><span class="fa fa-eye"></span></button>
-                                                </a>
+                                            <a href="{{route('trajet.voir', ['trajet' => $trajet->id])}}">
+                                                <button class="btn btn-sm btn-info" ><span class="fa fa-eye"></span></button>
+                                            </a>
                                             @else
-                                                <button class="btn btn-sm btn-info" disabled><span class="fa fa-eye"></span></button>
+                                            <button class="btn btn-sm btn-info" disabled><span class="fa fa-eye"></span></button>
                                             @endif
 
                                             <button class="btn btn-sm btn-primary modifier-trajet" data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}" data-update-url=""><span class="fa fa-edit"></span></button>
@@ -219,9 +231,9 @@
                                         </td>
                                     </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="7" class="text-center">Aucune trajet pour ce camion</td>
-                                        </tr>
+                                    <tr>
+                                        <td colspan="7" class="text-center">Aucune trajet pour ce camion</td>
+                                    </tr>
                                     @endforelse
                                 </tbody>
                                 <tfoot>
@@ -429,9 +441,13 @@
 </div>
 <!---- / modal pour modification camion-->
 
+<div class="row">
+    <div class="col-xl-12">
+        @dump($errors->all())
+    </div>
+</div>
 
 {{-- -Tous ce qui concerne les trajets --}}
-
 
 <div class="modal fade" id="modal-trajet">
     <div class="modal-dialog">
@@ -449,27 +465,29 @@
 
                     <input type="hidden" name="camion_id" value={{ $camion->id }}>
 
-                    <div class="row" style="margin-top: 3px; ">
-                        <div class="col-sm-5">
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
                             <label for="chauffeur" class="form-label">Chauffeur :</label>
                         </div>
-                        <div class="col-sm-7">
-                            <select name="chauffeur" class="form-control" id="chauffeur">
+                        <div class="col-sm-8">
+                            <select name="chauffeur" class="form-control" id="chauffeur" required>
                                 <option value="">Selectionner un chauffeur</option>
-                                @foreach ($chauffeurs as $chauffeur)
+                                @forelse ($chauffeurs as $chauffeur)
                                 <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
-                                @endforeach
+                                @empty
+                                <option value="">Aucun chauffeur disponible pour le moment</option>
+                                @endforelse
                             </select>
                         </div>
                     </div>
 
-                    <div class="row" style="margin-top: 3px; ">
-                        <div class="col-sm-5">
-                            <label for="date">Date & heure départ :</label>
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
+                            <label for="date">Départ :</label>
                         </div>
-                        <div class="col-sm-7">
+                        <div class="col-sm-8">
                             <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_depart" name="date_heure_depart" required="false">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
                                 <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
@@ -477,13 +495,13 @@
                         </div>
                     </div>
 
-                    <div class="row" style="margin-top: 3px; ">
-                        <div class="col-sm-5">
-                            <label for="date">Date & heure arrivée :</label>
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
+                            <label for="date">Arrivée :</label>
                         </div>
-                        <div class="col-sm-7">
+                        <div class="col-sm-8">
                             <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_arrivee" name="date_heure_arrivee" required="false">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
                                 <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
@@ -491,8 +509,22 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
+                            <label for="etat">Status :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <select name="etat" class="form-control" id="etat" required>
+                                <option value="">Selectionner le status</option>
+                                @foreach (App\Models\Trajet::getEtat() as $status)
+                                <option value="{{ $status }}">{{ $status }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     {{-- Bloc pour gerer les itinéraires --}}
-                    <div id="content-itineraire">
+                    <div id="content-itineraire" class="mb-3">
                         <input type="hidden" name="itineraire" class="itineraire_data" value="">
                         <div class="form-group">
                             <label for="nombre_itineraire">Itinéraires :</label>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Camion;
 use App\Models\Carburant;
 use App\Models\Chauffeur;
+use App\Models\Trajet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
@@ -20,8 +21,8 @@ class CamionController extends Controller
         $this->middleware('super-admin')->except(['add', 'index', 'voir']);
     }
 
-    public function index(){
-
+    public function index()
+    {
         // Verifier si l'utilisateur peut acceder au dashboard
         if (!Gate::allows('acceder-dashboard'))
         {
@@ -136,13 +137,15 @@ class CamionController extends Controller
         return redirect()->back();
     }
 
-    public function voir(Camion $camion){
-
+    public function voir(Camion $camion)
+    {
         if($camion->blocked == false){
             $active_camion_index = "active";
             $carburants = Carburant::all();
-            $chauffeurs = Chauffeur::orderBy('name', 'desc')->get();
+            $chauffeurs = Chauffeur::orderBy('name', 'asc')->get();
+
             $stock_carburant = $this->CarburantRestant($camion->id);
+
             return view("Camion.voirCamion", compact("active_camion_index", "camion", "carburants", "stock_carburant", "chauffeurs"));
         }
     }

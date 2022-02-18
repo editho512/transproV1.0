@@ -55,10 +55,9 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @if(isset($chauffeurs) && $chauffeurs->count() > 0)
-                                        @foreach($chauffeurs as $chauffeur)
+                                        @forelse($chauffeurs as $chauffeur)
                                             <tr style='{{$chauffeur->blocked == true ? "color:gray;" : ""}}'>
-                                                <td>{{ucwords($chauffeur->name)}}</td>
+                                                <td>{{ ucwords($chauffeur->name) }} - @if ($chauffeur->disponible() === false) <span class="badge badge-info">En cours de travail</span> @endif</td>
                                                 <td>{{$chauffeur->phone}}</td>
                                                 <td>{{$chauffeur->cin}}</td>
                                                 <td>
@@ -76,14 +75,13 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                    @else
-                                     <tr>
-                                         <td style="text-align: center" colspan="6">
-                                            Aucun chauffeur dans la liste
-                                        </td>
-                                     </tr>
-                                    @endif
+                                        @empty
+                                            <tr>
+                                                <td style="text-align: center" colspan="6">
+                                                    Aucun chauffeur dans la liste
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                     <tfoot>
                                     <tr>
