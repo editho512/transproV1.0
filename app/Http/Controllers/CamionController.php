@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use File;
-use Session;
 use App\Models\Camion;
 use App\Models\Carburant;
+use App\Models\Chauffeur;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class CamionController extends Controller
@@ -29,9 +30,9 @@ class CamionController extends Controller
 
         $camions = Camion::all();
         $active_camion_index = "active";
-        return view("Camion.camionIndex", compact("active_camion_index", "camions" ));
-    }
 
+        return view("Camion.camionIndex", compact("active_camion_index", "camions"));
+    }
 
     public function add(Request $request){
         $data = $request->except("photo");
@@ -48,7 +49,7 @@ class CamionController extends Controller
                 ]
             );
 
-            if ($validator->passes()) {
+            if ($validator->passes()){
 
                 $name = $request->file('photo')->getClientOriginalName();
                 $path = $request->file('photo')->store('camions', 'public');
@@ -140,8 +141,9 @@ class CamionController extends Controller
         if($camion->blocked == false){
             $active_camion_index = "active";
             $carburants = Carburant::all();
+            $chauffeurs = Chauffeur::orderBy('name', 'desc')->get();
             $stock_carburant = $this->CarburantRestant($camion->id);
-            return view("Camion.voirCamion", compact("active_camion_index", "camion", "carburants", "stock_carburant"));
+            return view("Camion.voirCamion", compact("active_camion_index", "camion", "carburants", "stock_carburant", "chauffeurs"));
         }
     }
 
