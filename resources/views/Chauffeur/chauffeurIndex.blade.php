@@ -57,9 +57,14 @@
                                     <tbody>
                                         @forelse($chauffeurs as $chauffeur)
                                             <tr style='{{$chauffeur->blocked == true ? "color:gray;" : ""}}'>
-                                                <td>{{ ucwords($chauffeur->name) }} - @if ($chauffeur->disponible() === false) <span class="badge badge-info">En cours de travail</span> @endif</td>
+                                                <td>{{ ucwords($chauffeur->name) }} @if ($chauffeur->disponible() === false) - <span class="badge badge-info">En cours de travail</span> @endif</td>
                                                 <td>{{$chauffeur->phone}}</td>
-                                                <td>{{$chauffeur->cin}}</td>
+                                                <td>
+                                                    {{$chauffeur->cin}}
+                                                    @if ($chauffeur->nombreTrajetEnAttente() > 0)
+                                                        <div class="badge badge-info">({{ $chauffeur->nombreTrajetEnAttente() }} - Trajet(s) en attente)</div>
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <div class="row" style="text-align: center;">
                                                         <div class="col-sm-12">

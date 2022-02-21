@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Chauffeur extends Model
 {
@@ -15,6 +16,12 @@ class Chauffeur extends Model
         'name', 'phone', 'cin', 'permis'
     ];
 
+
+    /**
+     * Recuperer tous les chauffeurs disponibles de l'agence
+     *
+     * @return array Tableau contenant tous les chauffeurs
+     */
     public static function tousDisponible() : array
     {
         $chauffeurs = [];
@@ -51,5 +58,25 @@ class Chauffeur extends Model
     {
         if (in_array($this, self::tousDisponible())) return true;
         else return false;
+    }
+
+
+    public function estDispoEntre(Carbon $depart, ?Carbon $arrivee)
+    {
+        $trajets = $this->trajets()->where('date_heure_depart', '>', $depart->toDateTimeString());
+
+        if ($arrivee !== null)
+        {
+            $trajets = $trajets->orWhere('date_heure_arrivee', '>', $arrivee->toDateTimeString());
+        }
+
+        if ($trajets->count() === 0) return true;
+        else return false;
+    }
+
+
+    public function nombreTrajetEnAttente() : int
+    {
+        return $this->trajets()->where('etat', Trajet::getEtat(0))->count();
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Camion;
 use App\Models\Carburant;
 use App\Models\Chauffeur;
-use App\Models\Trajet;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
@@ -14,14 +16,21 @@ use Illuminate\Support\Facades\Validator;
 
 class CamionController extends Controller
 {
-    //
-
+    /**
+    * Constructeur qui definit les middlewares
+    */
     public function __construct()
     {
         $this->middleware('super-admin')->except(['add', 'index', 'voir']);
     }
 
-    public function index()
+
+    /**
+    * Afficher la liste des camions
+    *
+    * @return View
+    */
+    public function index() : View
     {
         // Verifier si l'utilisateur peut acceder au dashboard
         if (!Gate::allows('acceder-dashboard'))
@@ -35,7 +44,15 @@ class CamionController extends Controller
         return view("Camion.camionIndex", compact("active_camion_index", "camions"));
     }
 
-    public function add(Request $request){
+
+    /**
+    * Ajouter un nouveau camion dans la base de données
+    *
+    * @param Request $request Requete contenant tous les champs
+    * @return RedirectResponse
+    */
+    public function add(Request $request) : RedirectResponse
+    {
         $data = $request->except("photo");
         $camion = Camion::create($data);
 
@@ -61,15 +78,37 @@ class CamionController extends Controller
 
 
         }
-        Session::put("notification", ["value" => "Camion ajouté" , "status" => "success" ]);
+
+        $request->session()->flash("notification", [
+            "value" => "Camion ajouté" ,
+            "status" => "success"
+            ]
+        );
+
         return redirect()->back();
     }
 
-    public function modifier(Camion $camion){
+
+    /**
+     * Methode pour modifier un camion
+     *
+     * @param Camion $camion
+     * @return JsonResponse
+     */
+    public function modifier(Camion $camion) : JsonResponse
+    {
         return response()->json($camion);
     }
 
-    public function update(Request $request, Camion $camion){
+    /**
+     * Enregistrer les modifications d'un camion
+     *
+     * @param Request $request
+     * @param Camion $camion
+     * @return void
+     */
+    public function update(Request $request, Camion $camion)
+    {
 
         $data = $request->except("photo");
         $camion->name = $data["name"];
@@ -141,7 +180,7 @@ class CamionController extends Controller
     {
         if($camion->blocked == false){
             $active_camion_index = "active";
-            $carburants = Carburant::all();
+            $carburants = $camion->carburants;
             $chauffeurs = Chauffeur::orderBy('name', 'asc')->get();
 
             $stock_carburant = $this->CarburantRestant($camion->id);

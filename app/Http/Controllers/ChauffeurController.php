@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use File;
 use Session;
 use App\Models\Chauffeur;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,8 +16,9 @@ class ChauffeurController extends Controller
         $this->middleware('super-admin')->except(['index', 'add']);
     }
 
-    //
-    public function index(){
+
+    public function index() : View
+    {
         $chauffeurs = Chauffeur::all();
         $active_chauffeur_index = "active";
         return view("Chauffeur.chauffeurIndex", compact("active_chauffeur_index", "chauffeurs" ));

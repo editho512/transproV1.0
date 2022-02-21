@@ -2,31 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Camion;
 use App\Models\Trajet;
+use App\Models\Chauffeur;
 use App\Models\Itineraire;
-use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
 class TrajetController extends Controller
 {
     /**
-     * Methode qui ajoute un nouveau trajet dans la base de données
-     *
-     * @param Request $request Contenant tous les champs
-     * @return RedirectResponse Redirection vers la page precedente
-     */
+    * Methode qui ajoute un nouveau trajet dans la base de données
+    *
+    * @param Request $request Contenant tous les champs
+    * @return RedirectResponse Redirection vers la page precedente
+    */
     public function add(Request $request) : RedirectResponse
     {
         // Validation des données reçues
         $request->validate([
             "camion_id" => ['required', 'numeric', 'exists:camions,id'],
             "etat" => ['required', Rule::in(Trajet::getEtat())],
-            "chauffeur" => ['required', 'exists:chauffeurs,id'],
+            "chauffeur" => ['nullable', 'exists:chauffeurs,id'],
             "date_heure_depart" => ['required', 'date'],
             "date_heure_arrivee" => ['nullable', 'date'],
         ]);
@@ -37,11 +37,38 @@ class TrajetController extends Controller
         // Verifier si le camion a un trajet en cours ou non
         $camion = Camion::findOrFail($request->camion_id);
 
+        if ($request->chauffeur !== null)
+        {
+            $chauffeur = Chauffeur::findOrFail($request->chauffeur);
+
+            if (!$chauffeur->estDispoEntre($date_depart, $date_arrivee))
+            {
+                $request->session()->flash("notification", [
+                    "value" => "Chauffeur non disponible entre les dates que vous avez selectionné" ,
+                    "status" => "error"
+                ]);
+
+                return redirect()->back();
+            }
+        }
+        else
+        {
+            if ($request->etat !== Trajet::getEtat(0))
+            {
+                $request->session()->flash("notification", [
+                    "value" => "Vous devez selectionner au moins un chauffeur pour un trajet non a prévoir" ,
+                    "status" => "error"
+                ]);
+
+                return redirect()->back();
+            }
+        }
+
         // Verifier l'etat en fonction de la trajet en cours: Si a un trajet en cours, l'état ne doit pas etre en cours aussi, ou terminé
         if ($camion->aUnTrajetEnCours() AND ($request->etat === Trajet::getEtat(1) OR $request->etat === Trajet::getEtat(2)))
         {
             $request->session()->flash("notification", [
-                "value" => "Vous devez choisir l\'état a prévoir pour ce trajet" ,
+                "value" => "Le camion a encore un trajet en cours" ,
                 "status" => "success"
             ]);
             return redirect()->back();
@@ -99,14 +126,13 @@ class TrajetController extends Controller
         // Si la date de depart est supérieur a la date d'arrivée
         if ($date_arrivee !== null AND $date_depart->greaterThan($date_arrivee))
         {
-            dd('La date de depart doit etrer inférieur a la date d\'arrivée');
-            return back()->withErrors('La date de depart doit etrer inférieur a la date d\'arrivée');
+            $request->session()->flash("notification", [
+                "value" => "La date de depart doit etrer inférieur a la date d\'arrivée" ,
+                "status" => "error"
+            ]);
+
+            return redirect()->back();
         }
-
-        $etat = 'En cours';
-
-        // Si la d'ate de départ est superieur a la date et heure actuel, l'etat sera a prévoir
-        if ($date_depart->greaterThan(Carbon::now('EAT'))) $etat = "A prévoir";
 
         $depart = ucfirst($itineraires[0]['nom_itineraire']);
         $arrivee = ucfirst(end($itineraires)['nom_itineraire']);
@@ -116,9 +142,9 @@ class TrajetController extends Controller
             'date_heure_depart' => $date_depart->toDateTimeString(),
             'arrivee' => $arrivee,
             'date_heure_arrivee' => $date_arrivee,
-            'etat' => $etat,
+            'etat' => $request->etat,
             'camion_id' => intval($request->camion_id),
-            'chauffeur_id' => intval($request->chauffeur),
+            'chauffeur_id' => $request->chauffeur === null ? null : intval($request->chauffeur),
         ]);
 
         if ($trajet->save())
@@ -150,11 +176,11 @@ class TrajetController extends Controller
 
 
     /**
-     * Modifier un trajer
-     *
-     * @param Trajet $trajet Trajet a modifier
-     * @return JsonResponse JSON contenant les ifons contenant le trajet
-     */
+    * Modifier un trajer
+    *
+    * @param Trajet $trajet Trajet a modifier
+    * @return JsonResponse JSON contenant les ifons contenant le trajet
+    */
     public function modifier(Trajet $trajet) : JsonResponse
     {
         $itineraires = $trajet->itineraires;
@@ -166,22 +192,53 @@ class TrajetController extends Controller
 
 
     /**
-     * Mettre a jour un trajet
-     *
-     * @param Request $request Requete contenant tous les champs
-     * @param Trajet $trajet Le trajet a mettre a jour
-     * @return RedirectResponse
-     */
+    * Mettre a jour un trajet
+    *
+    * @param Request $request Requete contenant tous les champs
+    * @param Trajet $trajet Le trajet a mettre a jour
+    * @return RedirectResponse
+    */
     public function update(Request $request, Trajet $trajet) : RedirectResponse
     {
         // Validation des données reçues
         $data = $request->validate([
+            "camion_id" => ["required", "exists:camions,id"],
             "etat" => ['required', Rule::in(Trajet::getEtat())],
-            "chauffeur" => ['required', 'exists:chauffeurs,id'],
+            "chauffeur" => ['nullable', 'exists:chauffeurs,id'],
             "date_heure_depart" => ['required', 'date'],
             "date_heure_arrivee" => ['nullable', 'date'],
             "itineraire" => ["required", "sometimes"]
         ]);
+
+        $date_depart = Carbon::parse($request->date_heure_depart, 'EAT');
+        $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse($request->date_heure_arrivee, 'EAT');
+
+        if ($request->chauffeur !== null)
+        {
+            $chauffeur = Chauffeur::findOrFail($request->chauffeur);
+
+            if (!$chauffeur->estDispoEntre($date_depart, $date_arrivee))
+            {
+                $request->session()->flash("notification", [
+                    "value" => "Chauffeur non disponible entre les dates que vous avez selectionné" ,
+                    "status" => "error"
+                ]);
+
+                return redirect()->back();
+            }
+        }
+        else
+        {
+            if ($request->etat !== Trajet::getEtat(0))
+            {
+                $request->session()->flash("notification", [
+                    "value" => "Vous devez selectionner au moins un chauffeur pour un trajet non a prévoir" ,
+                    "status" => "error"
+                ]);
+
+                return redirect()->back();
+            }
+        }
 
         if ($trajet->etat === Trajet::getEtat(0) AND $request->etat === Trajet::getEtat(2))
         {
@@ -192,6 +249,17 @@ class TrajetController extends Controller
 
             return redirect()->back();
             //dd("Ne peut pas terminer un trajet a prévoir.");
+        }
+
+        // Pour demarrer le trajet, il faut que la date soit inferieur ou egal a la date heure en cours
+        if ($request->etat === Trajet::getEtat(2) AND $date_depart->greaterThanOrEqualTo(Carbon::now()))
+        {
+            $request->session()->flash("notification", [
+                "value" => "La date depart ne doit pas depasser la date et heure actuel." ,
+                "status" => "error"
+            ]);
+
+            return redirect()->back();
         }
 
         if ($request->etat === Trajet::getEtat(2) AND $request->date_heure_arrivee === null)
@@ -205,10 +273,49 @@ class TrajetController extends Controller
             //dd('Vous devez specifier une date d\'arrivée');
         }
 
+
+        // Verifications des dates des trajets
+
+        $verifierDate = true;
+        $camion = Camion::findOrFail($request->camion_id);
+
+        // Verifier l'etat en fonction de la trajet en cours: Si a un trajet en cours, l'état ne doit pas etre en cours aussi, ou terminé
+        if ($camion->aUnTrajetEnCours($trajet) AND ($request->etat === Trajet::getEtat(1) OR $request->etat === Trajet::getEtat(2)))
+        {
+            $request->session()->flash("notification", [
+                "value" => "Le camion a encore un trajet en cours" ,
+                "status" => "error"
+            ]);
+            return redirect()->back();
+        }
+
+        foreach ($camion->trajets as $t)
+        {
+            if ($t->id !== $trajet->id)
+            {
+                $date_dpart_trajet = Carbon::parse($trajet->date_heure_depart, 'EAT');
+                $date_arrivee_trajet = Carbon::parse($trajet->date_heure_arrivee, 'EAT');
+
+                if ($date_dpart_trajet->greaterThan($date_depart))
+                {
+                    $verifierDate = ($verifierDate AND false);
+                }
+                else
+                {
+                    if ($date_arrivee_trajet !== null AND $date_arrivee_trajet->greaterThan($date_depart))
+                    {
+                        $verifierDate = ($verifierDate AND false);
+                    }
+                    else
+                    {
+                        $verifierDate = ($verifierDate AND true);
+                    }
+                }
+            }
+        }
+
         $itineraires = json_decode($data['itineraire'], true);
 
-        $date_depart = Carbon::parse($request->date_heure_depart, 'EAT');
-        $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse($request->date_heure_arrivee, 'EAT');
         $depart = $itineraires[0]['nom'];
         $arrivee = end($itineraires)['nom'];
         $etat = $request->etat;
@@ -219,22 +326,54 @@ class TrajetController extends Controller
             'arrivee' => $arrivee,
             'date_heure_arrivee' => $date_arrivee,
             'etat' => $etat,
-            'chauffeur_id' => intval($request->chauffeur),
+            'chauffeur_id' => $request->chauffeur === null ? null : intval($request->chauffeur),
         ]);
 
-        if ($update) $request->session()->flash('success', 'Trajet mis a jour avec success');
-        else $request->session()->flash('error', 'Erreur de mise a jour');
+        if ($update)
+        {
+            $request->session()->flash("notification", [
+                "value" => "Mise a jour avec success." ,
+                "status" => "success"
+            ]);
+        }
+        else
+        {
+            $request->session()->flash("notification", [
+                "value" => "Erreur de mise a jour" ,
+                "status" => "error"
+            ]);
+        }
 
         return redirect()->back();
 
     }
 
-    public function delete(Trajet $carburant){
-        $carburant->delete();
-        Session::put("notification", [
-            "value" => "Carburant supprimé" ,
-            "status" => "success"
-        ]);
+
+    /**
+    * Methode permettant de supprimer un trajet
+    *
+    * @param Trajet $trajet
+    * @return RedirectResponse Redirection vers la page precedente
+    */
+    public function delete(Request $request, Trajet $trajet) : RedirectResponse
+    {
+        $delete = $trajet->delete();
+
+        if ($delete)
+        {
+            $request->session()->flash("notification", [
+                "value" => "Trajet supprimé" ,
+                "status" => "success"
+            ]);
+        }
+        else
+        {
+            $request->session()->flash("notification", [
+                "value" => "Impossible de supprimer le trajet" ,
+                "status" => "error"
+            ]);
+        }
+
         return redirect()->back();
 
     }

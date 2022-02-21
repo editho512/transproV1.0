@@ -61,9 +61,13 @@
                             <span class="info-box-text">Chauffeur</span>
                             <h5 class="info-box-number">
                                 @if ($camion->dernierTrajet() !== null)
-                                {{ $camion->dernierTrajet()->chauffeur->name }}
+                                    @if ($camion->dernierTrajet()->chauffeur !== null)
+                                        {{ $camion->dernierTrajet()->chauffeur->name }}
+                                    @else
+                                        Pas encore de chauffeur
+                                    @endif
                                 @else
-                                Aucun chauffeur
+                                    Aucun chauffeur
                                 @endif
                             </h5>
                         </div>
@@ -202,7 +206,7 @@
                                         <td>{{ $trajet->nomItineraire() }}</td>
                                         <td>{{ formatDate($trajet->date_heure_depart) }}</td>
                                         <td>{{ formatDate($trajet->date_heure_arrivee) }}</td>
-                                        <td>{{ $trajet->chauffeur->name }}</td>
+                                        <td>{{ $trajet->chauffeur === null ? "Pas encore de chauffeur assigné" : $trajet->chauffeur->name }}</td>
                                         <td>
                                             @if ($trajet->enRetard())
                                                 <div class="badge badge-danger">En rétard</div>
@@ -216,7 +220,7 @@
                                                     {{ $trajet->etat }}
                                                 </div>
 
-                                                @if ($trajet->ordreExecution() !== null)
+                                                @if ($trajet->ordreExecution() !== null AND $trajet->etat !== App\Models\Trajet::getEtat(2))
                                                     <b>&nbsp;-&nbsp;Ordre:&nbsp;<span>{{ $trajet->ordreExecution() }}</span></b>
                                                 @endif
                                             @endif
@@ -230,7 +234,7 @@
                                             <button class="btn btn-sm btn-info" disabled><span class="fa fa-eye"></span></button>
                                             @endif
 
-                                            <button class="btn btn-sm btn-primary modifier-trajet" data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}"><span class="fa fa-edit"></span></button>
+                                            <button class="btn btn-sm btn-primary modifier-trajet" @if ($trajet->etat === App\Models\Trajet::getEtat(2)) disabled @endif  data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}"><span class="fa fa-edit"></span></button>
                                             <button class="btn btn-sm btn-danger supprimer-trajet" data-url="{{route('trajet.supprimer', ['trajet' => $trajet->id])}}" data-delete-url="{{route('trajet.delete', ['trajet' => $trajet->id])}}"><span class="fa fa-trash"></span></button>
                                         </td>
                                     </tr>
@@ -476,12 +480,12 @@
                             <label for="chauffeur" class="form-label">Chauffeur :</label>
                         </div>
                         <div class="col-sm-8">
-                            <select name="chauffeur" class="form-control" id="chauffeur" required>
+                            <select name="chauffeur" class="form-control" id="chauffeur">
                                 <option value="">Selectionner un chauffeur</option>
                                 @forelse ($chauffeurs as $chauffeur)
-                                <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                                    <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
                                 @empty
-                                <option value="">Aucun chauffeur disponible pour le moment</option>
+                                    <option value="">Aucun chauffeur disponible pour le moment</option>
                                 @endforelse
                             </select>
                         </div>
@@ -578,12 +582,14 @@
                     @csrf
                     @method('patch')
 
+                    <input type="hidden" name="camion_id" value={{ $camion->id }}>
+
                     <div class="row mb-3" style="margin-top: 3px; ">
                         <div class="col-sm-4">
                             <label for="chauffeur" class="form-label">Chauffeur :</label>
                         </div>
                         <div class="col-sm-8">
-                            <select name="chauffeur" class="form-control" id="modifier-chauffeur" required>
+                            <select name="chauffeur" class="form-control" id="modifier-chauffeur">
                                 <option value="">Selectionner un chauffeur</option>
                                 @forelse ($chauffeurs as $chauffeur)
                                     <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
