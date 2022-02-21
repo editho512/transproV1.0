@@ -58,7 +58,7 @@
                                     @if(isset($camions) && $camions->count() > 0)
                                         @foreach($camions as $camion)
                                             <tr style='{{$camion->blocked == true ? "color:gray;" : ""}}' >
-                                                <td>{{ucwords($camion->name)}} - @if ($camion->aUnTrajetEncours()) <span class="badge badge-info">A un trajet en cours</span> @endif</td>
+                                                <td>{{ucwords($camion->name)}} @if ($camion->aUnTrajetEncours()) -<span class="badge badge-info">A un trajet en cours</span> @endif</td>
                                                 <td>{{$camion->numero_chassis}}</td>
                                                 <td>{{$camion->model}}</td>
                                                 <td>{{$camion->marque}}</td>

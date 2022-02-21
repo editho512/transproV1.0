@@ -183,7 +183,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="example2" class="table table-bordered table-striped dataTable">
+                            <table id="trajets" class="table table-bordered table-striped dataTable">
                                 <thead>
                                     <tr>
                                         <th>Numéro du trajet</th>
@@ -196,25 +196,29 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($camion->trajets as $trajet)
+                                    @forelse ($camion->trajets()->orderBy('date_heure_depart', 'ASC')->get() as $trajet)
                                     <tr>
-                                        <td>{{ $trajet->id }}</td>
+                                        <td @if ($trajet->ordreExecution() !== null) style="background-color:{{ $trajet->couleurs() }}" @endif>{{ $trajet->id }}</td>
                                         <td>{{ $trajet->nomItineraire() }}</td>
-                                        <td>{{ $trajet->date_heure_depart }}</td>
-                                        <td>{{ $trajet->date_heure_arrivee }}</td>
+                                        <td>{{ formatDate($trajet->date_heure_depart) }}</td>
+                                        <td>{{ formatDate($trajet->date_heure_arrivee) }}</td>
                                         <td>{{ $trajet->chauffeur->name }}</td>
                                         <td>
-                                            <div class="
-                                                @if ($trajet->etat === App\Models\Trajet::getEtat(1)) badge badge-info
-                                                @elseif ($trajet->etat === App\Models\Trajet::getEtat(0)) badge badge-warning
-                                                @else badge badge-success
-                                                @endif
-                                            ">
-                                                {{ $trajet->etat }}
-                                            </div>
+                                            @if ($trajet->enRetard())
+                                                <div class="badge badge-danger">En rétard</div>
+                                            @else
+                                                <div class="
+                                                    @if ($trajet->etat === App\Models\Trajet::getEtat(1)) badge badge-info
+                                                    @elseif ($trajet->etat === App\Models\Trajet::getEtat(0)) badge badge-warning
+                                                    @else badge badge-success
+                                                    @endif
+                                                ">
+                                                    {{ $trajet->etat }}
+                                                </div>
 
-                                            @if ($trajet->ordreExecution() !== null)
-                                                <span style="color:{{ $trajet->couleurs() }}">{{ $trajet->ordreExecution() }}</span>
+                                                @if ($trajet->ordreExecution() !== null)
+                                                    <b>&nbsp;-&nbsp;Ordre:&nbsp;<span>{{ $trajet->ordreExecution() }}</span></b>
+                                                @endif
                                             @endif
                                         </td>
                                         <td>
@@ -226,7 +230,7 @@
                                             <button class="btn btn-sm btn-info" disabled><span class="fa fa-eye"></span></button>
                                             @endif
 
-                                            <button class="btn btn-sm btn-primary modifier-trajet" data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}" data-update-url=""><span class="fa fa-edit"></span></button>
+                                            <button class="btn btn-sm btn-primary modifier-trajet" data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}"><span class="fa fa-edit"></span></button>
                                             <button class="btn btn-sm btn-danger supprimer-trajet" data-url="{{route('trajet.supprimer', ['trajet' => $trajet->id])}}" data-delete-url="{{route('trajet.delete', ['trajet' => $trajet->id])}}"><span class="fa fa-trash"></span></button>
                                         </td>
                                     </tr>
@@ -441,11 +445,13 @@
 </div>
 <!---- / modal pour modification camion-->
 
-<div class="row">
-    <div class="col-xl-12">
-        @dump($errors->all())
+@if ($errors->any())
+    <div class="row">
+        <div class="col-xl-12">
+            @dump($errors->all())
+        </div>
     </div>
-</div>
+@endif
 
 {{-- -Tous ce qui concerne les trajets --}}
 
@@ -544,6 +550,7 @@
                             </div>
                         </div>
                     </div>
+
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
@@ -559,55 +566,103 @@
 <div class="modal fade" id="modal-modifier-trajet">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header modal-header-primary">
+            <div class="modal-header modal-header-success">
                 <h4 class="modal-title">Modifier un flux de carburant</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body"  >
-                <form action="#" method="post" id="form-modifier-carburant" enctype="multipart/form-data">
+            <div class="modal-body">
+
+                <form action="#" method="post" id="form-modifier-trajet" enctype="multipart/form-data">
                     @csrf
                     @method('patch')
-                    <input type="hidden" name="camion_id" value={{$camion->id}}>
-                    <div class="row" style="margin-top: 3px; ">
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
                         <div class="col-sm-4">
-                            <label for="date">Date :</label>
+                            <label for="chauffeur" class="form-label">Chauffeur :</label>
                         </div>
                         <div class="col-sm-8">
-                            <div class="input-group date" id="date_modifier" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_modifier" id="modifier_date" name="date" required="">
-                                <div class="input-group-append" data-target="#date_modifier" data-toggle="datetimepicker">
+                            <select name="chauffeur" class="form-control" id="modifier-chauffeur" required>
+                                <option value="">Selectionner un chauffeur</option>
+                                @forelse ($chauffeurs as $chauffeur)
+                                    <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                                @empty
+                                    <option value="">Aucun chauffeur disponible pour le moment</option>
+                                @endforelse
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
+                            <label for="date">Départ :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
+                                <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
                         <div class="col-sm-4">
-                            <label for="quantite">Quantité :</label>
+                            <label for="date">Arrivée :</label>
                         </div>
                         <div class="col-sm-8">
-                            <input type="number" class="form-control" name="quantite" id="modifier_quantite" required>
+                            <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
+                                <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
                         <div class="col-sm-4">
-                            <label for="flux">Flux :</label>
+                            <label for="etat">Status :</label>
                         </div>
                         <div class="col-sm-8">
-                            <select name="flux" class="form-control" id="modifier_flux">
-                                <option value=0 selected>Entrée</option>
-                                <option value=1>Sortie</option>
+                            <select name="etat" class="form-control" id="modifier-etat" required>
+                                <option value="">Selectionner le status</option>
+                                @foreach (App\Models\Trajet::getEtat() as $status)
+                                    <option value="{{ $status }}">{{ $status }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
 
+                    {{-- Bloc pour gerer les itinéraires --}}
+                    <div id="content-itineraire" class="mb-3">
+                        <input type="hidden" name="itineraire" id="data-itineraire" class="itineraire_data" value="">
+                        <div class="form-group">
+                            <label for="nombre_itineraire">Itinéraires :</label>
+                            <div id="itineraire_formulaire">
+                                <div class="row">
+                                    <div class="col-sm-12" style="padding-top:1%;" id="list-itineraire">
+                                        {{-- <input type="text" placeholder="Nom de l'itinéraire" class='form-control' value="test"> --}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-1 row">
+                                <div class="col-sm-12" style="text-align:right;">
+                                    <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
+                                    <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
+
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="submit" form="form-modifier-carburant" id="button-modifier-carburant" class="float-right btn btn-primary">Modifier</button>
+                <button type="submit" form="form-modifier-trajet" id="button-modifier-trajet" class="float-right btn btn-success">Modifier</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -784,6 +839,65 @@
             })
 
         })
+    })
+
+
+    $(document).ready(function () {
+
+        $("#trajets").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "searching": true,
+            "paging": false,
+            "ordering": true,
+            "info": false,
+        });
+
+        $(document).on("click", ".modifier-trajet", function(){
+            let url = $(this).attr("data-show-url");
+            let url_update = $(this).attr("data-update-url")
+
+            $("#modal-modifier-trajet").modal("show");
+            $("#form-modifier-trajet").attr("action", url_update);
+
+            $.get(url, {}, dataType="JSON").done(function (data) {
+                let lists = document.getElementById('list-itineraire')
+                let itineraires = data.itineraires
+
+                itineraires.forEach(itineraire => {
+                    input = document.createElement('input')
+                    input.value = itineraire.nom
+                    input.classList.add('form-control')
+                    input.classList.add('mb-2')
+                    input.setAttribute('placeholder', 'Nom de l\'itinéraire')
+                    lists.appendChild(input)
+                })
+
+                $("#modal-modifier-trajet #data-itineraire").val(JSON.stringify(data.itineraires));
+                $("#modal-modifier-trajet #modifier-chauffeur").val(data.trajet.chauffeur_id);
+                $("#modal-modifier-trajet #modifier_date_heure_depart").val(data.trajet.date_heure_depart);
+                $("#modal-modifier-trajet #modifier_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
+                $("#modal-modifier-trajet #modifier-etat").val(data.trajet.etat);
+
+            })
+        })
+
+        /*$(document).on("click", ".supprimer-carburant", function (e) {
+            let url = $(this).prev().attr("data-show-url");
+            let url_delete = $(this).attr("data-url");
+
+            $("#button-supprimer-carburant").parent().attr("href", url_delete);
+
+            $("#modal-supprimer-carburant").modal("show");
+
+            $.get(url, {}, dataType="JSON").done(function (data) {
+                $("#modal-supprimer-carburant #supprimer_date").val(data.date).attr("disabled", true);
+                $("#modal-supprimer-carburant #supprimer_quantite").val(data.quantite).attr("disabled", true);
+                $("#modal-supprimer-carburant #supprimer_flux").val(data.flux).change().attr("disabled", true);
+
+            })
+
+        })*/
     })
 
 
