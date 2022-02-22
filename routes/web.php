@@ -25,6 +25,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // --------------------- CARBURANTS ---------------//
+
 Route::get('/Carburant/delete/{carburant}/{type?}',  [App\Http\Controllers\CarburantController::class, 'delete'])->name("carburant.delete");
 
 Route::patch('/Carburant/update/{carburant}', [App\Http\Controllers\CarburantController::class, 'update'])->name('carburant.update');
@@ -33,6 +34,20 @@ Route::get('/Carburant/modifier/{carburant}', [App\Http\Controllers\CarburantCon
 
 Route::post('/Carburant/ajouter', [App\Http\Controllers\CarburantController::class, 'add'])->name('carburant.ajouter');
 
+
+//----------------------- TRAJETS -----------------//
+
+Route::prefix('trajet')->group(function() {
+
+    Route::get('/delete/{carburant}/{type?}',  [App\Http\Controllers\TrajetController::class, 'delete'])->name("trajet.delete");
+
+    Route::patch('/update/{carburant}', [App\Http\Controllers\TrajetController::class, 'update'])->name('trajet.update');
+
+    Route::get('/modifier/{carburant}', [App\Http\Controllers\TrajetController::class, 'modifier'])->name('trajet.modifier');
+
+    Route::post('/ajouter', [App\Http\Controllers\TrajetController::class, 'add'])->name('trajet.ajouter');
+
+});
 
 // ---------------------- CHAUFFEURS ------------- //
 
