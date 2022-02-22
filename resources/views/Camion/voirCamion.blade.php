@@ -680,54 +680,86 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header modal-header-danger">
-                <h4 class="modal-title">Supprimer un flux de carburant</h4>
+                <h4 class="modal-title">Supprimer un trajet</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body"  >
-                <form action="#" method="post" id="form-supprimer-carburant" >
+                <form action="#" method="post" id="form-supprimer-trajet" >
                     @csrf
-                    <div class="row" style="margin-top: 3px; ">
+
+                    <input type="hidden" name="camion_id" value={{ $camion->id }}>
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
                         <div class="col-sm-4">
-                            <label for="date">Date :</label>
+                            <label for="chauffeur" class="form-label">Chauffeur :</label>
                         </div>
                         <div class="col-sm-8">
-                            <div class="input-group date" id="date_modifier" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_modifier" id="supprimer_date" name="date" required="">
-                                <div class="input-group-append" data-target="#date_modifier" data-toggle="datetimepicker">
+                            <label class="form-control" id="supprimer-chauffeur"></label>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
+                            <label for="date">Départ :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
+                                <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
                         <div class="col-sm-4">
-                            <label for="quantite">Quantité :</label>
+                            <label for="date">Arrivée :</label>
                         </div>
                         <div class="col-sm-8">
-                            <input type="number" class="form-control" name="quantite" id="supprimer_quantite" required>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="flux">Flux :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select name="flux" class="form-control" id="supprimer_flux">
-                                <option value=0 selected>Entrée</option>
-                                <option value=1>Sortie</option>
-                            </select>
+                            <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
+                                <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
+                            <label for="etat">Status :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <label class="form-control" id="supprimer-etat"></label>
+                        </div>
+                    </div>
+
+                    {{-- Bloc pour gerer les itinéraires --}}
+                    <div id="content-delete-itineraire" class="mb-3">
+                        <div class="form-group">
+                            <label for="nombre_itineraire">Itinéraires :</label>
+                            <div id="itineraire_delete_formulaire">
+                                <div class="row">
+                                    <div class="col-sm-12" style="padding-top:1%;" id="list-delete-itineraire">
+                                        {{-- <input type="text" placeholder="Nom de l'itinéraire" class='form-control' value="test"> --}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <a href="">
-                    <button type="button" form="form-supprimer-carburant" id="button-supprimer-carburant" class="float-right btn btn-danger">Supprimer</button>
-                </a>
+                <div class="d-flex justify-content-between">
+                    <a href="" class="btn btn-warning mr-2">Bloquer</a>
+                    <a href="">
+                        <button type="button" form="form-supprimer-trajet" id="button-supprimer-trajet" class="float-right btn btn-danger">Supprimer</button>
+                    </a>
+                </div>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -869,6 +901,7 @@
             $.get(url, {}, dataType="JSON").done(function (data) {
                 let lists = document.getElementById('list-itineraire')
                 let itineraires = data.itineraires
+                lists.innerHTML = ''
 
                 itineraires.forEach(itineraire => {
                     input = document.createElement('input')
@@ -888,22 +921,37 @@
             })
         })
 
-        /*$(document).on("click", ".supprimer-carburant", function (e) {
+        $(document).on("click", ".supprimer-trajet", function (e) {
             let url = $(this).prev().attr("data-show-url");
             let url_delete = $(this).attr("data-url");
 
-            $("#button-supprimer-carburant").parent().attr("href", url_delete);
+            $("#button-supprimer-trajet").parent().attr("href", url_delete);
 
-            $("#modal-supprimer-carburant").modal("show");
+            $("#modal-supprimer-trajet").modal("show");
 
             $.get(url, {}, dataType="JSON").done(function (data) {
-                $("#modal-supprimer-carburant #supprimer_date").val(data.date).attr("disabled", true);
-                $("#modal-supprimer-carburant #supprimer_quantite").val(data.quantite).attr("disabled", true);
-                $("#modal-supprimer-carburant #supprimer_flux").val(data.flux).change().attr("disabled", true);
+                let lists = document.getElementById('list-delete-itineraire')
+                let itineraires = data.itineraires
+                lists.innerHTML = ''
 
+                itineraires.forEach(itineraire => {
+                    input = document.createElement('input')
+                    input.value = itineraire.nom
+                    input.classList.add('form-control')
+                    input.classList.add('mb-2')
+                    input.setAttribute('placeholder', 'Nom de l\'itinéraire')
+                    input.setAttribute('disabled', true)
+                    lists.appendChild(input)
+                })
+
+                $("#modal-supprimer-trajet #supprimer-chauffeur").html(data.chauffeur.name);
+                $("#modal-supprimer-trajet #supprimer_date_heure_depart").val(data.trajet.date_heure_depart);
+                $("#modal-supprimer-trajet #supprimer_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
+                $("#modal-supprimer-trajet #supprimer-etat").html(data.trajet.etat);
             })
 
-        })*/
+        })
+
     })
 
 

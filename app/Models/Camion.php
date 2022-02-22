@@ -55,7 +55,7 @@ class Camion extends Model
 
         if ($trajetEnCours !== null)
         {
-            if ($trajet->id === $trajetEnCours->id)
+            if ($trajet !== null AND $trajet->id === $trajetEnCours->id)
             {
                 return false;
             }

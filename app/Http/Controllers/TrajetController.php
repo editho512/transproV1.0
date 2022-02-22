@@ -7,6 +7,7 @@ use App\Models\Camion;
 use App\Models\Trajet;
 use App\Models\Chauffeur;
 use App\Models\Itineraire;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
@@ -187,6 +188,7 @@ class TrajetController extends Controller
         return response()->json([
             "trajet" => $trajet,
             "itineraires" => $itineraires,
+            "chauffeur" => $trajet->chauffeur,
         ]);
     }
 
@@ -217,7 +219,7 @@ class TrajetController extends Controller
         {
             $chauffeur = Chauffeur::findOrFail($request->chauffeur);
 
-            if (!$chauffeur->estDispoEntre($date_depart, $date_arrivee))
+            if (!$chauffeur->estDispoEntre($date_depart, $date_arrivee) AND $request->etat !== Trajet::getEtat(2))
             {
                 $request->session()->flash("notification", [
                     "value" => "Chauffeur non disponible entre les dates que vous avez selectionné" ,
@@ -355,8 +357,9 @@ class TrajetController extends Controller
     * @param Trajet $trajet
     * @return RedirectResponse Redirection vers la page precedente
     */
-    public function delete(Request $request, Trajet $trajet) : RedirectResponse
+    public function supprimer(Request $request, Trajet $trajet) : RedirectResponse
     {
+        $trajet->itineraires()->delete();
         $delete = $trajet->delete();
 
         if ($delete)
