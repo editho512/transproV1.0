@@ -86,4 +86,15 @@ class Camion extends Model
     {
         return $this->trajets()->where('etat', Trajet::getEtat(0))->count();
     }
+
+
+    /**
+     * Permet de calculer le stock de carburant d'un camion
+     *
+     * @return integer
+     */
+    public function stockCarburant() : int
+    {
+        return $this->carburants()->where('flux', 0)->sum('quantite') - $this->carburants()->where('flux', 1)->sum('quantite');
+    }
 }

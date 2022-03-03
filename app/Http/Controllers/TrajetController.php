@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Camion;
+use App\Models\Carburant;
 use App\Models\Trajet;
 use App\Models\Chauffeur;
 use App\Models\Itineraire;
@@ -24,12 +25,13 @@ class TrajetController extends Controller
     public function add(Request $request) : RedirectResponse
     {
         // Validation des données reçues
-        $request->validate([
+        $data = $request->validate([
             "camion_id" => ['required', 'numeric', 'exists:camions,id'],
             "etat" => ['required', Rule::in(Trajet::getEtat())],
             "chauffeur" => ['nullable', 'exists:chauffeurs,id'],
             "date_heure_depart" => ['required', 'date'],
             "date_heure_arrivee" => ['nullable', 'date'],
+            "carburantRestant" => ['nullable', 'numeric', 'min:1', 'max:500'],
         ]);
 
         $date_depart = Carbon::parse($request->date_heure_depart, 'EAT');
@@ -135,6 +137,18 @@ class TrajetController extends Controller
             return redirect()->back();
         }
 
+
+        // Verifier si la status est terminé et que la carbburant restant n'est pas nulle
+        if ($request->etat === Trajet::getEtat(2) AND $request->carburantRestant === null)
+        {
+            $request->session()->flash("notification", [
+                "value" => "Veillez remplir la quantité de carburant restant" ,
+                "status" => "error"
+            ]);
+
+            return redirect()->back();
+        }
+
         $depart = ucfirst($itineraires[0]['nom_itineraire']);
         $arrivee = ucfirst(end($itineraires)['nom_itineraire']);
 
@@ -150,6 +164,10 @@ class TrajetController extends Controller
 
         if ($trajet->save())
         {
+            /*$Carburant = Carburant::create([
+                'quantite' =>
+            ]);*/
+
             // Enregistrement de tous les itinéraires
             foreach ($itineraires as $itineraire)
             {

@@ -30,7 +30,7 @@ class CamionController extends Controller
     *
     * @return View
     */
-    public function index() : View
+    public function index()
     {
         // Verifier si l'utilisateur peut acceder au dashboard
         if (!Gate::allows('acceder-dashboard'))
