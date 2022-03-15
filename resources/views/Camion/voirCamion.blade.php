@@ -116,12 +116,12 @@
             <div class="card">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a style="color:#023047 !important;" class="nav-item nav-link active" id="nav-carburant-tab" data-toggle="tab" href="#nav-carburant" role="tab" aria-controls="nav-carburant" aria-selected="true">Carburants</a>
-                        <a style="color:#023047 !important;" class="nav-item nav-link " id="nav-trajet-tab" data-toggle="tab" href="#nav-trajet" role="tab" aria-controls="nav-trajet" aria-selected="false">Trajets</a>
+                        <a style="color:#023047 !important;" class="nav-item nav-link {{ ( isset($tab) === false || $tab == 1 ) ? 'active' : '' }} " id="nav-carburant-tab" data-toggle="tab" href="#nav-carburant" role="tab" aria-controls="nav-carburant" aria-selected="true">Carburants</a>
+                        <a style="color:#023047 !important;" class="nav-item nav-link {{ ( isset($tab) === true && intval($tab) === 2 ) ? 'active' : ''}} " id="nav-trajet-tab" data-toggle="tab" href="#nav-trajet" role="tab" aria-controls="nav-trajet" aria-selected="false">Trajets</a>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-carburant" role="tabpanel" aria-labelledby="nav-carburant-tab">
+                    <div class="tab-pane fade  {{( isset($tab) === false || $tab == 1 ) ? ' show active ' : '' }} " id="nav-carburant" role="tabpanel" aria-labelledby="nav-carburant-tab">
                         <div class="card-header">
                             <h3 class="card-title" style="color: gray;display:none;" >Flux des carburants</h3>
                             <button class="float-right btn btn-success" id="btn-modal-carburant" data-toggle="modal" data-target="#modal-carburant"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
@@ -180,7 +180,7 @@
                     </div>
 
                     {{-- Pour les trajets --}}
-                    <div class="tab-pane fade " id="nav-trajet" role="tabpanel" aria-labelledby="nav-trajet-tab">
+                    <div class="tab-pane fade {{ ( isset($tab) === true && intval($tab) === 2 ) ? ' show active ' : ''}} " id="nav-trajet" role="tabpanel" aria-labelledby="nav-trajet-tab">
                         <div class="card-header">
                             <h3 class="card-title" style="color: gray;display:none;" >Liste des trajets</h3>
                             <button class="float-right btn btn-success" id="btn-modal-trajet" data-toggle="modal" data-target="#modal-trajet"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
@@ -580,7 +580,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header modal-header-success">
-                <h4 class="modal-title">Modifier un flux de carburant</h4>
+                <h4 class="modal-title">Modifier un trajet</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -614,9 +614,9 @@
                             <label for="date">Départ :</label>
                         </div>
                         <div class="col-sm-8">
-                            <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
-                                <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
+                            <div class="input-group date" id="date_heure_depart_modifier" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_depart" data-target="#date_heure_depart_modifier" name="date_heure_depart" required="false" placeholder="Date et heure départ">
+                                <div class="input-group-append" data-target="#date_heure_depart_modifier" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
@@ -628,9 +628,9 @@
                             <label for="date">Arrivée :</label>
                         </div>
                         <div class="col-sm-8">
-                            <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
-                                <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
+                            <div class="input-group date_heure_arrivee" id="date_heure_arrivee_modifier" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_arrivee" data-target="#date_heure_arrivee_modifier" name="date_heure_arrivee" placeholder="Date et heure arrivée">
+                                <div class="input-group-append" data-target="#date_heure_arrivee_modifier" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
@@ -957,6 +957,10 @@
                 $("#modal-supprimer-trajet #supprimer_date_heure_depart").val(data.trajet.date_heure_depart);
                 $("#modal-supprimer-trajet #supprimer_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
                 $("#modal-supprimer-trajet #supprimer-etat").html(data.trajet.etat);
+
+                $("#modal-supprimer-trajet input").attr("disabled", true);
+
+
             })
 
         })

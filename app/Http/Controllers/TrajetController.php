@@ -51,7 +51,7 @@ class TrajetController extends Controller
                     "status" => "error"
                 ]);
 
-                return redirect()->back();
+                return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             }
         }
         else
@@ -63,7 +63,7 @@ class TrajetController extends Controller
                     "status" => "error"
                 ]);
 
-                return redirect()->back();
+                return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             }
         }
 
@@ -74,7 +74,7 @@ class TrajetController extends Controller
                 "value" => "Le camion a encore un trajet en cours" ,
                 "status" => "success"
             ]);
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
         }
 
         if (Carbon::now('EAT')->greaterThanOrEqualTo($date_depart) AND $request->etat === Trajet::getEtat(0))
@@ -84,7 +84,7 @@ class TrajetController extends Controller
                 "status" => "success"
             ]);
 
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             //dd('La date de depart doit être spérieur a ce moment précis si la status est aprévoir');
         }
 
@@ -123,7 +123,7 @@ class TrajetController extends Controller
                 "status" => "error"
             ]);
 
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
         }
 
         // Si la date de depart est supérieur a la date d'arrivée
@@ -134,9 +134,8 @@ class TrajetController extends Controller
                 "status" => "error"
             ]);
 
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
         }
-
 
         // Verifier si la status est terminé et que la carbburant restant n'est pas nulle
         if ($request->etat === Trajet::getEtat(2) AND $request->carburantRestant === null)
@@ -146,7 +145,18 @@ class TrajetController extends Controller
                 "status" => "error"
             ]);
 
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+
+        }else if($request->etat === Trajet::getEtat(2)){
+
+            $CarburantSortie = doubleval($camion->CarburantRestant()) - doubleval($request->carburantRestant);
+
+            Carburant::create([
+                "quantite" => $CarburantSortie,
+                "flux" => 1,
+                "date" => $date_arrivee,
+                "camion_id" => $camion->id
+            ]);
         }
 
         $depart = ucfirst($itineraires[0]['nom_itineraire']);
@@ -190,7 +200,8 @@ class TrajetController extends Controller
             ]);
         }
 
-        return redirect()->back();
+
+        return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
     }
 
 
@@ -230,6 +241,8 @@ class TrajetController extends Controller
             "itineraire" => ["required", "sometimes"]
         ]);
 
+        $camion = Camion::findOrFail($request->camion_id);
+
         $date_depart = Carbon::parse($request->date_heure_depart, 'EAT');
         $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse($request->date_heure_arrivee, 'EAT');
 
@@ -244,7 +257,7 @@ class TrajetController extends Controller
                     "status" => "error"
                 ]);
 
-                return redirect()->back();
+                return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             }
         }
         else
@@ -256,7 +269,7 @@ class TrajetController extends Controller
                     "status" => "error"
                 ]);
 
-                return redirect()->back();
+                return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             }
         }
 
@@ -267,7 +280,7 @@ class TrajetController extends Controller
                 "status" => "error"
             ]);
 
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             //dd("Ne peut pas terminer un trajet a prévoir.");
         }
 
@@ -279,7 +292,7 @@ class TrajetController extends Controller
                 "status" => "error"
             ]);
 
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
         }
 
         if ($request->etat === Trajet::getEtat(2) AND $request->date_heure_arrivee === null)
@@ -289,7 +302,7 @@ class TrajetController extends Controller
                 "status" => "error"
             ]);
 
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             //dd('Vous devez specifier une date d\'arrivée');
         }
 
@@ -297,7 +310,6 @@ class TrajetController extends Controller
         // Verifications des dates des trajets
 
         $verifierDate = true;
-        $camion = Camion::findOrFail($request->camion_id);
 
         // Verifier l'etat en fonction de la trajet en cours: Si a un trajet en cours, l'état ne doit pas etre en cours aussi, ou terminé
         if ($camion->aUnTrajetEnCours($trajet) AND ($request->etat === Trajet::getEtat(1) OR $request->etat === Trajet::getEtat(2)))
@@ -306,7 +318,7 @@ class TrajetController extends Controller
                 "value" => "Le camion a encore un trajet en cours" ,
                 "status" => "error"
             ]);
-            return redirect()->back();
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
         }
 
         foreach ($camion->trajets as $t)
@@ -364,7 +376,7 @@ class TrajetController extends Controller
             ]);
         }
 
-        return redirect()->back();
+        return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
 
     }
 

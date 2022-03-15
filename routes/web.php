@@ -68,7 +68,7 @@ Route::get('/Chauffeur', [App\Http\Controllers\ChauffeurController::class, 'inde
 
 // --------------------- CAMIONS -----------------//
 
-Route::get('/Camion/voir/{camion}/',  [App\Http\Controllers\CamionController::class, 'voir'])->name("camion.voir");
+Route::get('/Camion/voir/{camion}/{tab?}/',  [App\Http\Controllers\CamionController::class, 'voir'])->name("camion.voir");
 
 Route::get('/Camion/delete/{camion}/{type?}',  [App\Http\Controllers\CamionController::class, 'delete'])->name("camion.delete");
 

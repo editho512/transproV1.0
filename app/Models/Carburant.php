@@ -15,4 +15,6 @@ class Carburant extends Model
         'date',
         'camion_id'
     ];
+
+    
 }

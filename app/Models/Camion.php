@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Carburant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Camion extends Model
 {
@@ -96,5 +97,23 @@ class Camion extends Model
     public function stockCarburant() : int
     {
         return $this->carburants()->where('flux', 0)->sum('quantite') - $this->carburants()->where('flux', 1)->sum('quantite');
+    }
+
+    public function CarburantRestant(){
+        $stock =  Carburant::where("camion_id", "=", $this->id)->groupBy("flux")->selectRaw("sum(quantite) as quantite, flux")->get();
+        $stock = $stock->toArray();
+        $entre = 0 ;
+        $sortie = 0;
+
+        foreach ($stock as $key => $value) {
+            # code...
+            if($value["flux"] == 0){
+                $entre = doubleval($value["quantite"]);
+            }else{
+                $sortie = doubleval($value["quantite"]);
+            }
+        }
+
+        return (doubleval($entre) - doubleval($sortie));
     }
 }
