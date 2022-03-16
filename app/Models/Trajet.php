@@ -2,32 +2,43 @@
 
 namespace App\Models;
 
-use App\Models\Chauffeur;
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
+use App\Models\Chauffeur;
+use App\Models\Itineraire;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Trajet extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'depart', 'date_heure_depart', 'arrivee', 'date_heure_arrivee', 'etat', 'camion_id', 'chauffeur_id',
+        'depart', 'date_heure_depart', 'arrivee', 'date_heure_arrivee', 'etat', 'camion_id', 'chauffeur_id', 'carburant_depart', 'carburant_total', 'carburant_id', 'poids'
     ];
 
     private static $etat = [
         0 => 'A prévoir',
         1 => 'En cours',
         2 => 'Terminé',
+        3 => 'Annulé',
     ];
 
 
     private static $coleurs = [];
 
+   
+    public function viderTrajet(){
 
+        Itineraire::where("id_trajet", $this->id )->delete();
+    }
+
+    public function carburantUtilise(){
+        return doubleval($this->carburant_total);
+    }
+    
     /**
      * Methode qui retourne le nom de l'itineraire
      *
@@ -59,6 +70,7 @@ class Trajet extends Model
     {
         return $this->belongsTo(Chauffeur::class, 'chauffeur_id', 'id');
     }
+
 
 
     /**

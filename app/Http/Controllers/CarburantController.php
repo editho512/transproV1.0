@@ -7,6 +7,7 @@ use App\Models\Carburant;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\QueryException;
+use Session;
 
 class CarburantController extends Controller
 {
@@ -50,7 +51,7 @@ class CarburantController extends Controller
             dd("Une erreur est survenu, contactez l'administrateur. Message d'erreur : " , $e->getMessage());
         }
 
-        return redirect()->back();
+        return redirect()->route('camion.voir', ['camion' => $data['camion_id'], 'tab' => 1]);
     }
 
     public function modifier(Carburant $carburant){
@@ -71,21 +72,22 @@ class CarburantController extends Controller
             Session::put("notification", ["value" => "Carburant modifié" ,
             "status" => "success"
         ]);
-    }else{
-        Session::put("notification", ["value" => "echec d'ajout" ,
-        "status" => "error"
+        }else{
+            Session::put("notification", ["value" => "echec d'ajout" ,
+            "status" => "error"
+        ]);
+    }
+
+    return redirect()->route('camion.voir', ['camion' => $carburant->camion_id, 'tab' => 1]);
+
+    }
+
+    public function delete(Carburant $carburant){
+        $carburant->delete();
+        Session::put("notification", ["value" => "Carburant supprimé" ,
+        "status" => "success"
     ]);
-}
-return redirect()->back();
+    return redirect()->route('camion.voir', ['camion' => $carburant->camion_id, 'tab' => 1]);
 
-}
-
-public function delete(Carburant $carburant){
-    $carburant->delete();
-    Session::put("notification", ["value" => "Carburant supprimé" ,
-    "status" => "success"
-]);
-return redirect()->back();
-
-}
+    }
 }

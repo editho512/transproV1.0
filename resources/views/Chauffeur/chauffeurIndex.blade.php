@@ -9,9 +9,6 @@
 @endsection
 
 @section('content')
-
-
-
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper teste" style="min-height: inherit!important;">
         <!-- Content Header (Page header) -->

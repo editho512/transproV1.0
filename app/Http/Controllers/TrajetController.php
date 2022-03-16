@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Session;
 
 class TrajetController extends Controller
 {
@@ -25,41 +26,62 @@ class TrajetController extends Controller
     public function add(Request $request) : RedirectResponse
     {
         // Validation des données reçues
+
+        
         $data = $request->validate([
             "camion_id" => ['required', 'numeric', 'exists:camions,id'],
             "etat" => ['required', Rule::in(Trajet::getEtat())],
             "chauffeur" => ['nullable', 'exists:chauffeurs,id'],
             "date_heure_depart" => ['required', 'date'],
             "date_heure_arrivee" => ['nullable', 'date'],
-            "carburantRestant" => ['nullable', 'numeric', 'min:1', 'max:500'],
+            "carburantRestant" => ['nullable', 'numeric'],
+            "poids" => ['nullable', 'numeric']
         ]);
 
-        $date_depart = Carbon::parse($request->date_heure_depart, 'EAT');
-        $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse($request->date_heure_arrivee, 'EAT');
 
+
+        $date_depart = Carbon::parse(date("Y-m-d H:i:s", strtotime($request->date_heure_depart)), 'EAT');
+        $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse(date("Y-m-d H:i:s", strtotime($request->date_heure_arrivee)), 'EAT');
+
+        $carburant = collect();
         // Verifier si le camion a un trajet en cours ou non
         $camion = Camion::findOrFail($request->camion_id);
+        $chauffeur = Chauffeur::find($request->chauffeur);
+
+        
+        if($camion->estDispoEntre($date_depart, $date_arrivee) !== true){
+
+            $request->session()->flash("notification", [
+                "value" => "Camion non disponible entre les dates que vous avez selectionné" ,
+                "status" => "error"
+            ]);
+
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+        }
 
         if ($request->chauffeur !== null)
         {
             $chauffeur = Chauffeur::findOrFail($request->chauffeur);
-
+           
+           /* $msg = "Aucun chauffeur n'a été selectionnée";
             if (!$chauffeur->estDispoEntre($date_depart, $date_arrivee))
             {
-                $request->session()->flash("notification", [
-                    "value" => "Chauffeur non disponible entre les dates que vous avez selectionné" ,
-                    "status" => "error"
-                ]);
-
-                return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+                $msg = "Chauffeur non disponible entre les dates que vous avez selectionné";
             }
+
+            $request->session()->flash("notification", [
+                "value" =>  $msg ,
+                "status" => "error"
+            ]);
+
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);*/
         }
-        else
+        else 
         {
             if ($request->etat !== Trajet::getEtat(0))
             {
                 $request->session()->flash("notification", [
-                    "value" => "Vous devez selectionner au moins un chauffeur pour un trajet non a prévoir" ,
+                    "value" => "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" ,
                     "status" => "error"
                 ]);
 
@@ -72,21 +94,24 @@ class TrajetController extends Controller
         {
             $request->session()->flash("notification", [
                 "value" => "Le camion a encore un trajet en cours" ,
-                "status" => "success"
+                "status" => "error"
             ]);
+
             return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
         }
 
         if (Carbon::now('EAT')->greaterThanOrEqualTo($date_depart) AND $request->etat === Trajet::getEtat(0))
         {
             $request->session()->flash("notification", [
-                "value" => "La date de depart doit être spérieur a ce moment précis si la status est aprévoir" ,
-                "status" => "success"
+                "value" => "La date de depart doit être supérieur a ce moment précis si le statut est à prévoir" ,
+                "status" => "error"
             ]);
 
             return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
             //dd('La date de depart doit être spérieur a ce moment précis si la status est aprévoir');
         }
+
+
 
         $verifierDate = true;
 
@@ -130,15 +155,17 @@ class TrajetController extends Controller
         if ($date_arrivee !== null AND $date_depart->greaterThan($date_arrivee))
         {
             $request->session()->flash("notification", [
-                "value" => "La date de depart doit etrer inférieur a la date d\'arrivée" ,
+                "value" => "La date de depart doit être inférieur a la date d\'arrivée" ,
                 "status" => "error"
             ]);
 
             return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
         }
 
-        // Verifier si la status est terminé et que la carbburant restant n'est pas nulle
-        if ($request->etat === Trajet::getEtat(2) AND $request->carburantRestant === null)
+        // Verifier si la status est terminé et que la carburant restant n'est pas nulle
+        $carburant_total = $request->etat === Trajet::getEtat(2) ? doubleval($camion->stockCarburant()) -  doubleval($request->carburantRestant) : null;
+        $carburant_depart = ( $camion->stockCarburant() >= doubleval($request->carburantRestant) && doubleval($request->carburantRestant) > 0 )  ? doubleval($request->carburantRestant) : doubleval($camion->stockCarburant());
+        if (($request->etat === Trajet::getEtat(1) || $request->etat === Trajet::getEtat(2)) AND $request->carburantRestant === null)
         {
             $request->session()->flash("notification", [
                 "value" => "Veillez remplir la quantité de carburant restant" ,
@@ -146,23 +173,53 @@ class TrajetController extends Controller
             ]);
 
             return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+            
+        }
+        
+        else if($request->etat === Trajet::getEtat(1) && $carburant_depart == 0){
 
-        }else if($request->etat === Trajet::getEtat(2)){
+
+            $request->session()->flash("notification", [
+                "value" => "Le carburant du véhicule est encore insuffisant" ,
+                "status" => "error"
+            ]);
+            
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+        }
+        
+        else if($request->etat === Trajet::getEtat(2)){
+
+            if($carburant_total < 0 ){
+                
+                $request->session()->flash("notification", [
+                    "value" => "La quantité de carburant que vous avez saisi est superieur au stock actuel" ,
+                    "status" => "error"
+                ]);
+                
+                return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+            }
 
             $CarburantSortie = doubleval($camion->CarburantRestant()) - doubleval($request->carburantRestant);
 
-            Carburant::create([
-                "quantite" => $CarburantSortie,
-                "flux" => 1,
-                "date" => $date_arrivee,
-                "camion_id" => $camion->id
-            ]);
+            Carburant::where("id", $trajet->carburant_id)->delete();
+
+            if($CarburantSortie > 0){
+
+                $carburant = Carburant::create([
+                    "quantite" => $CarburantSortie,
+                    "flux" => 1,
+                    "date" => $date_arrivee,
+                    "camion_id" => $camion->id
+                ]);
+            }
+
         }
 
-        $depart = ucfirst($itineraires[0]['nom_itineraire']);
-        $arrivee = ucfirst(end($itineraires)['nom_itineraire']);
+        $depart = ucfirst($itineraires[0]['nom']);
+        $arrivee = ucfirst(end($itineraires)['nom']);
 
         $trajet = new Trajet([
+
             'depart' => $depart,
             'date_heure_depart' => $date_depart->toDateTimeString(),
             'arrivee' => $arrivee,
@@ -170,6 +227,11 @@ class TrajetController extends Controller
             'etat' => $request->etat,
             'camion_id' => intval($request->camion_id),
             'chauffeur_id' => $request->chauffeur === null ? null : intval($request->chauffeur),
+            'carburant_depart' => ( $request->etat == Trajet::getEtat(1) || $request->etat == Trajet::getEtat(2) ) ? $carburant_depart : null ,
+            'carburant_total' => $carburant_total,
+            'carburant_id' => isset($carburant->id) === true ? $carburant->id : null ,
+            'poids' => doubleval($request->poids) > 0 ? doubleval($request->poids) : null
+
         ]);
 
         if ($trajet->save())
@@ -182,7 +244,7 @@ class TrajetController extends Controller
             foreach ($itineraires as $itineraire)
             {
                 $itineraire = Itineraire::create([
-                    'nom' => $itineraire['nom_itineraire'],
+                    'nom' => $itineraire['nom'],
                     'id_trajet' => $trajet->id,
                 ]);
             }
@@ -200,7 +262,6 @@ class TrajetController extends Controller
             ]);
         }
 
-
         return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
     }
 
@@ -213,11 +274,14 @@ class TrajetController extends Controller
     */
     public function modifier(Trajet $trajet) : JsonResponse
     {
+        
         $itineraires = $trajet->itineraires;
+
         return response()->json([
             "trajet" => $trajet,
             "itineraires" => $itineraires,
             "chauffeur" => $trajet->chauffeur,
+            "reservation" => $trajet->reservation
         ]);
     }
 
@@ -238,19 +302,44 @@ class TrajetController extends Controller
             "chauffeur" => ['nullable', 'exists:chauffeurs,id'],
             "date_heure_depart" => ['required', 'date'],
             "date_heure_arrivee" => ['nullable', 'date'],
-            "itineraire" => ["required", "sometimes"]
+            "itineraire" => ["required", "sometimes"],
+            "carburantRestant" => ['nullable', 'numeric'] ,
+            "poids" => ['nullable', 'numeric']
         ]);
+
+        $date_depart = Carbon::parse(date("Y-m-d H:i:s", strtotime($request->date_heure_depart)), 'EAT');
+        $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse(date("Y-m-d H:i:s", strtotime($request->date_heure_arrivee)), 'EAT');
+
 
         $camion = Camion::findOrFail($request->camion_id);
 
-        $date_depart = Carbon::parse($request->date_heure_depart, 'EAT');
-        $date_arrivee = $request->date_heure_arrivee === null ? null : Carbon::parse($request->date_heure_arrivee, 'EAT');
+        $carburant = collect();
+
+        if($camion->estDispoEntre($date_depart, $date_arrivee, $trajet ) !== true){
+
+            $request->session()->flash("notification", [
+                "value" => "Camion non disponible entre les dates que vous avez selectionné" ,
+                "status" => "error"
+            ]);
+
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+        }
+
+        // Verifier si le trajet est affilié à une reservation tms mais que le transporteur à changer la date de depart
+        if(isset($trajet->reservation->id) && strtotime($date_depart) != strtotime($trajet->reservation->date)  ){
+            $request->session()->flash("notification", [
+                "value" => "La date de depart du trajet ne peut pas être modifié" ,
+                "status" => "error"
+            ]);
+
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+        }
 
         if ($request->chauffeur !== null)
         {
             $chauffeur = Chauffeur::findOrFail($request->chauffeur);
 
-            if (!$chauffeur->estDispoEntre($date_depart, $date_arrivee) AND $request->etat !== Trajet::getEtat(2))
+            if (!$chauffeur->estDispoEntre($date_depart, $date_arrivee, $trajet) AND $request->etat !== Trajet::getEtat(2))
             {
                 $request->session()->flash("notification", [
                     "value" => "Chauffeur non disponible entre les dates que vous avez selectionné" ,
@@ -346,23 +435,127 @@ class TrajetController extends Controller
             }
         }
 
+        
         $itineraires = json_decode($data['itineraire'], true);
+        
+        // Si l'itinéraire est inférieur a deux
+        if (count($itineraires) < 2)
+        {
+            $request->session()->flash("notification", [
+                "value" => "Vous devez choisir au moins deux itinéraires" ,
+                "status" => "error"
+            ]);
 
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+        }
+        
         $depart = $itineraires[0]['nom'];
         $arrivee = end($itineraires)['nom'];
         $etat = $request->etat;
 
-        $update = $trajet->update([
+        // Verifier si la status est terminé et que la carburant restant n'est pas nulle
+        $carburant_total = $request->etat === Trajet::getEtat(2) ? doubleval($camion->stockCarburant()) -  doubleval($request->carburantRestant) : null;
+        $carburant_depart = $camion->stockCarburant() >= doubleval($request->carburantRestant) ? doubleval($request->carburantRestant) : 0;
+
+        if (($request->etat === Trajet::getEtat(1) || $request->etat === Trajet::getEtat(2) ) AND $request->carburantRestant === null)
+        {
+            $request->session()->flash("notification", [
+                "value" => "Veillez remplir la quantité de carburant restant" ,
+                "status" => "error"
+            ]);
+
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+            
+        }
+        
+        else if($request->etat === Trajet::getEtat(1) && $carburant_depart == 0){
+
+            
+            $request->session()->flash("notification", [
+                "value" => "Le carburant du véhicule est encore insuffisant" ,
+                "status" => "error"
+            ]);
+            
+            return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+        }
+        
+        else if($request->etat === Trajet::getEtat(2)){
+
+            if($carburant_total < 0 ){
+                
+                $request->session()->flash("notification", [
+                    "value" => "La quantité de carburant que vous avez saisi est superieur au stock" ,
+                    "status" => "error"
+                ]);
+                
+                return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
+            }
+
+            $CarburantSortie = doubleval($camion->CarburantRestant()) - doubleval($request->carburantRestant);
+            
+            Carburant::where("id", $trajet->carburant_id)->delete();
+
+            if($CarburantSortie > 0){
+
+                $carburant = Carburant::create([
+                    "quantite" => $CarburantSortie,
+                    "flux" => 1,
+                    "date" => $date_arrivee,
+                    "camion_id" => $camion->id
+                ]);
+            }
+        }
+
+ 
+        $_trajet = [
             'depart' => $depart,
             'date_heure_depart' => $date_depart->toDateTimeString(),
             'arrivee' => $arrivee,
             'date_heure_arrivee' => $date_arrivee,
             'etat' => $etat,
             'chauffeur_id' => $request->chauffeur === null ? null : intval($request->chauffeur),
-        ]);
+            'carburant_id' => isset($carburant->id) === true ? $carburant->id : null,
+            'poids' => doubleval($request->poids) > 0 ? doubleval($request->poids) : null
+
+        ];
+
+        if($request->etat === Trajet::getEtat(1)){
+            $_trajet["carburant_depart"] = $carburant_depart;
+        }
+
+        if($request->etat === Trajet::getEtat(2)){
+            $_trajet["carburant_total"] = $carburant_total;
+        }
+        
+        $update = $trajet->update($_trajet);
 
         if ($update)
         {
+            if( isset($trajet->reservation->id) === true ){
+
+                if($trajet->etat == Trajet::getEtat(2)){
+                    $trajet->reservation->status = Reservation::STATUS[2];
+                    $trajet->reservation->update();
+                }
+    
+                if($trajet->etat == Trajet::getEtat(3)){
+                    $trajet->reservation->status = Reservation::STATUS[6];
+                    $trajet->reservation->update();
+                }
+            }
+
+
+            //Supprimer les itineraire existant
+            $trajet->viderTrajet();
+            
+            foreach ($itineraires as $itineraire)
+            {
+                $itineraire = Itineraire::create([
+                    'nom' => $itineraire['nom'],
+                    'id_trajet' => $trajet->id,
+                ]);
+            }
+
             $request->session()->flash("notification", [
                 "value" => "Mise a jour avec success." ,
                 "status" => "success"
@@ -379,7 +572,6 @@ class TrajetController extends Controller
         return redirect()->route('camion.voir', ['camion' => $camion->id, 'tab' => 2]);
 
     }
-
 
     /**
     * Methode permettant de supprimer un trajet

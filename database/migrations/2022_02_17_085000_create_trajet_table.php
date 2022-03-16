@@ -22,6 +22,11 @@ class CreateTrajetTable extends Migration
             $table->string('etat')->nullable('false')->default('En  cours');
             $table->bigInteger('camion_id')->unsigned();
             $table->bigInteger('chauffeur_id')->unsigned()->nullable();
+            $table->double('carburant_depart')->nullable();
+            $table->double('carburant_total')->nullable();
+            $table->double('poids')->nullable();
+            $table->bigInteger('carburant_id')->unsigned()->nullable();
+
             $table->timestamps();
         });
     }
