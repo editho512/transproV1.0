@@ -7,7 +7,7 @@
 <style>
 
 .style-1 {
-    background: linear-gradient(146deg, #3198cf, #df4093);
+    background: linear-gradient(190deg, #3392c5, #0c6edf);
     color: white;
 }
 
@@ -17,12 +17,12 @@
 }
 
 .style-3 {
-    background: linear-gradient(146deg, #30d173, #30b0d1);
+    background: linear-gradient(45deg, #007497, #30b0d1);
     color: white;
 }
 
 .style-4 {
-    background: linear-gradient(146deg, #d13830, #306fd1);
+    background: linear-gradient(146deg, #51b9ff, #306fd1);
     color: white;
 }
 
@@ -42,7 +42,7 @@
 }
 
 .total {
-    background: linear-gradient(135deg, #ff4e4e, #00a3f2);
+    background: linear-gradient(135deg, #084766, #00a3f2);
     color: white;
 }
 
@@ -112,7 +112,7 @@
                     <div class="card">
                         <div class="card-header" >
                             <h3 class="card-title">Historique des dépenses</h3>
-                            <button class="btn btn-primary float-right" data-toggle="modal" id="ajouter-depense" data-target="#modal-ajouter-depense"><span class="fa fa-plus mr-2"></span>Ajouter</button>
+                            <button class="btn btn-primary float-right" data-backdrop="static" data-keyboard="false" data-toggle="modal" id="ajouter-depense" data-target="#modal-ajouter-depense"><span class="fa fa-plus mr-2"></span>Ajouter</button>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -138,8 +138,8 @@
                                             <td>{{ $depense->infosChauffeur() }}</td>
                                             <td>{{ $depense->commentaire }}</td>
                                             <td class="d-flex justify-content-center">
-                                                <button class="btn btn-primary mr-2" id="modifier-depense" data-toggle="modal" data-target="#modal-modifier-depense" data-update-url="{{ route('depense.post.modifier', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-edit"></i></button>
-                                                <button class="btn btn-danger" id="supprimer-depense" data-toggle="modal" data-target="#modal-supprimer-depense" data-update-url="{{ route('depense.post.supprimer', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-trash"></i></button>
+                                                <button class="btn btn-primary mr-2" id="modifier-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-depense" data-update-url="{{ route('depense.post.modifier', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-edit"></i></button>
+                                                <button class="btn btn-danger" id="supprimer-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-depense" data-update-url="{{ route('depense.post.supprimer', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
                                     @empty
@@ -517,6 +517,7 @@ $(document).on("submit", "#form-ajouter-depense", function (e) {
         Object.entries(errors).forEach((error, key) => {
             let name = document.getElementsByName(error[0])[0]
             $(name).addClass(['border-danger', 'has-validation']);
+            $(name).next().remove()
             $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
         })
     })
@@ -538,9 +539,15 @@ $(document).on("submit", "#form-modifier-depense", function (e) {
     })
 })
 
+$(document).on("click", "#ajouter-depense", function (e) {
+    resetForm("#form-ajouter-depense")
+})
+
 $(document).on("click", "#supprimer-depense", function (e) {
     url = $(this).attr("data-show-url");
     url_delete = $(this).attr("data-update-url");
+
+    resetForm("#form-supprimer-depense")
 
     //$("#modal-modifier-depense").modal("show");
     $("#form-supprimer-depense").attr("action", url_delete);
@@ -557,10 +564,11 @@ $(document).on("click", "#supprimer-depense", function (e) {
     })
 })
 
-
 $(document).on("click", "#modifier-depense", function (e) {
     url = $(this).attr("data-show-url");
     url_update = $(this).attr("data-update-url");
+
+    resetForm("#form-modifier-depense")
 
     //$("#modal-modifier-depense").modal("show");
     $("#form-modifier-depense").attr("action", url_update);
@@ -577,6 +585,18 @@ $(document).on("click", "#modifier-depense", function (e) {
     })
 })
 
+function resetForm (formId) {
+    let class_name = 'border-danger'
+    let form = document.querySelector(formId)
+    let elements = form.getElementsByClassName(class_name)
+
+    for (let i = 0; i < elements.length; i++) {
+        $(elements[i]).next().remove()
+    }
+
+    form.reset()
+    $(elements).removeClass(class_name);
+}
 
 function formatAMPM(date)
 {
