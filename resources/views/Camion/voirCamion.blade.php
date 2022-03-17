@@ -483,118 +483,133 @@
                 </button>
             </div>
             <div class="modal-body" id="modal-ajouter-trajet">
-                <form action="{{route('trajet.ajouter')}}" method="post" role="form" id="form-ajouter-trajet" enctype="multipart/form-data">
-
-                    @csrf
-
-                    <input type="hidden" name="camion_id" value={{ $camion->id }}>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="chauffeur" class="form-label">Chauffeur :</label>
+                <div class="row">
+                    <form class="col-sm-12" action="{{route('trajet.ajouter')}}" method="post" role="form" id="form-ajouter-trajet" enctype="multipart/form-data">
+    
+                        @csrf
+    
+                        <input type="hidden" name="camion_id" value={{ $camion->id }}>
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="chauffeur" class="form-label">Chauffeur :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <select name="chauffeur" class="form-control" id="chauffeur">
+                                    <option value="">Selectionner un chauffeur</option>
+                                    @forelse ($chauffeurs as $chauffeur)
+                                        <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                                    @empty
+                                        <option value="">Aucun chauffeur disponible pour le moment</option>
+                                    @endforelse
+                                </select>
+                                <div id="chauffeur-feedback"  class="invalid-feedback"></div>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            <select name="chauffeur" class="form-control" id="chauffeur">
-                                <option value="">Selectionner un chauffeur</option>
-                                @forelse ($chauffeurs as $chauffeur)
-                                    <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
-                                @empty
-                                    <option value="">Aucun chauffeur disponible pour le moment</option>
-                                @endforelse
-                            </select>
-                        </div>
-                    </div>
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="date">Départ :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
+                                    <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                    <div  class="invalid-feedback"></div>
 
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Départ :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
-                                <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Arrivée :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
-                                <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="date">Arrivée :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
+                                    <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                    <div  class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="etat">Statut :</label>
+                            </div>
+                            <div class="col-sm-8">
+    
+                                <select name="etat" class="form-control " id="etat" onchange="checkCarburant(this)" required>
+                                    <option value="">Selectionner le statut</option>
+                                    @foreach (App\Models\Trajet::getEtat() as $status)
+                                    <option value="{{ $status }}">{{ $status }}</option>
+                                    @endforeach
+                                </select>
+                                <div  id="status-feedback" class="invalid-feedback"></div>
 
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="etat">Statut :</label>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
+    
+    
+                        <div class="row mb-3 mt-3  carburant" id="carburant" style="display: none;">
+                            <div class="col-sm-4">
+                                <label for="carburant-restant">Carburant restant :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" name="carburantRestant" id="carburant-restant" placeholder="Quantité de carburant restant">
+                                <div   class="invalid-feedback"></div>
 
-                            <select name="etat" class="form-control" id="etat" onchange="checkCarburant(this)" required>
-                                <option value="">Selectionner le statut</option>
-                                @foreach (App\Models\Trajet::getEtat() as $status)
-                                <option value="{{ $status }}">{{ $status }}</option>
-                                @endforeach
-                            </select>
+                            </div>
                         </div>
-                    </div>
-
-
-                    <div class="row mb-3 mt-3  carburant" id="carburant" style="display: none;">
-                        <div class="col-sm-4">
-                            <label for="carburant-restant">Carburant restant :</label>
+    
+                        <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
+                            <div class="col-sm-4">
+                                <label for="poids">Poids :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" name="carburantRestant" id="carburant-restant" placeholder="Quantité de carburant restant">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
-                        <div class="col-sm-4">
-                            <label for="poids">Poids :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
-                        </div>
-                    </div>
-
-
-                    {{-- Bloc pour gerer les itinéraires --}}
-                    <div id="content-itineraire" class="mb-3">
-                        <input type="hidden" name="itineraire" class="itineraire_data" value="">
-                        <div class="form-group">
-                            <label for="nombre_itineraire">Itinéraires :</label>
-                            <div id="itineraire_formulaire">
-                                <div class="row">
-                                    <div class="col-sm-12" style="padding-top:1%;">
-                                        <input type="text" placeholder="Nom de l'itinéraire" class='form-control' required>
+    
+    
+                        {{-- Bloc pour gerer les itinéraires --}}
+                        <div id="content-itineraire" class="mb-3">
+                            <input type="hidden" name="itineraire" class="itineraire_data" value="">
+                            <div class="form-group">
+                                <label for="nombre_itineraire">Itinéraires :</label>
+                                <div id="itineraire_formulaire">
+                                    <div class="row">
+                                        <div class="col-sm-12" style="padding-top:1%;">
+                                            <input type="text" placeholder="Nom de l'itinéraire" class='form-control' required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-1 row">
+                                    <div class="col-sm-12" style="text-align:right;">
+                                        <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
+    
+                                        <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-1 row">
-                                <div class="col-sm-12" style="text-align:right;">
-                                    <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
-
-                                    <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
-                                </div>
-                            </div>
                         </div>
+    
+                    </form>
+                </div>
+                <div class="row" style="display: none;">
+                    <div class="col-sm-12">
+                        <p class="alert alert-danger text-center"></p>
                     </div>
-
-                </form>
+                </div>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="submit" id="button-ajouter-trajet" form="form-ajouter-trajet" class="float-right btn btn-success">Valider</button>
+                <button type="button" id="button-ajouter-trajet" form="form-ajouter-trajet" class="float-right btn btn-success"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -612,114 +627,126 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="row">
 
-                <form action="#" method="post" id="form-modifier-trajet" enctype="multipart/form-data">
-                    @csrf
-                    @method('patch')
-
-                    <input type="hidden" name="camion_id" value={{ $camion->id }}>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="chauffeur" class="form-label">Chauffeur :</label>
+                    <form action="#" class="col-sm-12" method="post" id="form-modifier-trajet" enctype="multipart/form-data">
+                        @csrf
+                        @method('patch')
+    
+                        <input type="hidden" name="camion_id" value={{ $camion->id }}>
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="chauffeur" class="form-label">Chauffeur :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <select name="chauffeur" class="form-control" id="modifier-chauffeur">
+                                    <option value="">Selectionner un chauffeur</option>
+                                    @forelse ($chauffeurs as $chauffeur)
+                                        <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                                    @empty
+                                        <option value="">Aucun chauffeur disponible pour le moment</option>
+                                    @endforelse
+                                </select>
+                                <div id="chauffeur-modifier-feedback"  class="invalid-feedback"></div>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            <select name="chauffeur" class="form-control" id="modifier-chauffeur">
-                                <option value="">Selectionner un chauffeur</option>
-                                @forelse ($chauffeurs as $chauffeur)
-                                    <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
-                                @empty
-                                    <option value="">Aucun chauffeur disponible pour le moment</option>
-                                @endforelse
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Départ :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date_heure_depart_modifier" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
-                                <div class="input-group-append" data-target="#date_heure_depart_modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="date">Départ :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group date" id="date_heure_depart_modifier" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
+                                    <div class="input-group-append" data-target="#date_heure_depart_modifier" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Arrivée :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date_heure_arrivee" id="date_heure_arrivee_modifier" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
-                                <div class="input-group-append" data-target="#date_heure_arrivee_modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="date">Arrivée :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group date_heure_arrivee" id="date_heure_arrivee_modifier" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
+                                    <div class="input-group-append" data-target="#date_heure_arrivee_modifier" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                   
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="etat">Statut :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select name="etat" class="form-control" id="modifier-etat" required onchange="checkCarburant(this, '#modal-modifier-trajet')">
-                                <option value="">Selectionner le statut</option>
-                                @foreach (App\Models\Trajet::getEtat() as $status)
-                                    <option value="{{ $status }}">{{ $status }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3 mt-3  carburant" style="display: none;">
-                        <div class="col-sm-4">
-                            <label for="carburant-restant">Carburant restant :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" name="carburantRestant" id="carburant-restant" placeholder="Quantité de carburant restant">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
-                        <div class="col-sm-4">
-                            <label for="poids">Poids :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
-                        </div>
-                    </div>
-
-                    {{-- Bloc pour gerer les itinéraires --}}
-                    <div id="content-itineraire" class="mb-3">
-                        <input type="hidden" name="itineraire" id="data-itineraire" class="itineraire_data" value="">
-                        <div class="form-group">
-                            <label for="nombre_itineraire">Itinéraires :</label>
-                            <div id="itineraire_formulaire">
-                                
+    
+                       
+    
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="etat">Statut :</label>
                             </div>
-                            <div class="mt-1 row">
-                                <div class="col-sm-12" style="text-align:right;">
-                                    <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
-                                    <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
+                            <div class="col-sm-8">
+                                <select name="etat" class="form-control " id="modifier-etat" required onchange="checkCarburant(this, '#modal-modifier-trajet')">
+                                    <option value="">Selectionner le statut</option>
+                                    @foreach (App\Models\Trajet::getEtat() as $status)
+                                        <option value="{{ $status }}">{{ $status }}</option>
+                                    @endforeach
+                                </select>
+                                <div  id="status-modifier-feedback" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+    
+                        <div class="row mb-3 mt-3  carburant" style="display: none;">
+                            <div class="col-sm-4">
+                                <label for="carburant-restant">Carburant restant :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" name="carburantRestant" id="carburant-restant" placeholder="Quantité de carburant restant">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+    
+                        <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
+                            <div class="col-sm-4">
+                                <label for="poids">Poids :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
+                            </div>
+                        </div>
+    
+                        {{-- Bloc pour gerer les itinéraires --}}
+                        <div id="content-itineraire" class="mb-3">
+                            <input type="hidden" name="itineraire" id="data-itineraire" class="itineraire_data" value="">
+                            <div class="form-group">
+                                <label for="nombre_itineraire">Itinéraires :</label>
+                                <div id="itineraire_formulaire">
+                                    
+                                </div>
+                                <div class="mt-1 row">
+                                    <div class="col-sm-12" style="text-align:right;">
+                                        <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
+                                        <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+    
+                    </form>
+                </div>
+                <div class="row" style="display: none;">
+                    <div class="col-sm-12">
+                        <p class="alert alert-danger text-center"></p>
                     </div>
-
-                </form>
+                </div>
 
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="submit" form="form-modifier-trajet" id="button-modifier-trajet" class="float-right btn btn-primary">Modifier</button>
+                <button type="button" form="form-modifier-trajet" id="button-modifier-trajet" class="float-right btn btn-primary"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Modifier</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -903,187 +930,404 @@
         _this.parent().parent().parent().find(".itineraire_data").val(JSON.stringify(data_itineraire));
     })
 
-    $(document).ready(function () {
-        $("#flux-carburants , #trajets ").DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            "searching": true,
-            "paging": false,
-            "ordering": true,
-            "info": false ,            
-            language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+    $("#flux-carburants , #trajets ").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        "searching": true,
+        "paging": false,
+        "ordering": true,
+        "info": false ,            
+        language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+    });
+
+    $(document).on("click", ".modifier-carburant", function(){
+
+        let url = $(this).attr("data-show-url");
+        let url_update = $(this).attr("data-url")
+
+        $("#modal-modifier-carburant").modal({
+            backdrop: 'static',
+            keyboard: false
         });
+        $("#form-modifier-carburant").attr("action", url_update);
 
-        $(document).on("click", ".modifier-carburant", function(){
-            let url = $(this).attr("data-show-url");
-            let url_update = $(this).attr("data-url")
-
-            $("#modal-modifier-carburant").modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-            $("#form-modifier-carburant").attr("action", url_update);
-
-            $.get(url, {}, dataType="JSON").done(function (data) {
-                $("#modal-modifier-carburant #modifier_date").val(data.date);
-                $("#modal-modifier-carburant #modifier_quantite").val(data.quantite);
-                $("#modal-modifier-carburant #modifier_flux").val(data.flux).change();
-
-            })
-        })
-
-        $(document).on("click", ".supprimer-carburant", function (e) {
-            let url = $(this).prev().attr("data-show-url");
-            let url_delete = $(this).attr("data-url");
-
-            $("#button-supprimer-carburant").parent().attr("href", url_delete);
-
-            $("#modal-supprimer-carburant").modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-
-            $.get(url, {}, dataType="JSON").done(function (data) {
-                $("#modal-supprimer-carburant #supprimer_date").val(data.date).attr("disabled", true);
-                $("#modal-supprimer-carburant #supprimer_quantite").val(data.quantite).attr("disabled", true);
-                $("#modal-supprimer-carburant #supprimer_flux").val(data.flux).change().attr("disabled", true);
-
-            })
+        $.get(url, {}, dataType="JSON").done(function (data) {
+            $("#modal-modifier-carburant #modifier_date").val(data.date);
+            $("#modal-modifier-carburant #modifier_quantite").val(data.quantite);
+            $("#modal-modifier-carburant #modifier_flux").val(data.flux).change();
 
         })
     })
 
+    $(document).on("click", ".supprimer-carburant", function (e) {
+        let url = $(this).prev().attr("data-show-url");
+        let url_delete = $(this).attr("data-url");
 
-    $(document).ready(function () {
+        $("#button-supprimer-carburant").parent().attr("href", url_delete);
 
-        /* $("#trajets").DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            "searching": true,
-            "paging": false,
-            "ordering": true,
-            "info": false,
-        });*/
+        $("#modal-supprimer-carburant").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
 
+        $.get(url, {}, dataType="JSON").done(function (data) {
+            $("#modal-supprimer-carburant #supprimer_date").val(data.date).attr("disabled", true);
+            $("#modal-supprimer-carburant #supprimer_quantite").val(data.quantite).attr("disabled", true);
+            $("#modal-supprimer-carburant #supprimer_flux").val(data.flux).change().attr("disabled", true);
 
-        $(document).on("click","#nav-trajet-tab", function(){
-
-                resizeDataTable($("#trajets"), $("#nav-trajet")) ;
         })
 
-        $(document).on("click","#nav-carburant-tab", function(){
+    })
+   
 
-                resizeDataTable($("#flux-carburants"), $("#nav-carburant")) ;
+    $(document).on("click","#nav-trajet-tab", function(){
+
+            resizeDataTable($("#trajets"), $("#nav-trajet")) ;
+    })
+
+    $(document).on("click","#nav-carburant-tab", function(){
+
+            resizeDataTable($("#flux-carburants"), $("#nav-carburant")) ;
+    })
+
+    $(document).on("click", ".modifier-trajet", function(){
+        let url = $(this).attr("data-show-url");
+        let url_update = $(this).attr("data-update-url")
+
+        $("#modal-modifier-trajet").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+        $("#form-modifier-trajet").attr("action", url_update);
+
+        $.get(url, {}, dataType="JSON").done(function (data) {
+            let lists = document.getElementById('list-itineraire')
+            let itineraires =  data.itineraires.sort( (teamA, teamB) => teamA.id - teamB.id  );
+
+            $("#form-modifier-trajet").find("input[name=poids]").val(data.trajet.poids);
+            $("#form-modifier-trajet").find(".added").remove();
+            
+            itineraires.forEach((itineraire, index) => {
+                let element = "";
+                if(index === 0){
+                    element = '<div class="row added"><div class="col-sm-12" style="padding-top:1%;"><input type="text" placeholder="Nom de l\'itinéraire" class="form-control" value="' + itineraire.nom + '" required></div></div>'
+
+                }else{
+                    element = '<div id="itineraire_formulaire_added-'+(index + 1 )+'" class="row added" >';
+                    element += '    <div class="col-sm-12" style="padding-top:1%;">';
+                    element +=      '   <input type="text" placeholder="Nom de l\'itinéraire" class="form-control" value="' + itineraire.nom + '" required="">';
+                    element +=  '   </div>';
+                    element += '</div>';
+
+
+                }
+                $("#form-modifier-trajet").find("#itineraire_formulaire").append(element);
+
+            })
+
+            if(itineraires.length >  1){
+                $("#form-modifier-trajet .btn-itineraire-moins").show(100);
+            }
+
+            $("#modal-modifier-trajet #data-itineraire").val(JSON.stringify(data.itineraires));
+            $("#modal-modifier-trajet #modifier-chauffeur").val(data.trajet.chauffeur_id);
+            $("#modal-modifier-trajet #modifier_date_heure_depart").val(data.trajet.date_heure_depart);
+            $("#modal-modifier-trajet #modifier_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
+            $("#modal-modifier-trajet #modifier-etat").val(data.trajet.etat);
+
+
+            if(data.reservation != null){
+                $("#modal-modifier-trajet #modifier_date_heure_depart").attr("readonly", "readonly");
+                $("#modal-modifier-trajet #content-itineraire input").attr("readonly", "readonly");
+                $("#modal-modifier-trajet .btn-itineraire-plus , #modal-modifier-trajet .btn-itineraire-moins").attr("disabled", true);
+            }else{
+                $("#modal-modifier-trajet #modifier_date_heure_depart").removeAttr("readonly");
+                $("#modal-modifier-trajet #content-itineraire input").removeAttr("readonly");
+                $("#modal-modifier-trajet .btn-itineraire-plus , #modal-modifier-trajet .btn-itineraire-moins").removeAttr("disabled");
+            }
+
+            $("#modifier-etat").change();
+            if($("#modifier-etat option:selected").val() == '{{ App\Models\Trajet::getEtat(1) }}'){
+                $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_depart);
+
+            }else if ($("#modifier-etat option:selected").val() == '{{ App\Models\Trajet::getEtat(2) }}'){
+                $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_total);
+            }
+
+
+        })
+    })
+
+    $(document).on("click", ".supprimer-trajet", function (e) {
+
+        let url = $(this).prev().attr("data-show-url");
+        let url_delete = $(this).attr("data-url");
+
+        $("#button-supprimer-trajet").parent().attr("href", url_delete);
+
+        $("#modal-supprimer-trajet").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        $.get(url, {}, dataType="JSON").done(function (data) {
+            let lists = document.getElementById('list-delete-itineraire')
+            let itineraires = data.itineraires
+            lists.innerHTML = ''
+
+            itineraires.forEach(itineraire => {
+                input = document.createElement('input')
+                input.value = itineraire.nom
+                input.classList.add('form-control')
+                input.classList.add('mb-2')
+                input.setAttribute('placeholder', 'Nom de l\'itinéraire')
+                input.setAttribute('disabled', true)
+                lists.appendChild(input)
+            })
+
+            $("#modal-supprimer-trajet #supprimer-chauffeur").html(data.chauffeur.name);
+            $("#modal-supprimer-trajet #supprimer_date_heure_depart").val(data.trajet.date_heure_depart);
+            $("#modal-supprimer-trajet #supprimer_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
+            $("#modal-supprimer-trajet #supprimer-etat").html(data.trajet.etat);
         })
 
-        $(document).on("click", ".modifier-trajet", function(){
-            let url = $(this).attr("data-show-url");
-            let url_update = $(this).attr("data-update-url")
+    })
+    
+    $(document).on("click", "#button-ajouter-trajet", function(e){
+        let me = $(this);
+        spinning(me);
 
-            $("#modal-modifier-trajet").modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-            $("#form-modifier-trajet").attr("action", url_update);
+        let data = $("#form-ajouter-trajet").serialize();
+        let url = $("#form-ajouter-trajet").attr("action");
 
-            $.get(url, {}, dataType="JSON").done(function (data) {
-                let lists = document.getElementById('list-itineraire')
-                let itineraires =  data.itineraires.sort( (teamA, teamB) => teamA.id - teamB.id  );
+        $.ajax({
+                url: url,
+                type : "post",
+                dataType : "JSON",
+                data : data ,
+                success : function(data){
 
-                $("#form-modifier-trajet").find("input[name=poids]").val(data.trajet.poids);
-                $("#form-modifier-trajet").find(".added").remove();
-                
-                itineraires.forEach((itineraire, index) => {
-                    let element = "";
-                    if(index === 0){
-                        element = '<div class="row added"><div class="col-sm-12" style="padding-top:1%;"><input type="text" placeholder="Nom de l\'itinéraire" class="form-control" value="' + itineraire.nom + '" required></div></div>'
+                    if(data.status == "success"){
+                        window.location.href = data.value;
+                    }
 
-                    }else{
-                        element = '<div id="itineraire_formulaire_added-'+(index + 1 )+'" class="row added" >';
-                        element += '    <div class="col-sm-12" style="padding-top:1%;">';
-                        element +=      '   <input type="text" placeholder="Nom de l\'itinéraire" class="form-control" value="' + itineraire.nom + '" required="">';
-                        element +=  '   </div>';
-                        element += '</div>';
+                    if(data.status == "error"){
 
+                        // reeffacer les alert apres un cas de non success
+                        $("#status-feedback").prev().removeClass("is-invalid");
+                        $("#status-feedback").html("").hide(300);
+                        $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
+                        $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
+
+                        if
+                        (   data.value == "Camion non disponible entre les dates que vous avez selectionnées" ||
+                            date.value == "Le camion a encore un trajet en cours" ||
+                            data.value == "Vous devez choisir au moins deux itinéraires" ||
+                            data.value == "echec d'ajout"  )
+                        {
+                            $("#form-ajouter-trajet").parent().next().find(".alert").html(data.value);
+                            $("#form-ajouter-trajet").parent().next().show(300);
+                        }else{
+                            $("#form-ajouter-trajet").parent().next().find(".alert").html("");
+                            $("#form-ajouter-trajet").parent().next().hide(300);
+        
+                        }
+
+                        if(data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" || data.value == "Chauffeur non disponible entre les dates que vous avez selectionné"){
+                            $("#chauffeur-feedback").prev().addClass("is-invalid");
+                            $("#chauffeur-feedback").html(data.value).show(300);
+                        }else{
+                            $("#chauffeur-feedback").prev().removeClass("is-invalid");
+                            $("#chauffeur-feedback").html("").hide(300);
+                        }
+
+                        if
+                        (   data.value == "La date de depart doit être supérieur a ce moment précis si le statut est à prévoir" || 
+                            data.value == "La date de depart doit être inférieur a la date d'arrivée")
+                        {
+                            
+                            $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html(data.value).show(300)
+                        }else{
+                            $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
+                        }
+
+                        if
+                        (   data.value == "Veuillez remplir la quantité de carburant restant" || 
+                            data.value == "Le carburant du véhicule est encore insuffisant" ||
+                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock actuel")
+                        {
+                            $("#form-ajouter-trajet input[name=carburantRestant]").addClass("is-invalid").next().html(data.value).show(300);
+                        }else{
+                            $("#form-ajouter-trajet input[name=carburantRestant]").removeClass("is-invalid").next().html("").hide(300);
+
+                        }
 
                     }
-                    $("#form-modifier-trajet").find("#itineraire_formulaire").append(element);
 
-                })
+                    
 
-                if(itineraires.length >  1){
-                    $("#form-modifier-trajet .btn-itineraire-moins").show(100);
+
+                    spinning(me, 2);
+                },
+                error: function (data) {
+                        donnee = $.parseJSON(data.responseText);
+                        console.log( donnee);
+
+                        if(donnee.message == "The given data was invalid."){
+                           
+                            console.log(donnee.errors.etat );
+
+                            if(donnee.errors.hasOwnProperty("etat") === true){
+                                $("#status-feedback").prev().addClass("is-invalid");
+                                $("#status-feedback").html("la date de départ est obligatoire").show(300);
+                            }else{
+                                $("#status-feedback").prev().removeClass("is-invalid");
+                                $("#status-feedback").html("").hide(300);
+                            }
+
+                            if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
+                                $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
+                                
+                            }else{
+                                    $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
+                            }
+
+                            if(donnee.errors.hasOwnProperty("date_heure_arrivee") === true ){
+                                $("#form-ajouter-trajet input[name=date_heure_arrivee]").addClass("is-invalid").next().next().html("La date d'arrivée approximative est obligatoire").show(300)
+                                
+                            }else{
+                                    $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
+                            }
+                        }
+                        spinning(me, 2);
+                    }
+                }
+            )
+        
+    });
+
+    $(document).on("click", "#button-modifier-trajet", function(e){
+        let me = $(this);
+        spinning(me);
+
+        let data = $("#form-modifier-trajet").serialize();
+        let url = $("#form-modifier-trajet").attr("action");
+
+        $.ajax({
+            url : url,
+            type : "POST",
+            dataType : "JSON",
+            data : data,
+            success : function (data) {
+
+                if(data.status == "success"){
+                        window.location.href = data.value;
                 }
 
-                $("#modal-modifier-trajet #data-itineraire").val(JSON.stringify(data.itineraires));
-                $("#modal-modifier-trajet #modifier-chauffeur").val(data.trajet.chauffeur_id);
-                $("#modal-modifier-trajet #modifier_date_heure_depart").val(data.trajet.date_heure_depart);
-                $("#modal-modifier-trajet #modifier_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
-                $("#modal-modifier-trajet #modifier-etat").val(data.trajet.etat);
+                if(data.status == "error"){
+                    if
+                    (   data.value == "Camion non disponible entre les dates que vous avez selectionnées" ||
+                        date.value == "Le camion a encore un trajet en cours" ||
+                        data.value == "Vous devez choisir au moins deux itinéraires" ||
+                        data.value == "Erreur de mise a jour" ||
+                        data.value == "Le camion a encore un trajet en cours" )
+                    {
+                        $("#form-modifier-trajet").parent().next().find(".alert").html(data.value);
+                        $("#form-modifier-trajet").parent().next().show(300);
+                    }else{
+                        $("#form-modifier-trajet").parent().next().find(".alert").html("");
+                        $("#form-modifier-trajet").parent().next().hide(300);
+        
+                    }
 
-                console.log(data.reservation);
+                    if(
+                        data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" || 
+                        data.value == "Chauffeur non disponible entre les dates que vous avez selectionné"
+                    ){
+                            $("#chauffeur-modifier-feedback").prev().addClass("is-invalid");
+                            $("#chauffeur-modifier-feedback").html(data.value).show(300);
+                    }else{
+                            $("#chauffeur-modifier-feedback").prev().removeClass("is-invalid");
+                            $("#chauffeur-modifier-feedback").html("").hide(300);
+                    }
 
-                if(data.reservation != null){
-                    $("#modal-modifier-trajet #modifier_date_heure_depart").attr("readonly", "readonly");
-                    $("#modal-modifier-trajet #content-itineraire input").attr("readonly", "readonly");
-                    $("#modal-modifier-trajet .btn-itineraire-plus , #modal-modifier-trajet .btn-itineraire-moins").attr("disabled", true);
+                    if( data.value == "On ne peut pas terminer un trajet a prévoir sans être en cours" ){
+
+                        $("#status-modifier-feedback").prev().addClass("is-invalid");
+                        $("#status-modifier-feedback").html(data.value).show(300);
+                    }else{
+
+                        $("#status-modifier-feedback").prev().removeClass("is-invalid");
+                        $("#status-modifier-feedback").html("").hide(300);
+                    }
+
+                    if
+                        (   data.value == "La date depart ne doit pas depasser la date et heure actuel" ||
+                            data.value == "Vous devez specifier une date d'arrivée." ||
+                            data.value == "La date de depart doit être inférieur a la date d'arrivée"
+                            )
+                        {
+                            
+                            $("#form-modifier-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html(data.value).show(300)
+                        }else{
+                            $("#form-modifier-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
+                        }
+
+
+                    if
+                    (   data.value == "Veuillez remplir la quantité de carburant restant" || 
+                            data.value == "Le carburant du véhicule est encore insuffisant" ||
+                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock actuel")
+                    {
+                        $("#form-modifier-trajet input[name=carburantRestant]").addClass("is-invalid").next().html(data.value).show(300);
+                    }else{
+                        $("#form-modifier-trajet input[name=carburantRestant]").removeClass("is-invalid").next().html("").hide(300);
+
+                    }
+
+                }
+
+                spinning(me, 2);
+            },
+            error : function (data){
+
+                donnee = $.parseJSON(data.responseText);
+
+                if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
+                    $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
+                                
                 }else{
-                    $("#modal-modifier-trajet #modifier_date_heure_depart").removeAttr("readonly");
-                    $("#modal-modifier-trajet #content-itineraire input").removeAttr("readonly");
-                    $("#modal-modifier-trajet .btn-itineraire-plus , #modal-modifier-trajet .btn-itineraire-moins").removeAttr("disabled");
+                    $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                 }
 
-                $("#modifier-etat").change();
-                if($("#modifier-etat option:selected").val() == '{{ App\Models\Trajet::getEtat(1) }}'){
-                    $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_depart);
-
-                }else if ($("#modifier-etat option:selected").val() == '{{ App\Models\Trajet::getEtat(2) }}'){
-                    $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_total);
+                if(donnee.errors.hasOwnProperty("date_heure_arrivee") === true ){
+                    $("#form-modifier-trajet input[name=date_heure_arrivee]").addClass("is-invalid").next().next().html("La date d'arrivée approximative est obligatoire").show(300)
+                                
+                }else{
+                    $("#form-modifier-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
                 }
 
+                if(donnee.errors.hasOwnProperty("etat") === true){
+                    $("#status-modifier-feedback").prev().addClass("is-invalid");
+                    $("#status-modifier-feedback").html("la date de départ est obligatoire").show(300);
+                }else{
+                    $("#status-modifier-feedback").prev().removeClass("is-invalid");
+                    $("#status-modifier-feedback").html("").hide(300);
+                }
 
-            })
-        })
-
-        $(document).on("click", ".supprimer-trajet", function (e) {
-
-            let url = $(this).prev().attr("data-show-url");
-            let url_delete = $(this).attr("data-url");
-
-            $("#button-supprimer-trajet").parent().attr("href", url_delete);
-
-            $("#modal-supprimer-trajet").modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-
-            $.get(url, {}, dataType="JSON").done(function (data) {
-                let lists = document.getElementById('list-delete-itineraire')
-                let itineraires = data.itineraires
-                lists.innerHTML = ''
-
-                itineraires.forEach(itineraire => {
-                    input = document.createElement('input')
-                    input.value = itineraire.nom
-                    input.classList.add('form-control')
-                    input.classList.add('mb-2')
-                    input.setAttribute('placeholder', 'Nom de l\'itinéraire')
-                    input.setAttribute('disabled', true)
-                    lists.appendChild(input)
-                })
-
-                $("#modal-supprimer-trajet #supprimer-chauffeur").html(data.chauffeur.name);
-                $("#modal-supprimer-trajet #supprimer_date_heure_depart").val(data.trajet.date_heure_depart);
-                $("#modal-supprimer-trajet #supprimer_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
-                $("#modal-supprimer-trajet #supprimer-etat").html(data.trajet.etat);
-            })
+                spinning(me, 2);
+            }
 
         })
+    })
 
+    $(document).on("click", "#btn-modal-trajet", function(e){
+        viderFormulaireAjoutTrajet();
     })
 
 
     const checkCarburant = function (select, action) {
+
         action = action === undefined ? "#modal-trajet" : action ;
 
         let etat = select.value
@@ -1103,6 +1347,14 @@
         }
     }
 
+    function viderFormulaireAjoutTrajet(){
+        $("#form-ajouter-trajet .mb-3 input").val("").removeClass("is-invalid");
+        $("#form-ajouter-trajet select").val("").removeClass("is-invalid").change();
+        $("#form-ajouter-trajet .invalid-feedback").html("").hide();
+        $("#form-ajouter-trajet").parent().next().find(".alert").html("");
+        $("#form-ajouter-trajet").parent().next().hide(200);
+    }
+
     function resizeDataTable(element , content) {
 
             setTimeout(function(){
@@ -1115,6 +1367,21 @@
                     resizeDataTable(element, content)
                }
            }, 200);
+    }
+
+
+    function spinning(me, flux){
+        flux = flux == undefined ? 1 : flux;
+        if(flux == 1){
+            me.attr("disabled", true);
+            me.find(".fa").hide();
+            me.find(".spinner-border").show();
+        }else{
+
+            me.find(".spinner-border").hide();
+            me.find(".fa").show()
+            me.removeAttr("disabled");
+        }
     }
 
 
