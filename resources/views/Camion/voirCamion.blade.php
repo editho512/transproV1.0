@@ -146,10 +146,12 @@
                                         <td>{{$carburant->date}}</td>
                                         <td>{{$carburant->quantite}}</td>
                                         <td>{{$carburant->flux == false ? "Entrée" : "Sortie"}}</td>
-                                        <td class="row">
-                                            <div class="col-sm-12" style="text-align: center">
-                                                <button class="btn btn-xs btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
-                                                <button class="btn btn-xs btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
+                                        <td >
+                                            <div class="row">
+                                                <div class="col-sm-12" style="text-align: center">
+                                                    <button class="btn btn-xs btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
+                                                    <button class="btn btn-xs btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
+                                                </div>
                                             </div>
 
                                         </td>
@@ -1370,19 +1372,7 @@
     }
 
 
-    function spinning(me, flux){
-        flux = flux == undefined ? 1 : flux;
-        if(flux == 1){
-            me.attr("disabled", true);
-            me.find(".fa").hide();
-            me.find(".spinner-border").show();
-        }else{
-
-            me.find(".spinner-border").hide();
-            me.find(".fa").show()
-            me.removeAttr("disabled");
-        }
-    }
+    
 
 
 </script>

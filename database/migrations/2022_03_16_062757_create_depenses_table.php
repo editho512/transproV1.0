@@ -16,6 +16,7 @@ class CreateDepensesTable extends Migration
         Schema::create('depenses', function (Blueprint $table) {
             $table->id();
             $table->dateTime('date_heure')->nullable(false);
+            $table->double('montant');
             $table->bigInteger('camion_id')->unsigned()->nullable();
             $table->bigInteger('chauffeur_id')->unsigned()->nullable();
             $table->string('type', 255)->nullable(false);

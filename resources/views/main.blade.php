@@ -152,6 +152,22 @@
     <script src="{{asset('assets/adminlte/dist/js/pages/dashboard.js')}}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{asset('assets/adminlte/dist/js/demo.js')}}"></script>--}}
+
+    <script>
+        function spinning(me, flux){
+            flux = flux == undefined ? 1 : flux;
+            if(flux == 1){
+                me.attr("disabled", true);
+                me.find(".fa").hide();
+                me.find(".spinner-border").show();
+            }else{
+
+                me.find(".spinner-border").hide();
+                me.find(".fa").show()
+                me.removeAttr("disabled");
+            }
+        }
+    </script>
         @php
             $notification = Session::has("notification") === true ? Session::get("notification") : null;
             Session::forget("notification");

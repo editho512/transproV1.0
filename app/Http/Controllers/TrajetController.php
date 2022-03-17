@@ -630,7 +630,7 @@ class TrajetController extends Controller
             ]);
         }
 
-        return redirect()->back();
+        return redirect()->route('camion.voir', ['camion' => $trajet->camion_id, 'tab' => 2]);
 
     }
 }
