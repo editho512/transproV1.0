@@ -56,9 +56,8 @@
                     </a>
                 </li>
 
-
                 <li class="nav-item has-treeview @if(isset($active_depense_index)) menu-open @endif">
-                    <a href="" class="nav-link @if(isset($active_depense_index)) {{$active_depense_index}} @endif">
+                    <a href="{{ route('depense.index') }}" class="nav-link @if(isset($active_depense_index)) {{$active_depense_index}} @endif">
                         <i class="nav-icon fas fa-dollar-sign"></i>
                         <p>
                             Depenses
