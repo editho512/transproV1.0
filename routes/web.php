@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Depense\MainDepenseController;
+use App\Http\Controllers\Depense\ModifierDepenseController;
+use App\Http\Controllers\Depense\NouvelleDepenseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -100,3 +103,26 @@ Route::prefix('Utilisateur')->middleware('super-admin')->group(function () {
 });
 
 // --------------------- UTILISATEUR -------------//
+
+
+/**
+ * Regroupe toutes les toutes qui concerne les depenses
+ * URL prefixé par depense/
+ */
+Route::prefix('depense')->middleware(['auth'])->group(function () {
+
+    // Page d'accueil de la depense
+    Route::get('/', [MainDepenseController::class, 'index'])->name('depense.index');
+
+    // Enregistrer un dépense
+    Route::get('nouvelle', [NouvelleDepenseController::class, 'create'])->name('depense.nouvelle');
+    Route::post('nouvelle', [NouvelleDepenseController::class, 'store'])->name('depense.post.nouvelle');
+
+    // Modifier un dépense
+    Route::get('modifier/{depense}', [ModifierDepenseController::class, 'create'])->name('depense.modifier');
+    Route::post('nouvelle/{depense}', [ModifierDepenseController::class, 'store'])->name('depense.post.modifier');
+
+    // Supprimer une dépense
+    Route::post('supprimer/{depense}', [MainDepenseController::class, 'supprimer'])->name('depense.post.supprimer');
+
+});

@@ -391,13 +391,13 @@
     <script>
 
     $("#camions").DataTable({
-                    "responsive": true,
-                    "autoWidth": false,
-                    "searching": true,
-                    "paging": false,
-                    "ordering": true,
-                    "info": false,
-                });
+        "responsive": true,
+        "autoWidth": false,
+        "searching": true,
+        "paging": false,
+        "ordering": true,
+        "info": false,
+    });
 
         $(document).on("click", ".supprimer-camion", function (e) {
             $("#modal-supprimer-camion").modal("show");
