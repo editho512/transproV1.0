@@ -62,12 +62,31 @@
                     $i = 1
                 @endphp
 
-                @foreach ($depensesGroups as $type => $depenseGrpup)
+                {{-- @foreach ($depensesGroups as $type => $depenseGrpup)
                     <div class="col-md-6">
                         <div class="card style-{{ $i }}">
                             <div class="card-body">
                                 <h4 class="mb-3 font-weight-bold text-white">{{ formatMoney($depenseGrpup->sum('montant')) }}</h4>
                                 <h6>{{ numberToLetter($depenseGrpup->sum('montant')) }}</h6>
+                            </div>
+                            <div class="card-footer">
+                                <h5>{{ $type }}</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    @php
+                        $i++
+                    @endphp
+
+                @endforeach --}}
+
+                @foreach (typeDepense() as $type)
+                    <div class="col-md-6">
+                        <div class="card style-{{ $i }}">
+                            <div class="card-body">
+                                <h4 class="mb-3 font-weight-bold text-white">{{ $depensesGroups->has($type) === true ? formatMoney($depensesGroups[$type]->sum('montant')) : formatMoney(0) }}</h4>
+                                <h6>{{ $depensesGroups->has($type) === true ? numberToLetter($depensesGroups[$type]->sum('montant')) : numberToLetter(0) }}</h6>
                             </div>
                             <div class="card-footer">
                                 <h5>{{ $type }}</h5>
@@ -143,11 +162,7 @@
                                             </td>
                                         </tr>
                                     @empty
-                                    <tr>
-                                        <td style="text-align: center" colspan="7">
-                                            Historique vide
-                                        </td>
-                                    </tr>
+
                                     @endforelse
                                 </tbody>
                                 <tfoot>
