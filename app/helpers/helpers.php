@@ -2,8 +2,10 @@
 
 use App\Models\Camion;
 use App\Models\Depense\Depense;
+use App\Models\Maintenance\Maintenance;
 use App\Models\Trajet;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
 * Fonction permet de detecter si un trajet a depasser la limite d'arrivée
@@ -92,6 +94,11 @@ function typeDepense()
     return Depense::getAllType();
 }
 
+function typeMaintenance()
+{
+    return Maintenance::getAllType();
+}
+
 
 function formatMoney(float $number = 0, string $unite = 'Ar')
 {
@@ -101,6 +108,24 @@ function formatMoney(float $number = 0, string $unite = 'Ar')
 function totalDepense() : float
 {
     return doubleval(Depense::sum('montant'));
+}
+
+function totalMaintenance() : float
+{
+    $montant = doubleval(Maintenance::sum('main_oeuvre'));
+
+    foreach (Maintenance::all() as $maintenance)
+    {
+        if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
+        {
+            foreach (json_decode($maintenance->pieces, true) as $piece) {
+                $montant += $piece["pu"] * $piece["quantite"];
+            }
+        }
+    }
+
+    return doubleval($montant);
+
 }
 
 function numberToLetter(float $number, string $separateur = ".", string $unite = 'Ariary') : string
@@ -187,4 +212,22 @@ function asLetters($number, $separateur = ".")
     elseif ($number < 1000000000) {
         return asLetters((int)($number/1000000)).' '.asLetters(1000000).($number%1000000 > 0 ? ' '.asLetters($number%1000000): '');
     }
+}
+
+
+function montantPieces(Collection $maintenances) : float
+{
+    $montant = 0;
+
+    foreach ($maintenances as $maintenance)
+    {
+        if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
+        {
+            foreach (json_decode($maintenance->pieces, true) as $piece) {
+                $montant += $piece["pu"] * $piece["quantite"];
+            }
+        }
+    }
+
+    return doubleval($montant);
 }
