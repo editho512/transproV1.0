@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnToItinerairesTable extends Migration
+class AddForeignKeysToCarburantsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddColumnToItinerairesTable extends Migration
      */
     public function up()
     {
-        Schema::table('itineraires', function (Blueprint $table) {
-            $table->foreignId('id_trajet')->unsigned()->references('id')->on('trajets');
+        Schema::table('carburants', function (Blueprint $table) {
+            $table->foreign(['camion_id'], 'carburants_ibfk_1')->references(['id'])->on('camions');
         });
     }
 
@@ -25,8 +25,8 @@ class AddColumnToItinerairesTable extends Migration
      */
     public function down()
     {
-        Schema::table('itineraires', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('id_trajet');
+        Schema::table('carburants', function (Blueprint $table) {
+            $table->dropForeign('carburants_ibfk_1');
         });
     }
 }

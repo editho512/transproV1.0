@@ -14,15 +14,14 @@ class CreateDepensesTable extends Migration
     public function up()
     {
         Schema::create('depenses', function (Blueprint $table) {
-            $table->id();
-            $table->dateTime('date_heure')->nullable(false);
-            $table->bigInteger('camion_id')->unsigned()->nullable();
-            $table->bigInteger('chauffeur_id')->unsigned()->nullable();
-            $table->string('type', 255)->nullable(false);
+            $table->bigIncrements('id');
+            $table->dateTime('date_heure');
+            $table->unsignedBigInteger('camion_id')->nullable()->index('depenses_camion_id_foreign');
+            $table->unsignedBigInteger('chauffeur_id')->nullable()->index('depenses_chauffeur_id_foreign');
+            $table->string('type', 255);
+            $table->decimal('montant', 12, 0);
             $table->string('commentaire', 5000)->nullable();
             $table->timestamps();
-            $table->foreign('camion_id')->references('id')->on('camions');
-            $table->foreign('chauffeur_id')->references('id')->on('chauffeurs');
         });
     }
 

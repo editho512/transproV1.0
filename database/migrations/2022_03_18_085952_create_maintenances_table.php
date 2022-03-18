@@ -14,11 +14,11 @@ class CreateMaintenancesTable extends Migration
     public function up()
     {
         Schema::create('maintenances', function (Blueprint $table) {
-            $table->id();
-            $table->string('intitule', 255)->nullable(false);
-            $table->dateTime('date_heure')->nullable(false);
-            $table->bigInteger('camion_id')->unsigned()->nullable();
-            $table->string('type', 255)->nullable(false);
+            $table->bigIncrements('id');
+            $table->string('titre', 255);
+            $table->dateTime('date_heure');
+            $table->unsignedBigInteger('camion_id')->nullable()->index('maintenances_camion_id_foreign');
+            $table->string('type', 255);
             $table->string('commentaire', 5000)->nullable();
             $table->string('nom_reparateur', 500)->nullable();
             $table->string('tel_reparateur', 255)->nullable();
@@ -26,7 +26,6 @@ class CreateMaintenancesTable extends Migration
             $table->double('main_oeuvre')->nullable();
             $table->json('pieces')->nullable();
             $table->timestamps();
-            $table->foreign('camion_id')->references('id')->on('camions');
         });
     }
 
