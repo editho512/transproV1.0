@@ -19,9 +19,14 @@ class CreateTrajetsTable extends Migration
             $table->string('arrivee', 255);
             $table->dateTime('date_heure_depart');
             $table->dateTime('date_heure_arrivee')->nullable();
-            $table->string('etat')->nullable()->default('En  cours');
-            $table->unsignedBigInteger('camion_id')->index('trajet_camion_id_foreign');
-            $table->unsignedBigInteger('chauffeur_id')->nullable()->index('trajet_chauffeur_id_foreign');
+            $table->string('etat')->nullable('false')->default('En  cours');
+            $table->bigInteger('camion_id')->unsigned();
+            $table->bigInteger('chauffeur_id')->unsigned()->nullable();
+            $table->double('carburant_depart')->nullable();
+            $table->double('carburant_total')->nullable();
+            $table->double('poids')->nullable();
+            $table->bigInteger('carburant_id')->unsigned()->nullable();
+
             $table->timestamps();
         });
     }

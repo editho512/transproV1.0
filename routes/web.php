@@ -30,6 +30,20 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// -------------------- PAPIERS ------------------- //
+
+Route::get("/papier/supprimer/{papier}", [App\Http\Controllers\PapierController::class, 'supprimer'])->name("papier.supprimer");
+
+Route::patch("/papier/update/{papier}", [App\Http\Controllers\PapierController::class, 'update'])->name("papier.update");
+
+Route::get("/papier/modifier/{papier}", [App\Http\Controllers\PapierController::class, 'modifier'])->name("papier.modifier");
+
+Route::post("/papier/ajouter", [App\Http\Controllers\PapierController::class, 'ajouter'])->name("papier.ajouter");
+
+Route::get("/papier", [App\Http\Controllers\PapierController::class, 'index'])->name("papier.liste");
+
+// -------------------- PAPIERS ------------------- //
+
 // --------------------- CARBURANTS ---------------//
 
 Route::get('/Carburant/delete/{carburant}/{type?}',  [App\Http\Controllers\CarburantController::class, 'delete'])->name("carburant.delete");

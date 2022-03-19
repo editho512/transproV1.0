@@ -15,6 +15,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+        //Artisan::call('storage:link', []);
         $this->middleware('auth');
     }
 
