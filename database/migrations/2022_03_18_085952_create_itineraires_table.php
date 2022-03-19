@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddEtatToCamionsTable extends Migration
+class CreateItinerairesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class AddEtatToCamionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('camions', function (Blueprint $table) {
-            $table->boolean('disponible')->default(true)->nullable(false);
+        Schema::create('itineraires', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nom', 255);
+            $table->timestamps();
+            $table->unsignedBigInteger('id_trajet')->index('itineraires_id_trajet_foreign');
         });
     }
 
@@ -25,8 +28,6 @@ class AddEtatToCamionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('camions', function (Blueprint $table) {
-            $table->dropColumn('disponible');
-        });
+        Schema::dropIfExists('itineraires');
     }
 }

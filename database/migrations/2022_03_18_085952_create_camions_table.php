@@ -14,15 +14,17 @@ class CreateCamionsTable extends Migration
     public function up()
     {
         Schema::create('camions', function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
-            $table->string("annee")->nullable();
-            $table->string("model")->nullable();
-            $table->string("marque")->nullable();
-            $table->string("numero_chassis")->nullable();
-            $table->text("photo")->nullable();
-            $table->boolean('blocked')->default(0);
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('annee')->nullable();
+            $table->string('model')->nullable();
+            $table->string('marque')->nullable();
+            $table->string('numero_chassis')->nullable();
+            $table->text('photo')->nullable();
+            $table->boolean('blocked')->default(false);
             $table->timestamps();
+            $table->boolean('disponible')->default(true);
+            $table->softDeletes();
         });
     }
 

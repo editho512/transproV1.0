@@ -14,12 +14,12 @@ class CreateChauffeursTable extends Migration
     public function up()
     {
         Schema::create('chauffeurs', function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
-            $table->string("phone")->nullable();
-            $table->string("cin")->nullable();
-            $table->text("permis")->nullable();
-            $table->boolean('blocked')->default(0);
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('phone')->nullable();
+            $table->string('cin')->nullable();
+            $table->text('permis')->nullable();
+            $table->boolean('blocked')->default(false);
             $table->timestamps();
         });
     }

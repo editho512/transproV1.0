@@ -67,7 +67,7 @@
                 </li>
 
                 <li class="nav-item has-treeview @if(isset($active_maintenance_index)) menu-open @endif">
-                    <a href="" class="nav-link @if(isset($active_maintenance_index)) {{$active_maintenance_index}} @endif">
+                    <a href="{{ route('maintenance.index') }}" class="nav-link @if(isset($active_maintenance_index)) {{ $active_maintenance_index }} @endif">
                         <i class="nav-icon fas fa-wrench"></i>
                         <p>
                             Maintenances

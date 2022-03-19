@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddForeignKeyToTrajetTable extends Migration
+class AddForeignKeysToTrajetsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,8 @@ class AddForeignKeyToTrajetTable extends Migration
     public function up()
     {
         Schema::table('trajets', function (Blueprint $table) {
-            $table->foreign('camion_id')->references('id')->on('camions');
-            $table->foreign('chauffeur_id')->references('id')->on('chauffeurs');
+            $table->foreign(['camion_id'], 'trajet_camion_id_foreign')->references(['id'])->on('camions');
+            $table->foreign(['chauffeur_id'], 'trajet_chauffeur_id_foreign')->references(['id'])->on('chauffeurs');
         });
     }
 
@@ -27,8 +27,8 @@ class AddForeignKeyToTrajetTable extends Migration
     public function down()
     {
         Schema::table('trajets', function (Blueprint $table) {
-            $table->dropForeign('camion_id');
-            $table->dropForeign('chauffeur_id');
+            $table->dropForeign('trajet_camion_id_foreign');
+            $table->dropForeign('trajet_chauffeur_id_foreign');
         });
     }
 }

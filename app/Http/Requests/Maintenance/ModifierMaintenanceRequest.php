@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Depense;
+namespace App\Http\Requests\Maintenance;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class NouvelleDepenseRequest extends FormRequest
+class ModifierMaintenanceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,33 +19,24 @@ class NouvelleDepenseRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Règles de validation de la réquete
+        /**
+     * Get the validation rules that apply to the request.
      *
      * @return array
      */
     public function rules()
     {
         return [
-            "type" => ['required', 'min:5', 'max:255'],
-            "date_heure" => ['required', 'date', 'date_format:Y-m-d H:i:s', 'before_or_equal:' . Carbon::now('EAT')->toDateTimeString()],
-            "camion_id" => ['nullable', 'numeric', 'exists:camions,id'],
-            "chauffeur_id" => ['nullable', 'numeric', 'exists:chauffeurs,id'],
-            "commentaire" => ['nullable', 'sometimes', 'min:5', 'max:5000'],
-            "montant" => ['required', 'numeric', 'min:10', 'max:999999999999'],
-        ];
-    }
-
-
-    /**
-     * Message d'erreur
-     *
-     * @return array
-     */
-    public function messages() : array
-    {
-        return [
-
+            "type" => ["required", "sometimes", "in:Reparation,Maintenance"],
+            "titre" => ["required", "min:5", "max:255", "sometimes", "unique:maintenances,titre,".$this->maintenance->id.",id"],
+            "date_heure" => ["required", "date", "date_format:Y-m-d H:i:s", 'before_or_equal:' . Carbon::now('EAT')->toDateTimeString()],
+            "camion_id" => ["required", "numeric", "exists:camions,id"],
+            "main_oeuvre" => ["required", "numeric", "min:1", "max:999999999999"],
+            "commentaire" => ["nullable", "sometimes", "min:5", "max:5000"],
+            "nom_reparateur" => ["required", "sometimes", "min:2", "max:500"],
+            "tel_reparateur" => ["required"],
+            "adresse_reparateur" => ["required", "sometimes"],
+            "pieces" => ["nullable", "sometimes"],
         ];
     }
 
@@ -58,6 +49,7 @@ class NouvelleDepenseRequest extends FormRequest
     protected function prepareForValidation()
     {
         if ($this->date_heure !== null) $this->merge(['date_heure' => Carbon::parse($this->date_heure, 'EAT')->toDateTimeString()]);
+        if (json_decode($this->pieces, true) === []) $this->merge(['pieces' => null]);
     }
 
 

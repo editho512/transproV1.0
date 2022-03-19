@@ -3,6 +3,9 @@
 use App\Http\Controllers\Depense\MainDepenseController;
 use App\Http\Controllers\Depense\ModifierDepenseController;
 use App\Http\Controllers\Depense\NouvelleDepenseController;
+use App\Http\Controllers\Maintenance\MainMaintenanceController;
+use App\Http\Controllers\Maintenance\ModifierMaintenanceController;
+use App\Http\Controllers\Maintenance\NouvelleMaintenanceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -138,5 +141,28 @@ Route::prefix('depense')->middleware(['auth'])->group(function () {
 
     // Supprimer une dépense
     Route::post('supprimer/{depense}', [MainDepenseController::class, 'supprimer'])->name('depense.post.supprimer');
+
+});
+
+
+/**
+ * Regroupe toutes les toutes qui concerne les maintenances et reparations
+ * URL prefixé par maintenance/
+ */
+Route::prefix('maintenance')->middleware(['auth'])->group(function () {
+
+    // Page d'accueil de la depense
+    Route::get('/', [MainMaintenanceController::class, 'index'])->name('maintenance.index');
+
+    // Enregistrer un dépense
+    Route::get('nouvelle', [NouvelleMaintenanceController::class, 'create'])->name('maintenance.nouvelle');
+    Route::post('nouvelle', [NouvelleMaintenanceController::class, 'store'])->name('maintenance.post.nouvelle');
+
+    // Modifier un dépense
+    Route::get('modifier/{maintenance}', [ModifierMaintenanceController::class, 'create'])->name('maintenance.modifier');
+    Route::post('nouvelle/{maintenance}', [ModifierMaintenanceController::class, 'store'])->name('maintenance.post.modifier');
+
+    // Supprimer une dépense
+    Route::post('supprimer/{maintenance}', [MainMaintenanceController::class, 'supprimer'])->name('maintenance.post.supprimer');
 
 });

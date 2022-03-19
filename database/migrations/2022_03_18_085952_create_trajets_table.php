@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTrajetTable extends Migration
+class CreateTrajetsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateTrajetTable extends Migration
     public function up()
     {
         Schema::create('trajets', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('depart', 255);
             $table->string('arrivee', 255);
             $table->dateTime('date_heure_depart');

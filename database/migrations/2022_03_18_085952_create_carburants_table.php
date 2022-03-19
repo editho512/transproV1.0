@@ -14,11 +14,11 @@ class CreateCarburantsTable extends Migration
     public function up()
     {
         Schema::create('carburants', function (Blueprint $table) {
-            $table->id();
-            $table->double("quantite");
-            $table->boolean("flux")->default(0);
+            $table->bigIncrements('id');
+            $table->double('quantite');
+            $table->boolean('flux')->default(false);
             $table->timestamp('date')->nullable();
-            $table->integer('camion_id');
+            $table->unsignedBigInteger('camion_id')->index('camion_id');
             $table->timestamps();
         });
     }

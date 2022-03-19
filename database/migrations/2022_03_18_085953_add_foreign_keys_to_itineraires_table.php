@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateItinerairesTable extends Migration
+class AddForeignKeysToItinerairesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateItinerairesTable extends Migration
      */
     public function up()
     {
-        Schema::create('itineraires', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom', 255)->nullable(false);
-            $table->timestamps();
+        Schema::table('itineraires', function (Blueprint $table) {
+            $table->foreign(['id_trajet'])->references(['id'])->on('trajets');
         });
     }
 
@@ -27,6 +25,8 @@ class CreateItinerairesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('itineraires');
+        Schema::table('itineraires', function (Blueprint $table) {
+            $table->dropForeign('itineraires_id_trajet_foreign');
+        });
     }
 }
