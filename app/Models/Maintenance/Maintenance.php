@@ -12,7 +12,7 @@ class Maintenance extends Model
     use HasFactory;
 
     private const ALL_TYPE = [
-        'Réparation', 'Maintenance',
+        'Reparation', 'Maintenance',
     ];
 
 

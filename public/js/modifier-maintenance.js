@@ -11,10 +11,10 @@ let resultEdit = document.getElementById('result-edit')
 addMaterielEdit.addEventListener('click', e => {
     e.preventDefault()
 
-    if (nomEdit.value === "") { alert("Veillez remplir le nom de la matériel"); return; }
-    if (isNaN(parseFloat(puEdit.value))) { alert("Veillez remplir le montant du prix unitaire"); return; }
-    if (isNaN(parseInt(quantiteEdit.value))) { alert("Veillez remplir la quantité"); return; }
-    if (isNaN(parseFloat(totalEdit.value))) { alert("Le montant total est invaluide"); return; }
+    if (nomEdit.value === "") { $('#error p').html("Veillez remplir le nom de la matériel"); $('#error').modal('show'); return; }
+    if (isNaN(parseFloat(puEdit.value)) || parseFloat(puEdit.value) < 0) { $('#error p').html("Prix unitaire vide ou invalide"); $('#error').modal('show'); return; }
+    if (isNaN(parseInt(quantiteEdit.value)) || parseInt(quantiteEdit.value) < 0) { $('#error p').html("Quantite vide ou invalide"); $('#error').modal('show'); return; }
+    if (isNaN(parseFloat(totalEdit.value)) || parseFloat(totalEdit.value) < 0) { $('#error p').html("Montant total vide ou invalide"); $('#error').modal('show'); return; }
 
     let tr = document.createElement('tr')
     let tuple = "<td>" + nomEdit.value + "</td><td>" + parseFloat(puEdit.value) + " Ar</td><td>" + parseFloat(quantiteEdit.value) + "</td><td>" + parseFloat(totalEdit.value) + " Ar</td><td class='d-inline-flex'><button onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button></td>"

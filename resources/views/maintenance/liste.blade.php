@@ -1,6 +1,6 @@
 @extends('main')
 
-@section('title') <title>Listes des dépenses</title> @endsection
+@section('title') <title>Historique des maintenances</title> @endsection
 
 @section('styles')
 
@@ -111,7 +111,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header" >
-                            <h3 class="card-title">Historique des dépenses</h3>
+                            <h3 class="card-title">Historique des dépenses (Maintenances et reparations)</h3>
                             <button class="btn btn-primary float-right" data-backdrop="static" data-keyboard="false" data-toggle="modal" id="ajouter-maintenance" data-target="#modal-ajouter-maintenance"><span class="fa fa-plus mr-2"></span>Ajouter</button>
                         </div>
                         <!-- /.card-header -->
@@ -138,10 +138,7 @@
                                             <td>{{ formatDate($maintenance->date_heure) }}</td>
                                             <td>
                                                 <span class="d-block mb-2"><b>TOTAL: </b>{{ formatMoney($maintenance->montantTotal()) }}</span>
-                                                <span class="d-block font-weight-bold">Details</span>
-                                                <hr>
-                                                <span class="d-block"><b>Main d'oeuvre: </b> {{ formatMoney($maintenance->main_oeuvre) }}</span>
-
+                                                <span class="d-block"><b>Main d'&oelig;uvre: </b> {{ formatMoney($maintenance->main_oeuvre) }}</span>
                                                 @if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
                                                     <span class="d-block"><b>Pièces: </b></span>
                                                     <ul>
@@ -194,13 +191,14 @@
             </div>
         </div>
     </section>
+
 </div>
 
 
 {{-- Modal pour ajouter une dépense --}}
 
 <div class="modal fade" id="modal-ajouter-maintenance">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
                 <h4 class="modal-title">Enregistrer une dépense</h4>
@@ -253,7 +251,7 @@
                                 </div>
                                 <div class="col-sm-8">
                                     <div class="input-group date_heure" id="date_heure" data-target-input="nearest">
-                                        <input onchange="resetStyle(this)" type="text" placeholder="Date & heure du dépense" class="form-control datetimepicker-input" data-target="#date_heure" name="date_heure" required="">
+                                        <input onchange="resetStyle(this)" type="text" placeholder="Date & heure du dépense" class="form-control datetimepicker-input" data-target="#date_heure" name="date_heure">
                                         <div class="input-group-append" data-target="#date_heure" data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
@@ -307,7 +305,7 @@
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="nom_reparateur" id="nom_reparateur" placeholder="Nom et prénoms de l'agent">
+                                    <input onchange="resetStyle(this)" type="text" class="form-control" name="nom_reparateur" id="nom_reparateur" placeholder="Nom et prénoms de l'agent">
                                 </div>
                             </div>
 
@@ -317,7 +315,7 @@
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="tel_reparateur" id="tel_reparateur" placeholder="Téléphone de l'agent">
+                                    <input onchange="resetStyle(this)" type="text" class="form-control" name="tel_reparateur" id="tel_reparateur" placeholder="Téléphone de l'agent">
                                 </div>
                             </div>
 
@@ -327,7 +325,7 @@
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="adresse_reparateur" id="adresse_reparateur" placeholder="Adresse de l'agent">
+                                    <input onchange="resetStyle(this)" type="text" class="form-control" name="adresse_reparateur" id="adresse_reparateur" placeholder="Adresse de l'agent">
                                 </div>
                             </div>
                         </div>
@@ -375,7 +373,7 @@
 {{-- Modal pour modifier une dépense --}}
 
 <div class="modal fade" id="modal-modifier-maintenance">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
                 <h4 class="modal-title">Enregistrer une dépense</h4>
@@ -482,7 +480,7 @@
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="nom_reparateur" id="nom_reparateur" placeholder="Nom et prénoms de l'agent">
+                                    <input onchange="resetStyle(this)" type="text" class="form-control" name="nom_reparateur" id="nom_reparateur" placeholder="Nom et prénoms de l'agent">
                                 </div>
                             </div>
 
@@ -492,7 +490,7 @@
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="tel_reparateur" id="tel_reparateur" placeholder="Téléphone de l'agent">
+                                    <input onchange="resetStyle(this)" type="text" class="form-control" name="tel_reparateur" id="tel_reparateur" placeholder="Téléphone de l'agent">
                                 </div>
                             </div>
 
@@ -502,7 +500,7 @@
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="adresse_reparateur" id="adresse_reparateur" placeholder="Adresse de l'agent">
+                                    <input onchange="resetStyle(this)" type="text" class="form-control" name="adresse_reparateur" id="adresse_reparateur" placeholder="Adresse de l'agent">
                                 </div>
                             </div>
                         </div>
@@ -550,7 +548,7 @@
 {{-- Supprimer un maintenance --}}
 
 <div class="modal fade" id="modal-supprimer-maintenance">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header modal-header-danger">
                 <h4 class="modal-title">Supprimer une maintenance</h4>
@@ -712,6 +710,26 @@
     <!-- /.modal-dialog -->
 </div>
 
+<div class="modal fade" id="error">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h6 class="modal-title">Une erreur s'est produite</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="message">Vous devez remplir le nom</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-danger"><i class="fa fa-plus mr-2" style="transform: rotate(45deg)"></i>Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection
 
 @section('scripts')
@@ -776,6 +794,7 @@ $(document).on("submit", "#form-modifier-maintenance", function (e) {
         Object.entries(errors).forEach((error, key) => {
             let name = document.getElementsByName(error[0])[1]
             $(name).addClass('border-danger');
+            $(name).next().remove()
             $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
         })
     })

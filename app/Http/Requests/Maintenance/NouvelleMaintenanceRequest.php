@@ -27,7 +27,7 @@ class NouvelleMaintenanceRequest extends FormRequest
     public function rules()
     {
         return [
-            "type" => ["required", "sometimes", "in:Réparation,Maintenance"],
+            "type" => ["required", "sometimes", "in:Reparation,Maintenance"],
             "titre" => ["required", "min:5", "max:255", "sometimes"],
             "date_heure" => ["required", "date", "date_format:Y-m-d H:i:s"],
             "camion_id" => ["required", "numeric", "exists:camions,id"],
@@ -37,6 +37,13 @@ class NouvelleMaintenanceRequest extends FormRequest
             "tel_reparateur" => ["required"],
             "adresse_reparateur" => ["required", "sometimes"],
             "pieces" => ["nullable", "sometimes"],
+        ];
+    }
+
+    public function messages() : array
+    {
+        return [
+            "type.required" => "Le type est obligatoire (Reparation / Maintenance)",
         ];
     }
 

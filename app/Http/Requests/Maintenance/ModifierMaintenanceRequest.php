@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Maintenance;
 
-use App\Models\Maintenance\Maintenance;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -28,7 +27,7 @@ class ModifierMaintenanceRequest extends FormRequest
     public function rules()
     {
         return [
-            "type" => ["required", "sometimes", "in:Réparation,Maintenance"],
+            "type" => ["required", "sometimes", "in:Reparation,Maintenance"],
             "titre" => ["required", "min:5", "max:255", "sometimes", "unique:maintenances,titre,".$this->maintenance->id.",id"],
             "date_heure" => ["required", "date", "date_format:Y-m-d H:i:s"],
             "camion_id" => ["required", "numeric", "exists:camions,id"],
