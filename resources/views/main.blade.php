@@ -167,6 +167,11 @@
                 me.removeAttr("disabled");
             }
         }
+
+        function etc(text, count){
+            var result = text.slice(0, count) + (text.length > count ? "..." : "");
+            return result;
+        }
     </script>
         @php
             $notification = Session::has("notification") === true ? Session::get("notification") : null;

@@ -35,7 +35,7 @@ class TrajetController extends Controller
             "date_heure_depart" => ['required', 'date'],
             "date_heure_arrivee" => ['required', 'date'],
             "carburantRestant" => ['nullable', 'numeric'],
-            "poids" => ['nullable', 'numeric']
+            "poids" => ['nullable', 'numeric' , "min:0"]
         ]);
 
         $res = [];
@@ -305,7 +305,7 @@ class TrajetController extends Controller
             "date_heure_arrivee" => ['required', 'date'],
             "itineraire" => ["required", "sometimes"],
             "carburantRestant" => ['nullable', 'numeric'] ,
-            "poids" => ['nullable', 'numeric']
+            "poids" => ['nullable', 'numeric' , "min:0"]
         ]);
 
         $res = [];

@@ -54,12 +54,12 @@
 
         <div class="col-md-8 px-3">
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="info-box">
                         <span class="info-box-icon bg-primary"><i class="fa fa-id-card"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Chauffeur</span>
-                            <p class="info-box-number">
+                            <p class="info-box-number voir-camion-statistique">
                                 @if ($camion->dernierTrajet() !== null)
                                     @if ($camion->dernierTrajet()->chauffeur !== null)
                                         {{ $camion->dernierTrajet()->chauffeur->name }}
@@ -76,29 +76,55 @@
                     <!-- /.info-box -->
 
                 </div>
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="info-box">
-                        <span class="info-box-icon bg-info"><i class="fa fa-battery-half"></i></span>
+                        <span class="info-box-icon bg-danger"><i class="fa fa-battery-half"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Carburant restant</span>
-                            <p class="info-box-number">{{$stock_carburant}}L</p>
+                            <p class="info-box-number voir-camion-statistique ">{{$stock_carburant}}L</p>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
 
                 </div>
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="info-box">
-                        <span class="info-box-icon bg-success"><i class="fa fa-road"></i></span>
+                        <span class="info-box-icon bg-info"><i class="fa fa-road"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Trajet en cours</span>
-                            <p class="info-box-number">
+                            <p class="info-box-number voir-camion-statistique">
                                 @if ($camion->dernierTrajet(true) !== null)
                                 {{ $camion->dernierTrajet(true)->nomItineraire() }}
                                 @else
                                 Aucun
                                 @endif
+                            </p>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-lg-6">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-warning"><i style="" class="fa fa-university"></i></span>
+                        <div class="info-box-content" >
+                            <span class="info-box-text">Assurance</span>
+                            <p class="info-box-number voir-camion-statistique" >
+                                {{isset($assurance[0]->date_echeance) === true ? date("d/m/Y",strtotime($assurance[0]->date_echeance)) : "Aucune"}}
+                            </p>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-lg-6">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-success"><i class="fa fa-medkit"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Visite technique</span>
+                            <p class="info-box-number voir-camion-statistique">
+                                {{isset($visiteTechnique[0]->date_echeance) === true ? date("d/m/Y", strtotime($visiteTechnique[0]->date_echeance)) : "Aucune"}}
                             </p>
                         </div>
                         <!-- /.info-box-content -->
@@ -118,6 +144,8 @@
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a style="color:#023047 !important;" class="nav-item nav-link {{ ( isset($tab) === false || $tab == 1 ) ? 'active' : '' }} " id="nav-carburant-tab" data-toggle="tab" href="#nav-carburant" role="tab" aria-controls="nav-carburant" aria-selected="true">Carburants</a>
                         <a style="color:#023047 !important;" class="nav-item nav-link {{ ( isset($tab) === true && intval($tab) === 2 ) ? 'active' : ''}} " id="nav-trajet-tab" data-toggle="tab" href="#nav-trajet" role="tab" aria-controls="nav-trajet" aria-selected="false">Trajets</a>
+                        <a style="color:#023047 !important;" class="nav-item nav-link {{ ( isset($tab) === true && intval($tab) === 3 ) ? 'active' : ''}} " id="nav-papier-tab" data-toggle="tab" href="#nav-papier" role="tab" aria-controls="nav-papier" aria-selected="false">Papier</a>
+
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -272,6 +300,67 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    <div class="tab-pane fade {{( isset($tab) === true && $tab == 3 ) ? ' show active ' : '' }}" id="nav-papier" role="tabpanel" aria-labelledby="nav-papier-tab">
+                        <div class="card-header">
+                            <h3 class="card-title" style="color: gray;display:none;" ></h3>
+                            <button class="float-right btn btn-success" id="btn-modal-papier" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-papier"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="papiers" class="table table-bordered table-striped dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>Désignation</th>
+                                        <th>Type</th>
+                                        <th>Date d'obtention</th>
+                                        <th>Date d'échéance</th>
+                                        <th style="text-align: center;">Actions</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (isset($papiers) === true && $papiers->count() > 0)
+                                    @foreach ($papiers as $papier)
+
+                                    <tr>
+                                        <td>{{$papier->designation}}</td>
+                                        <td>{{$papier->type}}</td>
+                                        <td>{{$papier->date}}</td>
+                                        <td>{{$papier->date_echeance}}</td>
+                                        <td >
+                                            <div class="row">
+                                                <div class="col-sm-12" style="text-align: center">
+                                                    <button class="btn btn-sm btn-primary btn-papier-modifier" data-url="{{route('papier.update', ["papier" => $papier->id])}}"  data-show="{{route('papier.modifier', ["papier" => $papier->id])}}" ><span class="fa fa-edit"></span></button>
+                                                    <button class="btn btn-sm btn-danger btn-papier-supprimer" data-url="{{route('papier.supprimer', ["papier" => $papier->id])}}" data-show="{{route('papier.modifier', ["papier" => $papier->id])}}"><span class="fa fa-trash"></span></button>
+                                                </div>
+                                               
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                    @endforeach
+
+                                    @else
+                                   
+                                    @endif
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Désignation</th>
+                                        <th>Type</th>
+                                        <th>Date d'obtention</th>
+                                        <th>Date d'échéance</th>
+                                        <th style="text-align: center;">Actions</th>
+
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
                 </div>
 
             </div>
@@ -300,7 +389,7 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date" name="date" required="">
+                                <input type="text" placeholder="Date" class="form-control datetimepicker-input" data-target="#date" name="date" required="">
                                 <div class="input-group-append" data-target="#date" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
@@ -312,7 +401,7 @@
                             <label for="quantite">Quantité :</label>
                         </div>
                         <div class="col-sm-8">
-                            <input type="number" class="form-control" name="quantite" required>
+                            <input type="number"  placeholder="Quantité" class="form-control" name="quantite" required>
                         </div>
                     </div>
 
@@ -364,7 +453,7 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date_modifier" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_modifier" id="modifier_date" name="date" required="">
+                                <input type="text" placeholder="Date" class="form-control datetimepicker-input" data-target="#date_modifier" id="modifier_date" name="date" required="">
                                 <div class="input-group-append" data-target="#date_modifier" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
@@ -376,7 +465,7 @@
                             <label for="quantite">Quantité :</label>
                         </div>
                         <div class="col-sm-8">
-                            <input type="number" class="form-control" name="quantite" id="modifier_quantite" required>
+                            <input type="number" placeholder="Quantité" class="form-control" name="quantite" id="modifier_quantite" required>
                         </div>
                     </div>
                     <div class="row" style="margin-top: 3px; ">
@@ -575,6 +664,8 @@
                             </div>
                             <div class="col-sm-8">
                                 <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
+                                <div class="invalid-feedback"></div>
+
                             </div>
                         </div>
     
@@ -717,6 +808,8 @@
                             </div>
                             <div class="col-sm-8">
                                 <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
+                                <div class="invalid-feedback"></div>
+
                             </div>
                         </div>
     
@@ -849,6 +942,301 @@
 
 {{-- Fin trajets --}}
 
+
+{{-- Debut papier --}}
+<!---- modal pour ajouter papier --->
+<div class="modal fade" id="modal-papier">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-success">
+                <h4 class="modal-title">Ajouter un papier</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-ajouter-papier">
+                <form action="{{route('papier.ajouter')}}" method="post" role="form" id="form-ajouter-papier" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="camion_id" value={{$camion->id}}>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="designation">Désignation:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="designation" placeholder="Désignation">
+                            <div  class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="date">Date d'obtention:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date-obtention" data-target-input="nearest">
+                                <input type="text" placeholder="Date d'obtention du papier" class="form-control datetimepicker-input" data-target="#date-obtention" name="date_obtention" required="">
+                                <div class="input-group-append" data-target="#date-obtention" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                <div  class="invalid-feedback"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="date">Date d'échéance:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date-echeance" data-target-input="nearest">
+                                <input type="text" placeholder="Date d'échéance du papier" class="form-control datetimepicker-input" data-target="#date-echeance" name="date_echeance" required="">
+                                <div class="input-group-append" data-target="#date-echeance" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                <div  class="invalid-feedback"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="quantite">Type :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <select name="type" id="" class="form-control">
+                                <option value="">Type</option>
+                                @foreach (App\Models\Papier::TYPE as $item)
+                                <option value="{{$item}}">{{ucwords($item)}}</option>
+                                @endforeach
+                            </select>
+                            <div  class="invalid-feedback"></div>
+
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-4">
+                            <label for="photo">Photo</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
+                                </div>
+                                <div class="custom-file">
+                                  <input type="file" name="photo" class="custom-file-input form-control" id="inputGroupFile01"
+                                    aria-describedby="inputGroupFileAddon01">
+                                  <label class="custom-file-label" for="inputGroupFile01">Photo</label>
+                                </div>
+                            </div>
+                            <div  class="invalid-feedback photo-feedback"></div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                <button type="button" id="button-ajouter-papier" form="form-ajouter-papier" class="float-right btn btn-success"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!---- / modal pour ajouter papier-->
+
+
+<!---- modal pour modifier papier --->
+<div class="modal fade" id="modal-modifier-papier">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <h4 class="modal-title">Modifier un papier</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-ajouter-papier">
+                <form action="#" method="post" role="form" id="form-modifier-papier" enctype="multipart/form-data">
+                    @csrf
+                    @method("patch")
+                    <input type="hidden" name="camion_id" value={{$camion->id}}>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="designation">Désignation:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="designation" placeholder="Désignation">
+                            <div  class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="date">Date d'obtention:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date-obtention-modifier" data-target-input="nearest">
+                                <input type="text" placeholder="Date d'obtention du papier" class="form-control datetimepicker-input" data-target="#date-obtention-modifier" name="date_obtention" required="">
+                                <div class="input-group-append" data-target="#date-obtention-modifier" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                <div  class="invalid-feedback"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="date">Date d'échéance:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date-echeance-modifier" data-target-input="nearest">
+                                <input type="text" placeholder="Date d'échéance du papier" class="form-control datetimepicker-input" data-target="#date-echeance-modifier" name="date_echeance" required="">
+                                <div class="input-group-append" data-target="#date-echeance-modifier" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                <div  class="invalid-feedback"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="quantite">Type :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <select name="type" id="" class="form-control">
+                                <option value="">Type</option>
+                                @foreach (App\Models\Papier::TYPE as $item)
+                                <option value="{{$item}}">{{ucwords($item)}}</option>
+                                @endforeach
+                            </select>
+                            <div  class="invalid-feedback"></div>
+
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-4">
+                            <label for="photo">Photo</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
+                                </div>
+                                <div class="custom-file">
+                                  <input type="file" name="photo" class="custom-file-input form-control" id="inputGroupFile01"
+                                    aria-describedby="inputGroupFileAddon01">
+                                  <label class="custom-file-label" for="inputGroupFile01">Photo</label>
+                                </div>
+                            </div>
+                            <div  class="invalid-feedback photo-feedback"></div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                <button type="button" id="button-modifier-papier" form="form-modifier-papier" class="float-right btn btn-primary"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!---- / modal pour modifier papier-->
+
+<!---- modal pour supprimer papier --->
+<div class="modal fade" id="modal-supprimer-papier">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h4 class="modal-title">Supprimer un papier</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-supprimer-papier">
+                <form action="#" method="post" role="form" id="form-supprimer-papier" enctype="multipart/form-data">
+                    @csrf
+                    @method("patch")
+                    <input type="hidden" name="camion_id" value={{$camion->id}}>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="designation">Désignation:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input disabled type="text" class="form-control" name="designation" placeholder="Désignation">
+                            <div  class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="date">Date d'obtention:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date-obtention-modifier" data-target-input="nearest">
+                                <input disabled type="text" placeholder="Date d'obtention du papier" class="form-control datetimepicker-input" data-target="#date-obtention-modifier" name="date_obtention" required="">
+                                <div class="input-group-append" data-target="#date-obtention-modifier" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                <div  class="invalid-feedback"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="date">Date d'échéance:</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="date-echeance-modifier" data-target-input="nearest">
+                                <input disabled type="text" placeholder="Date d'échéance du papier" class="form-control datetimepicker-input" data-target="#date-echeance-modifier" name="date_echeance" required="">
+                                <div class="input-group-append" data-target="#date-echeance-modifier" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                <div  class="invalid-feedback"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" >
+                        <div class="col-sm-4">
+                            <label for="quantite">Type :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <select disabled name="type" id="" class="form-control">
+                                <option value="">Type</option>
+                                @foreach (App\Models\Papier::TYPE as $item)
+                                <option value="{{$item}}">{{ucwords($item)}}</option>
+                                @endforeach
+                            </select>
+                            <div  class="invalid-feedback"></div>
+
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                <a href="">
+                    <button type="button" id="button-supprimer-papier" form="form-supprimer-papier" class="float-right btn btn-danger"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
+
+                </a>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!---- / modal pour modifier papier-->
+
+{{-- Fin papier --}}
+
 <!-- page script -->
 @endsection
 
@@ -862,7 +1250,14 @@
 <script src="{{asset('assets/adminlte/plugins/moment/moment.min.js')}}"></script>
 <script src="{{asset('assets/adminlte/plugins/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
 <script>
+    // Limitation de nombre de lettre sur les statistique
 
+    $(".voir-camion-statistique").each(function(value){
+        let text = $(this).html().trim();
+        $(this).html(etc(text, 25))
+    })
+
+    // Limitation de nombre de lettre sur les statistique
 
     var nb_itineraire_formulaire = 0;
 
@@ -932,7 +1327,7 @@
         _this.parent().parent().parent().find(".itineraire_data").val(JSON.stringify(data_itineraire));
     })
 
-    $("#flux-carburants , #trajets ").DataTable({
+    $("#flux-carburants , #trajets , #papiers ").DataTable({
         "responsive": true,
         "autoWidth": false,
         "searching": true,
@@ -995,7 +1390,7 @@
     $(document).on("click", ".modifier-trajet", function(){
         let url = $(this).attr("data-show-url");
         let url_update = $(this).attr("data-update-url")
-
+        viderFormulaireAjoutTrajet($("#form-modifier-trajet"));
         $("#modal-modifier-trajet").modal({
             backdrop: 'static',
             keyboard: false
@@ -1173,7 +1568,7 @@
                 },
                 error: function (data) {
                         donnee = $.parseJSON(data.responseText);
-                        console.log( donnee);
+                      
 
                         if(donnee.message == "The given data was invalid."){
                            
@@ -1199,6 +1594,14 @@
                                 
                             }else{
                                     $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
+                            }
+
+                            if(donnee.errors.hasOwnProperty("poids") === true ){
+                                
+                                $("#form-ajouter-trajet input[name=poids]").addClass("is-invalid").next().html("Le poids doit être supérieur à zéro").show(300)
+                                
+                            }else{
+                                    $("#form-ajouter-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
                             }
                         }
                         spinning(me, 2);
@@ -1295,6 +1698,7 @@
 
                 donnee = $.parseJSON(data.responseText);
 
+
                 if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
                     $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
                                 
@@ -1317,6 +1721,13 @@
                     $("#status-modifier-feedback").html("").hide(300);
                 }
 
+                if(donnee.errors.hasOwnProperty("poids") === true ){
+                    $("#form-modifier-trajet input[name=poids]").addClass("is-invalid").next().html("Le poids doit être supérieur à zéro").show(300)
+                                
+                }else{
+                        $("#form-modifier-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
+                }
+
                 spinning(me, 2);
             }
 
@@ -1324,7 +1735,7 @@
     })
 
     $(document).on("click", "#btn-modal-trajet", function(e){
-        viderFormulaireAjoutTrajet();
+        viderFormulaireAjoutTrajet($("#form-modifier-trajet"));
     })
 
 
@@ -1349,13 +1760,111 @@
         }
     }
 
-    function viderFormulaireAjoutTrajet(){
-        $("#form-ajouter-trajet .mb-3 input").val("").removeClass("is-invalid");
-        $("#form-ajouter-trajet select").val("").removeClass("is-invalid").change();
-        $("#form-ajouter-trajet .invalid-feedback").html("").hide();
-        $("#form-ajouter-trajet").parent().next().find(".alert").html("");
-        $("#form-ajouter-trajet").parent().next().hide(200);
-    }
+   
+
+
+    // -------------------- EVENEMENT LIEE AU PAPIER ------------------------ //
+  
+    $(document).on("click", ".btn-papier-supprimer", function(e){
+        let url = $(this).attr("data-show");
+        let url_delete = $(this).attr("data-url");
+
+        //$("#modal-supprimer-papier").find("form").attr("action", url_update);
+        $("#button-supprimer-papier").parent().attr("href", url_delete);
+        $.get(url, {}, dataType = "JSON").done(function (data) {
+
+            $("#modal-supprimer-papier").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $("#modal-supprimer-papier").find("input[name=designation]").val(data.designation);
+            $("#modal-supprimer-papier").find("input[name=date_obtention]").val(data.date);
+            $("#modal-supprimer-papier").find("input[name=date_echeance]").val(data.date_echeance);
+            $("#modal-supprimer-papier").find("select[name=type]").val(data.type).change();
+           
+            
+        });
+    })
+
+    $(document).on("click", ".btn-papier-modifier", function(e){
+        let url = $(this).attr("data-show");
+        let url_update = $(this).attr("data-url");
+
+        $("#modal-modifier-papier").find("form").attr("action", url_update);
+        viderFormulaireAjouterPapier($("#modal-modifier-papier"));
+        $.get(url, {}, dataType = "JSON").done(function (data) {
+
+            $("#modal-modifier-papier").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $("#modal-modifier-papier").find("input[name=designation]").val(data.designation);
+            $("#modal-modifier-papier").find("input[name=date_obtention]").val(data.date);
+            $("#modal-modifier-papier").find("input[name=date_echeance]").val(data.date_echeance);
+            $("#modal-modifier-papier").find("select[name=type]").val(data.type).change();
+           
+            
+        });
+    });
+
+    $(document).on("click", "#btn-modal-papier", function(e){
+        viderFormulaireAjouterPapier($("#modal-ajouter-papier"));
+    });
+
+    $(document).on("click", "#button-ajouter-papier , #button-modifier-papier", function(e){
+        let button = $(this);
+        spinning(button);
+
+        let me = button.parent().parent().find("form")
+
+        let url = me.attr("action");
+        let id_form =  me.attr("id");
+        let data = new FormData(document.getElementById(id_form));
+
+        $.ajax({
+            url : url,
+            type : "POST",
+            dataType : "JSON",
+            data : data,
+            contentType: false,
+            processData: false,
+            error : function (data) {
+                let donnees = $.parseJSON(data.responseText);
+                name_list = Object.keys(donnees.errors);
+                
+
+                me.find(".form-control").each(function (value, index) {
+                    let name = $(this).attr("name");
+                    if(donnees.errors.hasOwnProperty(name)){                        
+                        me.find("input[name="+name+"] , select[name="+name+"]").addClass("is-invalid")
+                        .parent().find(".invalid-feedback").html(donnees.errors[name][0]).show(300);
+                        
+                        if(name == "photo"){
+                            me.find(".photo-feedback").html(donnees.errors[name][0]).show(300);
+                        }
+                    }else if(name_list.indexOf(name) == -1){
+                        $(this).removeClass("is-invalid").parent().find(".invalid-feedback").html("").hide();
+
+                        if(name == "photo"){
+                            me.find(".photo-feedback").html("").hide();
+                        }
+                    }
+                })
+
+                spinning(button, 2);
+            },
+            success : function (data) {
+                spinning(button, 2);
+                if(data.status == "success"){
+                    window.location.href = data.value;
+                }
+            }
+        });
+    });
+
+    // -------------------- EVENEMENT LIEE AU PAPIER ------------------------ //
 
     function resizeDataTable(element , content) {
 
@@ -1370,6 +1879,21 @@
                }
            }, 200);
     }
+
+    function viderFormulaireAjoutTrajet(me){
+        me.find(" .mb-3 input").val("").removeClass("is-invalid");
+        me.find(" select").val("").removeClass("is-invalid").change();
+        me.find(" .invalid-feedback").html("").hide();
+        me.parent().next().find(".alert").html("");
+        me.parent().next().hide(200);
+    }
+
+    function viderFormulaireAjouterPapier(me){
+        me.find(" input[type!='hidden'] , #form-ajouter-papier select").val("").removeClass("is-invalid");
+        me.find(".invalid-feedback").html("").hide();
+    }
+
+
 
 
     
