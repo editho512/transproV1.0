@@ -28,7 +28,7 @@ class ModifierDepenseRequest extends FormRequest
     {
         return [
             "type" => ['required', 'min:5', 'max:255'],
-            "date_heure" => ['required', 'date', 'date_format:Y-m-d H:i:s'],
+            "date_heure" => ['required', 'date', 'date_format:Y-m-d H:i:s', 'before_or_equal:' . Carbon::now()->toDateTimeString()],
             "camion_id" => ['nullable', 'numeric', 'exists:camions,id'],
             "chauffeur_id" => ['nullable', 'numeric', 'exists:chauffeurs,id'],
             "commentaire" => ['nullable', 'sometimes', 'min:5', 'max:5000'],
@@ -52,7 +52,7 @@ class ModifierDepenseRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge(['date_heure' => Carbon::parse($this->date_heure, 'EAT')->toDateTimeString()]);
+        if ($this->date_heure !== null) $this->merge(['date_heure' => Carbon::parse($this->date_heure, 'EAT')->toDateTimeString()]);
     }
 
 

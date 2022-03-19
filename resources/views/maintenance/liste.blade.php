@@ -426,7 +426,7 @@
                                 </div>
                                 <div class="col-sm-8">
                                     <div class="input-group date_heure_edit" id="date_heure_edit" data-target-input="nearest">
-                                        <input onchange="resetStyle(this)" type="text" placeholder="Date & heure du dépense" class="form-control datetimepicker-input" data-target="#date_heure_edit" name="date_heure" required="">
+                                        <input onchange="resetStyle(this)" type="text" placeholder="Date & heure du dépense" class="form-control datetimepicker-input" data-target="#date_heure_edit" name="date_heure">
                                         <div class="input-group-append" data-target="#date_heure_edit" data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
@@ -774,12 +774,20 @@ $(document).on("submit", "#form-ajouter-maintenance", function (e) {
 
         Object.entries(errors).forEach((error, key) => {
             let name = document.getElementsByName(error[0])[0]
-            $(name).addClass(['border-danger', 'has-validation']);
-            $(name).next().remove()
-            $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
+            $(name).addClass(['border-danger']);
+            let next = $(name).next()[0]
+
+            if (next !== undefined && next.tagName === "DIV") {
+                $(next).next().remove()
+                $(next.parentElement).after('<span class="text-danger">' + error[1][0] + '</span>')
+            } else {
+                $(name).next().remove()
+                $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
+            }
         })
     })
 })
+
 
 $(document).on("submit", "#form-modifier-maintenance", function (e) {
     e.preventDefault()
@@ -793,9 +801,16 @@ $(document).on("submit", "#form-modifier-maintenance", function (e) {
 
         Object.entries(errors).forEach((error, key) => {
             let name = document.getElementsByName(error[0])[1]
-            $(name).addClass('border-danger');
-            $(name).next().remove()
-            $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
+            $(name).addClass(['border-danger']);
+            let next = $(name).next()[0]
+
+            if (next !== undefined && next.tagName === "DIV") {
+                $(next).next().remove()
+                $(next.parentElement).after('<span class="text-danger">' + error[1][0] + '</span>')
+            } else {
+                $(name).next().remove()
+                $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
+            }
         })
     })
 })
@@ -919,8 +934,8 @@ function savePiece (button) {
     let Q = PU.nextElementSibling
     let TOTAL = Q.nextElementSibling
 
-    if (isNaN(parseFloat(PU.firstElementChild.value))) { alert("Veillez remplir le montant du prix unitaire"); return; }
-    if (isNaN(parseInt(Q.firstElementChild.value,))) { alert("Veillez remplir la quantité"); return; }
+    if (isNaN(parseFloat(PU.firstElementChild.value)) || parseFloat(PU.firstElementChild.value) < 0) { $('#error p').html("Prix unitaire vide ou invalide"); $('#error').modal('show'); return; }
+    if (isNaN(parseInt(Q.firstElementChild.value)) || parseInt(Q.firstElementChild.value) < 0) { $('#error p').html("Quantité vide ou invalide"); $('#error').modal('show'); return; }
 
     pieces[LIB.innerHTML] = {
         nom: LIB.innerHTML,

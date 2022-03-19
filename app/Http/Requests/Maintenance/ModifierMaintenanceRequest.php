@@ -29,7 +29,7 @@ class ModifierMaintenanceRequest extends FormRequest
         return [
             "type" => ["required", "sometimes", "in:Reparation,Maintenance"],
             "titre" => ["required", "min:5", "max:255", "sometimes", "unique:maintenances,titre,".$this->maintenance->id.",id"],
-            "date_heure" => ["required", "date", "date_format:Y-m-d H:i:s"],
+            "date_heure" => ["required", "date", "date_format:Y-m-d H:i:s", 'before_or_equal:' . Carbon::now('EAT')->toDateTimeString()],
             "camion_id" => ["required", "numeric", "exists:camions,id"],
             "main_oeuvre" => ["required", "numeric", "min:1", "max:999999999999"],
             "commentaire" => ["nullable", "sometimes", "min:5", "max:5000"],
@@ -48,7 +48,8 @@ class ModifierMaintenanceRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
-        $this->merge(['date_heure' => Carbon::parse($this->date_heure, 'EAT')->toDateTimeString()]);
+        if ($this->date_heure !== null) $this->merge(['date_heure' => Carbon::parse($this->date_heure, 'EAT')->toDateTimeString()]);
+        if (json_decode($this->pieces, true) === []) $this->merge(['pieces' => null]);
     }
 
 

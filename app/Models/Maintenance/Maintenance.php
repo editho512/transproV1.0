@@ -25,9 +25,11 @@ class Maintenance extends Model
     {
         $montant = $this->main_oeuvre;
 
-        foreach (json_decode($this->pieces, true) as $piece)
-        {
-            $montant += $piece['pu'] * $piece['quantite'];
+        if ($this->pieces !== null AND json_decode($this->pieces, true) !== []) {
+            foreach (json_decode($this->pieces, true) as $piece)
+            {
+                $montant += $piece['pu'] * $piece['quantite'];
+            }
         }
 
         return doubleval($montant);
