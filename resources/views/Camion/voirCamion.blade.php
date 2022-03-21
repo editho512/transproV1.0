@@ -78,7 +78,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="info-box">
-                        <span class="info-box-icon bg-info"><i class="fa fa-battery-half"></i></span>
+                        <span class="info-box-icon bg-info"><img src="{{ asset('assets/images/icons/gas.png') }}" class="w-50" alt="" srcset=""></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Carburant restant</span>
                             <h5 class="info-box-number">{{$stock_carburant}}L</h5>

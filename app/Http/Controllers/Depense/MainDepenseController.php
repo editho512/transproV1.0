@@ -6,6 +6,7 @@ use App\Models\Camion;
 use App\Models\Chauffeur;
 use Illuminate\Http\Request;
 use App\Models\Depense\Depense;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -50,31 +51,33 @@ class MainDepenseController extends Controller
     /**
      * Permet de supprimer un dépense
      *
-     * @param Depense $depense
+     * @param Depense $depense Dépense a supprimer
      * @return RedirectResponse
      */
     public function supprimer(Request $request, Depense $depense) : RedirectResponse
     {
         if ($depense->delete())
-        {
             $request->session()->flash("notification", [
                 "value" => "Dépense supprimé avec success" ,
                 "status" => "success"
             ]);
-        }
         else
-        {
             $request->session()->flash("notification", [
                 "value" => "Une erreur s'est produite lors de la suppresion" ,
                 "status" => "error"
             ]);
-        }
 
         return redirect()->back();
     }
 
 
-    public function voir(Depense $depense)
+    /**
+     * Voir details d'une dépense
+     *
+     * @param Depense $depense La dépense a voir
+     * @return JsonResponse La dépense sous forme de json
+     */
+    public function voir(Depense $depense) : JsonResponse
     {
         return response()->json($depense);
     }
