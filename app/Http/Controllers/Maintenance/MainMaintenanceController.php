@@ -70,4 +70,9 @@ class MainMaintenanceController extends Controller
 
         return redirect()->back();
     }
+
+    public function voir(Maintenance $maintenance)
+    {
+        return response()->json($maintenance);
+    }
 }

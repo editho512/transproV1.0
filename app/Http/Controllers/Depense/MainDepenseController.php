@@ -72,4 +72,10 @@ class MainDepenseController extends Controller
 
         return redirect()->back();
     }
+
+
+    public function voir(Depense $depense)
+    {
+        return response()->json($depense);
+    }
 }

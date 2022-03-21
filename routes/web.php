@@ -121,9 +121,12 @@ Route::prefix('depense')->middleware(['auth'])->group(function () {
     Route::get('nouvelle', [NouvelleDepenseController::class, 'create'])->name('depense.nouvelle');
     Route::post('nouvelle', [NouvelleDepenseController::class, 'store'])->name('depense.post.nouvelle');
 
+    // Voir un dépense
+    Route::get('voir/{depense}', [MainDepenseController::class, 'voir'])->name('depense.voir');
+
     // Modifier un dépense
     Route::get('modifier/{depense}', [ModifierDepenseController::class, 'create'])->name('depense.modifier');
-    Route::post('nouvelle/{depense}', [ModifierDepenseController::class, 'store'])->name('depense.post.modifier');
+    Route::post('modifier/{depense}', [ModifierDepenseController::class, 'store'])->name('depense.post.modifier');
 
     // Supprimer une dépense
     Route::post('supprimer/{depense}', [MainDepenseController::class, 'supprimer'])->name('depense.post.supprimer');
@@ -144,9 +147,12 @@ Route::prefix('maintenance')->middleware(['auth'])->group(function () {
     Route::get('nouvelle', [NouvelleMaintenanceController::class, 'create'])->name('maintenance.nouvelle');
     Route::post('nouvelle', [NouvelleMaintenanceController::class, 'store'])->name('maintenance.post.nouvelle');
 
+    // Voir details maintenance
+    Route::get('voir/{maintenance}', [MainMaintenanceController::class, 'voir'])->name('maintenance.voir');
+
     // Modifier un dépense
     Route::get('modifier/{maintenance}', [ModifierMaintenanceController::class, 'create'])->name('maintenance.modifier');
-    Route::post('nouvelle/{maintenance}', [ModifierMaintenanceController::class, 'store'])->name('maintenance.post.modifier');
+    Route::post('modifier/{maintenance}', [ModifierMaintenanceController::class, 'store'])->name('maintenance.post.modifier');
 
     // Supprimer une dépense
     Route::post('supprimer/{maintenance}', [MainMaintenanceController::class, 'supprimer'])->name('maintenance.post.supprimer');

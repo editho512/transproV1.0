@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Maintenance;
 
+use App\Rules\PhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -34,7 +35,7 @@ class ModifierMaintenanceRequest extends FormRequest
             "main_oeuvre" => ["required", "numeric", "min:1", "max:999999999999"],
             "commentaire" => ["nullable", "sometimes", "min:5", "max:5000"],
             "nom_reparateur" => ["required", "sometimes", "min:2", "max:500"],
-            "tel_reparateur" => ["required"],
+            "tel_reparateur" => ["required", new PhoneNumber],
             "adresse_reparateur" => ["required", "sometimes"],
             "pieces" => ["nullable", "sometimes"],
         ];

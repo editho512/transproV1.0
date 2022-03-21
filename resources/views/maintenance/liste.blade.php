@@ -163,6 +163,7 @@
                                                 @endif
                                             </td>
                                             <td class="d-flex justify-content-center">
+                                                <button class="btn btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
                                                 <button class="btn btn-primary mr-2" id="modifier-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-maintenance" data-update-url="{{ route('maintenance.post.modifier', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-edit"></i></button>
                                                 <button class="btn btn-danger" id="supprimer-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-maintenance" data-update-url="{{ route('maintenance.post.supprimer', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-trash"></i></button>
                                             </td>
@@ -710,6 +711,158 @@
     <!-- /.modal-dialog -->
 </div>
 
+{{-- Voir une maintenance --}}
+
+<div class="modal fade" id="modal-voir-maintenance">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <h4 class="modal-title">Details maintenance / reparation</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="modal-voir-maintenance">
+                    <div class="row">
+                        <div class="col-md-6 p-3">
+                            <h5 class="text-uppercase mb-4 text-info font-weight-bold">Information de la maintenance</h5>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="type" class="form-label">Type de dépense</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="type" disabled>
+                                </div>
+                            </div>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="titre">Intitulé / Titre</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input disabled type="text" name="titre" class="form-control" id="titre" placeholder="Titre ou intitulé" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="date_heure_edit">Date et heure</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="input-group date_heure_edit" id="date_heure_edit" data-target-input="nearest">
+                                        <input disabled onchange="resetStyle(this)" type="text" placeholder="Date & heure du dépense" class="form-control datetimepicker-input" data-target="#date_heure_edit" name="date_heure" required="">
+                                        <div class="input-group-append" data-target="#date_heure_edit" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="camion">Camion</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select disabled onchange="resetStyle(this)" name="camion_id" id="camion" class="form-control">
+                                        <option value="">Selectionner un camion</option>
+                                        @foreach ($camions as $camion)
+                                            <option value="{{ $camion->id }}">{{ $camion->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="main_oeuvre">Main d'&oelig;uvre</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input disabled type="number" name="main_oeuvre" class="form-control" id="main_oeuvre" placeholder="Montant de la main d'oeuvre" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex d-flex justify-content-between align-items-center">
+                                    <label for="commentaire">Commentaire</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <textarea disabled name="commentaire" class="form-control" id="commentaire" cols="30" rows="2" placeholder="Commentaire"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 p-3">
+
+                            <h5 class="text-uppercase mb-4 text-info font-weight-bold">Information de l'agent</h5>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="nom_reparateur" class="form-label">Nom de l'agent</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input disabled type="text" class="form-control" name="nom_reparateur" id="nom_reparateur" placeholder="Nom et prénoms de l'agent">
+                                </div>
+                            </div>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="tel_reparateur" class="form-label">Téléphone</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input disabled type="text" class="form-control" name="tel_reparateur" id="tel_reparateur" placeholder="Téléphone de l'agent">
+                                </div>
+                            </div>
+
+                            <div class="row mt-1 mb-3">
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center">
+                                    <label for="adresse_reparateur" class="form-label">Adresse</label>
+                                    <label for="">:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input disabled type="text" class="form-control" name="adresse_reparateur" id="adresse_reparateur" placeholder="Adresse de l'agent">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-4 mb-4">
+                            <h5 class="text-uppercase mb-4 text-center text-info font-weight-bold">Détails des matérielles</h5>
+
+                            <table class="table">
+                                <thead>
+                                    <th>Nom de la matérielle</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Quantité</th>
+                                    <th>Montant total</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody id="result-voir">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i style="transform: rotate(45deg)" class="fa fa-plus mr-2"></i>Fermer</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 <div class="modal fade" id="error">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
@@ -847,6 +1000,32 @@ $(document).on("click", "#supprimer-maintenance", function (e) {
         $("#modal-supprimer-maintenance #adresse_reparateur").val(maintenance.adresse_reparateur);
 
         pieces = populatePieceList(maintenance.pieces, '#result-delete', false)
+    })
+})
+
+$(document).on("click", "#voir-maintenance", function (e) {
+    url = $(this).attr("data-show-url");
+
+    document.getElementById('modal-voir-maintenance').getElementsByTagName('tbody')[0].innerHTML = null
+
+    //$("#modal-supprimer-maintenance").modal("show");
+
+    $.ajax(url, {}, dataType ="HTML").done(function (maintenance) {
+        let date = formatAMPM(new Date(maintenance.date_heure)).toUpperCase()
+
+        $("#modal-voir-maintenance #type").val(maintenance.type);
+        $("#modal-voir-maintenance #titre").val(maintenance.titre);
+        $("#modal-voir-maintenance #main_oeuvre").val(maintenance.main_oeuvre);
+        $("#modal-voir-maintenance #date_heure_edit input").val(date);
+        $("#modal-voir-maintenance #camion").val(maintenance.camion_id);
+        $("#modal-voir-maintenance #montant").val(maintenance.montant);
+        $("#modal-voir-maintenance #commentaire").val(maintenance.commentaire);
+
+        $("#modal-voir-maintenance #nom_reparateur").val(maintenance.nom_reparateur);
+        $("#modal-voir-maintenance #tel_reparateur").val(maintenance.tel_reparateur);
+        $("#modal-voir-maintenance #adresse_reparateur").val(maintenance.adresse_reparateur);
+
+        pieces = populatePieceList(maintenance.pieces, '#result-voir', false)
     })
 })
 
