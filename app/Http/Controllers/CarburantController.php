@@ -25,6 +25,7 @@ class CarburantController extends Controller
             "date" => ['required', 'date'],
             "quantite" => ['required', 'numeric', 'min:0'],
             "flux" => ['required', 'numeric', 'min:0', 'max:0'],
+            "prix" => ['required', 'numeric', 'min:0']
         ]);
 
         if ($validator->fails()) {
@@ -77,6 +78,8 @@ class CarburantController extends Controller
             "date" => ['required', 'date'],
             "quantite" => ['required', 'numeric', 'min:0'],
             "flux" => ['required', 'numeric', 'min:0', 'max:0'],
+            "prix" => ['required', 'numeric', 'min:0']
+
         ]);
 
         if ($validator->fails()) {
@@ -96,6 +99,7 @@ class CarburantController extends Controller
     
                 $carburant->date = $data["date"];
                 $carburant->quantite = $data["quantite"];
+                $carburant->prix = $data["prix"];
                 $carburant->flux = $data["flux"];
                 $carburant->camion_id = $data["camion_id"];
                 $carburant->update();

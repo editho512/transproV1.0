@@ -20,7 +20,7 @@ class CreatePapiersTable extends Migration
             $table->dateTime("date");
             $table->dateTime("date_echeance");
             $table->bigInteger("camion_id");
-            $table->text("photo");
+            $table->text("photo")->nullable();
             $table->timestamps();
         });
     }

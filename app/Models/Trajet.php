@@ -218,4 +218,11 @@ class Trajet extends Model
 
         return false;
     }
+
+    public function IsLastFinished(){
+        $next = self::where("id", ">", $this->id)->whereIn("etat", [self::getEtat(1), self::getEtat(2)])->get();
+        return !isset($next[0]->id) ;
+    }
+
+    
 }

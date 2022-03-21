@@ -78,10 +78,10 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="info-box">
-                        <span class="info-box-icon bg-danger"><i class="fa fa-battery-half"></i></span>
+                        <span class="info-box-icon bg-danger"><img src="{{asset("assets/images/icons/carburant.png")}}" style="width:35px;" alt=""></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Carburant restant</span>
-                            <p class="info-box-number voir-camion-statistique ">{{$stock_carburant}}L</p>
+                            <p class="info-box-number voir-camion-statistique ">{{nombre_fr($stock_carburant)}}L</p>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="info-box">
-                        <span class="info-box-icon bg-warning"><i style="" class="fa fa-university"></i></span>
+                        <span class="info-box-icon bg-warning" style="background-color: #ff9609 !important;"><img src="{{asset('assets/images/icons/assurance.png')}}" style="width:55px;" alt=""></span>
                         <div class="info-box-content" >
                             <span class="info-box-text">Assurance</span>
                             <p class="info-box-number voir-camion-statistique" >
@@ -120,7 +120,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="info-box">
-                        <span class="info-box-icon bg-success"><i class="fa fa-medkit"></i></span>
+                        <span class="info-box-icon bg-success"><img  style="width:55px;" src="{{asset('assets/images/icons/visit.png')}}" alt=""></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Visite technique</span>
                             <p class="info-box-number voir-camion-statistique">
@@ -161,6 +161,8 @@
                                     <tr>
                                         <th>Date</th>
                                         <th>Quantité</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Montant total</th>
                                         <th>Flux</th>
                                         <th style="text-align: center;">Actions</th>
 
@@ -172,13 +174,15 @@
 
                                     <tr>
                                         <td>{{$carburant->date}}</td>
-                                        <td>{{$carburant->quantite}}</td>
+                                        <td class="text-left" >{{nombre_fr($carburant->quantite)."L"}}</td>
+                                        <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix)}}</td>
+                                        <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix * $carburant->quantite, 0, ",", ".")}}</td>
                                         <td>{{$carburant->flux == false ? "Entrée" : "Sortie"}}</td>
                                         <td >
                                             <div class="row">
                                                 <div class="col-sm-12" style="text-align: center">
-                                                    <button class="btn btn-xs btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
-                                                    <button class="btn btn-xs btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
+                                                    <button class="btn  btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
+                                                    <button class="btn  btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
                                                 </div>
                                             </div>
 
@@ -197,6 +201,8 @@
                                     <tr>
                                         <th>Date</th>
                                         <th>Quantité</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Montant total</th>
                                         <th>Flux</th>
                                         <th style="text-align: center;">Actions</th>
 
@@ -276,7 +282,7 @@
                                             <button class="btn btn-sm btn-info" disabled ><span class="fa fa-eye"></span></button>
                                             @endif
 
-                                            <button class="btn btn-sm btn-primary modifier-trajet" @if ($trajet->etat === App\Models\Trajet::getEtat(2) || $trajet->etat === App\Models\Trajet::getEtat(3)) disabled @endif  data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}"><span class="fa fa-edit"></span></button>
+                                            <button @if ($trajet->IsLastFinished() === false ) disabled @endif  class="btn btn-sm btn-primary modifier-trajet"  data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}"><span class="fa fa-edit"></span></button>
                                             <button {{ isset($trajet->reservation->id) === true ? "disabled": "" }} class="btn btn-sm btn-danger supprimer-trajet" data-url="{{route('trajet.supprimer', ['trajet' => $trajet->id])}}" data-delete-url="{{route('trajet.delete', ['trajet' => $trajet->id])}}"><span class="fa fa-trash"></span></button>
                                         </td>
                                     </tr>
@@ -330,6 +336,9 @@
                                         <td >
                                             <div class="row">
                                                 <div class="col-sm-12" style="text-align: center">
+                                                    <a  href="{{$papier->photo == null ? "#" : asset('storage/'.$papier->photo)}}" >
+                                                        <button class="btn btn-sm btn-info"><span class="fa fa-eye"></span></button>
+                                                    </a>
                                                     <button class="btn btn-sm btn-primary btn-papier-modifier" data-url="{{route('papier.update', ["papier" => $papier->id])}}"  data-show="{{route('papier.modifier', ["papier" => $papier->id])}}" ><span class="fa fa-edit"></span></button>
                                                     <button class="btn btn-sm btn-danger btn-papier-supprimer" data-url="{{route('papier.supprimer', ["papier" => $papier->id])}}" data-show="{{route('papier.modifier', ["papier" => $papier->id])}}"><span class="fa fa-trash"></span></button>
                                                 </div>
@@ -354,7 +363,6 @@
                                         <th>Date d'obtention</th>
                                         <th>Date d'échéance</th>
                                         <th style="text-align: center;">Actions</th>
-
                                     </tr>
                                 </tfoot>
                             </table>
@@ -383,7 +391,7 @@
                 <form action="{{route('carburant.ajouter')}}" method="post" role="form" id="form-ajouter-carburant" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="camion_id" value={{$camion->id}}>
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="date">Date :</label>
                         </div>
@@ -396,7 +404,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="quantite">Quantité :</label>
                         </div>
@@ -405,7 +413,16 @@
                         </div>
                     </div>
 
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
+                        <div class="col-sm-4">
+                            <label for="prix">Prix unitaire :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="flux">Flux :</label>
                         </div>
@@ -447,7 +464,7 @@
                     @csrf
                     @method('patch')
                     <input type="hidden" name="camion_id" value={{$camion->id}}>
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="date">Date :</label>
                         </div>
@@ -460,7 +477,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="quantite">Quantité :</label>
                         </div>
@@ -468,7 +485,15 @@
                             <input type="number" placeholder="Quantité" class="form-control" name="quantite" id="modifier_quantite" required>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
+                        <div class="col-sm-4">
+                            <label for="prix">Prix unitaire :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="flux">Flux :</label>
                         </div>
@@ -506,7 +531,7 @@
             <div class="modal-body"  >
                 <form action="#" method="post" id="form-supprimer-carburant" >
                     @csrf
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="date">Date :</label>
                         </div>
@@ -519,7 +544,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="quantite">Quantité :</label>
                         </div>
@@ -527,7 +552,15 @@
                             <input type="number" class="form-control" name="quantite" id="supprimer_quantite" required>
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 3px; ">
+                    <div class="row" style="margin-top: 5px; ">
+                        <div class="col-sm-4">
+                            <label for="prix">Prix unitaire :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="flux">Flux :</label>
                         </div>
@@ -1351,6 +1384,7 @@
         $.get(url, {}, dataType="JSON").done(function (data) {
             $("#modal-modifier-carburant #modifier_date").val(data.date);
             $("#modal-modifier-carburant #modifier_quantite").val(data.quantite);
+            $("#modal-modifier-carburant input[name=prix]").val(data.prix);
             $("#modal-modifier-carburant #modifier_flux").val(data.flux).change();
 
         })
@@ -1370,6 +1404,7 @@
         $.get(url, {}, dataType="JSON").done(function (data) {
             $("#modal-supprimer-carburant #supprimer_date").val(data.date).attr("disabled", true);
             $("#modal-supprimer-carburant #supprimer_quantite").val(data.quantite).attr("disabled", true);
+            $("#modal-supprimer-carburant input[name=prix]").val(data.prix).attr("disabled", true);
             $("#modal-supprimer-carburant #supprimer_flux").val(data.flux).change().attr("disabled", true);
 
         })
@@ -1385,6 +1420,12 @@
     $(document).on("click","#nav-carburant-tab", function(){
 
             resizeDataTable($("#flux-carburants"), $("#nav-carburant")) ;
+    })
+
+    $(document).on("click","#nav-papier-tab", function(){
+
+            resizeDataTable($("#papiers"), $("#nav-papier")) ;
+
     })
 
     $(document).on("click", ".modifier-trajet", function(){
@@ -1431,6 +1472,7 @@
             $("#modal-modifier-trajet #modifier_date_heure_depart").val(data.trajet.date_heure_depart);
             $("#modal-modifier-trajet #modifier_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
             $("#modal-modifier-trajet #modifier-etat").val(data.trajet.etat);
+            $("#modifier-etat").change();
 
 
             if(data.reservation != null){
@@ -1443,12 +1485,11 @@
                 $("#modal-modifier-trajet .btn-itineraire-plus , #modal-modifier-trajet .btn-itineraire-moins").removeAttr("disabled");
             }
 
-            $("#modifier-etat").change();
             if($("#modifier-etat option:selected").val() == '{{ App\Models\Trajet::getEtat(1) }}'){
                 $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_depart);
 
             }else if ($("#modifier-etat option:selected").val() == '{{ App\Models\Trajet::getEtat(2) }}'){
-                $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_total);
+                $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_depart - data.trajet.carburant_total);
             }
 
 
@@ -1551,7 +1592,7 @@
                         if
                         (   data.value == "Veuillez remplir la quantité de carburant restant" || 
                             data.value == "Le carburant du véhicule est encore insuffisant" ||
-                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock actuel")
+                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock")
                         {
                             $("#form-ajouter-trajet input[name=carburantRestant]").addClass("is-invalid").next().html(data.value).show(300);
                         }else{
@@ -1681,8 +1722,8 @@
 
                     if
                     (   data.value == "Veuillez remplir la quantité de carburant restant" || 
-                            data.value == "Le carburant du véhicule est encore insuffisant" ||
-                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock actuel")
+                        data.value == "Le carburant du véhicule est encore insuffisant" ||
+                        data.value == "La quantité de carburant que vous avez saisi est superieur au stock")
                     {
                         $("#form-modifier-trajet input[name=carburantRestant]").addClass("is-invalid").next().html(data.value).show(300);
                     }else{
@@ -1735,7 +1776,7 @@
     })
 
     $(document).on("click", "#btn-modal-trajet", function(e){
-        viderFormulaireAjoutTrajet($("#form-modifier-trajet"));
+        viderFormulaireAjoutTrajet($("#form-ajouter-trajet"));
     })
 
 
@@ -1748,13 +1789,12 @@
         let poids = $(action + " .poids-content")
 
         if (etat == '{{ App\Models\Trajet::getEtat(2) }}'|| etat == '{{ App\Models\Trajet::getEtat(1) }}' ) {
-            
-            carburant.show(200)
+            carburant.show(200).find("input").val("");
             poids.show(200);
 
         } else {
 
-            carburant.hide(200)
+            carburant.hide(200).find("input").val("");
             poids.hide(200);
 
         }

@@ -197,7 +197,7 @@ class TrajetController extends Controller
 
             $CarburantSortie = doubleval($camion->CarburantRestant()) - doubleval($request->carburantRestant);
 
-            Carburant::where("id", $trajet->carburant_id)->delete();
+            
 
             if($CarburantSortie > 0){
 
@@ -277,12 +277,11 @@ class TrajetController extends Controller
     {
         
         $itineraires = $trajet->itineraires;
-
         return response()->json([
             "trajet" => $trajet,
             "itineraires" => $itineraires,
             "chauffeur" => $trajet->chauffeur,
-            "reservation" => $trajet->reservation
+            "reservation" => $trajet->reservation,
         ]);
     }
 
@@ -477,8 +476,11 @@ class TrajetController extends Controller
         $etat = $request->etat;
 
         // Verifier si la status est terminé et que la carburant restant n'est pas nulle
-        $carburant_total = $request->etat === Trajet::getEtat(2) ? doubleval($camion->stockCarburant()) -  doubleval($request->carburantRestant) : null;
+        $carburant_total = $request->etat === Trajet::getEtat(2) ? (doubleval($camion->stockCarburant()) + doubleval($trajet->carburant_total) ) -  doubleval($request->carburantRestant) : null;
         $carburant_depart = $camion->stockCarburant() >= doubleval($request->carburantRestant) ? doubleval($request->carburantRestant) : 0;
+
+        
+             
 
         if (($request->etat === Trajet::getEtat(1) || $request->etat === Trajet::getEtat(2) ) AND $request->carburantRestant === null)
         {
@@ -504,8 +506,9 @@ class TrajetController extends Controller
         
         else if($request->etat === Trajet::getEtat(2)){
 
-            if($carburant_total < 0 ){
-                
+          
+           
+            if($carburant_total < 0 ) {
                                
                 $res = [
                     "value" => "La quantité de carburant que vous avez saisi est superieur au stock" ,
@@ -515,12 +518,11 @@ class TrajetController extends Controller
                 return response()->json($res);
             }
 
+            Carburant::where("id", $trajet->carburant_id)->delete();
             $CarburantSortie = doubleval($camion->CarburantRestant()) - doubleval($request->carburantRestant);
             
-            Carburant::where("id", $trajet->carburant_id)->delete();
-
-            if($CarburantSortie > 0){
-
+            if($CarburantSortie > 0 || $trajet->carburant_id != null ){
+                
                 $carburant = Carburant::create([
                     "quantite" => $CarburantSortie,
                     "flux" => 1,
@@ -548,6 +550,9 @@ class TrajetController extends Controller
         }
 
         if($request->etat === Trajet::getEtat(2)){
+             // Recalculer le carburant total
+            
+
             $_trajet["carburant_total"] = $carburant_total;
         }
         
