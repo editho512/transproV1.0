@@ -201,7 +201,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Enregistrer une dépense</h4>
+                <h4 class="modal-title">Enregistrer une mainténance / reparation</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -376,7 +376,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Enregistrer une dépense</h4>
+                <h4 class="modal-title">Modifier une mainténance / reparation</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -551,7 +551,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header modal-header-danger">
-                <h4 class="modal-title">Supprimer une maintenance</h4>
+                <h4 class="modal-title">Supprimer une maintenance / reparation</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -759,7 +759,9 @@ $("#maintenances").DataTable({
 
 const resetStyle = (input) => {
     if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
-    $(input).next().remove();
+    let next = input.nextElementSibling
+    if (next !== undefined && next.tagName === "DIV") $(next.parentElement.nextElementSibling).remove()
+    else $(input).next().remove()
 }
 
 $(document).on("submit", "#form-ajouter-maintenance", function (e) {
@@ -778,7 +780,7 @@ $(document).on("submit", "#form-ajouter-maintenance", function (e) {
             let next = $(name).next()[0]
 
             if (next !== undefined && next.tagName === "DIV") {
-                $(next).next().remove()
+                $(next.parentElement.nextElementSibling).remove()
                 $(next.parentElement).after('<span class="text-danger">' + error[1][0] + '</span>')
             } else {
                 $(name).next().remove()
@@ -805,7 +807,7 @@ $(document).on("submit", "#form-modifier-maintenance", function (e) {
             let next = $(name).next()[0]
 
             if (next !== undefined && next.tagName === "DIV") {
-                $(next).next().remove()
+                $(next.parentElement.nextElementSibling).remove()
                 $(next.parentElement).after('<span class="text-danger">' + error[1][0] + '</span>')
             } else {
                 $(name).next().remove()

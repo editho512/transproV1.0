@@ -44,6 +44,14 @@ class NouvelleMaintenanceRequest extends FormRequest
     {
         return [
             "type.required" => "Le type est obligatoire (Reparation / Maintenance)",
+            "titre.required" => "Vous devez specifier un titre",
+            "date_heure.required" => "La date et heure est obligatoire",
+            "camion_id.required" => "Vous devez selectionner un camion",
+            "main_oeuvre.required" => "Vous devez remplir le montant de la main d'oeuvre",
+            "main_oeuvre.min" => "Le montant doit être superieur ou égal a :min",
+            "nom_reparateur.required" => "Le nom de l'agent est obligatoire",
+            "tel_reparateur.required" => "Le telephone de l'agent est obligatoire",
+            "adresse_reparateur.required" => "L'adresse de l'agent est obligatoire",
         ];
     }
 

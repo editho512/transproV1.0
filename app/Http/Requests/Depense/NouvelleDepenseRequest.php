@@ -45,7 +45,7 @@ class NouvelleDepenseRequest extends FormRequest
     public function messages() : array
     {
         return [
-
+            "type.required" => "Vous devez selectionner un type dans la liste",
         ];
     }
 
