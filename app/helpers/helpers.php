@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 if(!function_exists("nombre_fr")){
     /***
      * Fonction permetant de formater les nombre en format français
-     * 
+     *
      * @return double
      */
 
@@ -23,7 +23,7 @@ if(!function_exists("nombre_fr")){
 if(!function_exists("prix_mg")){
     /***
      * Fonction permetant de formater les nombre en format français
-     * 
+     *
      * @return double
      */
 
@@ -31,6 +31,12 @@ if(!function_exists("prix_mg")){
         return nombre_fr($nombre) . " Ar";
     }
 
+}
+
+
+function allTrajetsAPrevoir()
+{
+    return Trajet::trajetsAPrevoir();
 }
 
 

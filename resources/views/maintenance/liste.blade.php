@@ -164,7 +164,7 @@
                                             </td>
                                             <td >
                                                 <div class="row">
-                                                    <div class="col-sm-4 text-left"> 
+                                                    <div class="col-sm-4 text-left">
                                                           <button class="btn btn-xs btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
 
                                                     </div>
@@ -918,9 +918,10 @@ $("#maintenances").DataTable({
         "searching": true,
         "paging": false,
         "ordering": true,
-        "info": false ,            
+        "info": false ,
         language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
     });
+
 const resetStyle = (input) => {
     if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
     let next = input.nextElementSibling
@@ -1037,7 +1038,7 @@ $(document).on("click", "#voir-maintenance", function (e) {
         $("#modal-voir-maintenance #adresse_reparateur").val(maintenance.adresse_reparateur);
 
         pieces = populatePieceList(maintenance.pieces, '#result-voir', false)
-       
+
     })
 })
 
@@ -1112,8 +1113,8 @@ function editPiece (button) {
     let Q = PU.nextElementSibling
     let TOTAL = Q.nextElementSibling
 
-    PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replace('Ar', '').trim() + "'/>"
-    Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.replace('Ar', '').trim() + "'/>"
+    PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replace('Ar', '').trim().replace(",", "").replace(" ", "") + "'/>"
+    Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.replace('Ar', '').trim().replace(",", "").replace(" ", "") + "'/>"
 
     button.innerHTML = "<i class='fa fa-save'></i>"
     button.setAttribute("onclick", "savePiece(this)")

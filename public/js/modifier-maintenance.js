@@ -17,7 +17,7 @@ addMaterielEdit.addEventListener('click', e => {
     if (isNaN(parseFloat(totalEdit.value)) || parseFloat(totalEdit.value) < 0) { $('#error p').html("Montant total vide ou invalide"); $('#error').modal('show'); return; }
 
     let tr = document.createElement('tr')
-    let tuple = "<td>" + nomEdit.value + "</td><td>" + parseFloat(puEdit.value) + " Ar</td><td>" + parseFloat(quantiteEdit.value) + "</td><td>" + parseFloat(totalEdit.value) + " Ar</td><td class='d-inline-flex'><button onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button></td>"
+    let tuple = "<td>" + nomEdit.value + "</td><td>" + formatNumber(parseFloat(puEdit.value), 2, "Ar") + "</td><td>" + parseFloat(quantiteEdit.value) + "</td><td>" + formatNumber(parseFloat(totalEdit.value), 2, "Ar") + "</td><td class='d-inline-flex'><button onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button></td>"
 
     if (pieces[nomEdit.value]) { alert('Cette piece existe déja dans la liste'); resetFields(); return; }
 
@@ -76,7 +76,7 @@ function populatePieceList (pieces, result, editable = true) {
 
         if (editable === false) $action = "Aucun action"
 
-        let tuple = "<td>" + piece.nom + "</td><td>" + parseFloat(piece.pu) + " Ar</td><td>" + parseFloat(piece.quantite) + "</td><td>" + parseFloat(piece.total) + " Ar</td><td class='d-inline-flex'>" + $action + "</td>"
+        let tuple = "<td>" + piece.nom + "</td><td>" + formatNumber(parseFloat(piece.pu), 2, "Ar") + "</td><td>" + parseFloat(piece.quantite) + "</td><td>" + formatNumber(parseFloat(piece.total), 2, "Ar") + "</td><td class='d-inline-flex'>" + $action + "</td>"
         tr.innerHTML = tuple
         edit_result.appendChild(tr)
     })
