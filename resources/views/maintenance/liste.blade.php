@@ -1074,7 +1074,6 @@ $(document).on("click", "#modifier-maintenance", function (e) {
 })
 
 
-
 function resetForm (formId) {
     let class_name = 'border-danger'
     let form = document.querySelector(formId)
@@ -1107,19 +1106,25 @@ function formatAMPM(date)
 
 function editPiece (button) {
     window.event.preventDefault()
+
+    if (editing) { $('#error p').html("Veuillez enregistrer la modification en cours"); $('#error').modal('show'); return; }
+
     let tr = button.parentElement.parentElement
     let LIB = tr.firstElementChild
     let PU = LIB.nextElementSibling
     let Q = PU.nextElementSibling
     let TOTAL = Q.nextElementSibling
-    
+
+
+    LIB.innerHTML = "<input type='text' class='form-control' value='" + LIB.innerHTML.trim() + "'/>"
     PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replaceAll('Ar', '').trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
     Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
+    TOTAL.innerHTML = "<input type='number' class='form-control' disabled value='" + TOTAL.innerHTML.replaceAll('Ar', '').trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
 
     button.innerHTML = "<i class='fa fa-save'></i>"
     button.setAttribute("onclick", "savePiece(this)")
 
-    editing = LIB.innerHTML
+    editing = LIB.firstElementChild.value
 }
 
 function savePiece (button) {
@@ -1130,19 +1135,24 @@ function savePiece (button) {
     let Q = PU.nextElementSibling
     let TOTAL = Q.nextElementSibling
 
+    if (LIB.firstElementChild.value === "" || LIB.firstElementChild.value === undefined || parseInt(LIB.firstElementChild.value) >= 0) { $('#error p').html("Nom du matériel vide ou invalide"); $('#error').modal('show'); return; }
     if (isNaN(parseFloat(PU.firstElementChild.value)) || parseFloat(PU.firstElementChild.value) < 0) { $('#error p').html("Prix unitaire vide ou invalide"); $('#error').modal('show'); return; }
+    if (isNaN(parseFloat(TOTAL.firstElementChild.value)) || parseFloat(TOTAL.firstElementChild.value) < 0) { $('#error p').html("Total vide ou invalide"); $('#error').modal('show'); return; }
     if (isNaN(parseInt(Q.firstElementChild.value)) || parseInt(Q.firstElementChild.value) < 0) { $('#error p').html("Quantité vide ou invalide"); $('#error').modal('show'); return; }
 
-    pieces[LIB.innerHTML] = {
-        nom: LIB.innerHTML,
+    delete pieces[editing]
+
+    pieces[LIB.firstElementChild.value] = {
+        nom: LIB.firstElementChild.value,
         pu: PU.firstElementChild.value,
         quantite: Q.firstElementChild.value,
         total: PU.firstElementChild.value * Q.firstElementChild.value,
     }
 
-    TOTAL.innerHTML = (PU.firstElementChild.value * Q.firstElementChild.value).toString() + " Ar"
-    PU.innerHTML = PU.firstElementChild.value.toString() + " Ar"
-    Q.innerHTML = Q.firstElementChild.value.toString()
+    LIB.innerHTML = LIB.firstElementChild.value
+    TOTAL.innerHTML = formatNumber(PU.firstElementChild.value * Q.firstElementChild.value, 2, "Ar").toString()
+    PU.innerHTML = formatNumber(parseFloat(PU.firstElementChild.value), 2, "Ar").toString()
+    Q.innerHTML = formatNumber(parseInt(Q.firstElementChild.value), 0).toString()
 
     button.innerHTML = "<i class='fa fa-edit'></i>"
     button.setAttribute("onclick", "editPiece(this)")
