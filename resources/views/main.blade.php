@@ -7,8 +7,8 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="{{asset('assets/images/logo/favicon.ico')}}"/>
-    
-    
+
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('assets/adminlte/plugins/fontawesome-free/css/all.min.css')}}">
     <!-- Ionicons -->
@@ -32,14 +32,15 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('assets/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+
     <!-- include the style
-    
+
         <link rel="stylesheet" href="{{asset('assets/alertifyjs/css/alertify.min.css')}}" />
     -->
-    <!-- include a theme 
+    <!-- include a theme
         <link rel="stylesheet" href="{{asset('assets/alertifyjs/css/themes/default.min.css')}}" />
     -->
-    <!-- include the script 
+    <!-- include the script
         <script src="{{asset('assets/alertifyjs/alertify.min.js')}}"></script>
     -->
 
@@ -94,7 +95,7 @@
             color: white;
         }
     </style>
-   
+
     @yield('styles')
 
 </head>
@@ -105,7 +106,7 @@
         @include('layouts.header')
 
         @include('layouts.sidebar')
-        
+
         @yield('content')
 
         @include('layouts.footer')
@@ -115,7 +116,7 @@
 
     @yield('modals')
 
-    
+    <script src="{{ asset('js/format-number.js') }}"></script>
 
     <!-- jQuery -->
     <script src="{{asset('assets/adminlte/plugins/jquery/jquery.min.js')}}"></script>
@@ -184,7 +185,7 @@
                             status : "{{$notification['status']}}" ,
                             value :  "{{$notification['value']}}"
                         }
-                      
+
                         alertify.set('notifier','position', 'bottom-right');
                         if(notif.status == "success"){
                             alertify.success(notif.value);
@@ -192,9 +193,9 @@
                             alertify.error(notif.value);
                         }
                     })
-            
+
             </script>
-           
+
         @endif
     @yield('scripts')
 

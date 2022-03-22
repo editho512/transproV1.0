@@ -18,7 +18,7 @@ addMateriel.addEventListener('click', e => {
     if (isNaN(parseFloat(total.value)) || parseFloat(total.value) < 0) { $('#error p').html("Montant total vide ou invalide"); $('#error').modal('show'); return; }
 
     let tr = document.createElement('tr')
-    let tuple = "<td>" + nom.value + "</td><td>" + parseFloat(pu.value) + " Ar</td><td>" + parseFloat(quantite.value) + "</td><td>" + parseFloat(total.value) + " Ar</td><td class='d-inline-flex'><button onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button></td>"
+    let tuple = "<td>" + nom.value + "</td><td>" + formatNumber(parseFloat(pu.value), 2, "Ar") + "</td><td>" + parseFloat(quantite.value) + "</td><td>" + formatNumber(parseFloat(total.value), 2, "Ar") + "</td><td class='d-inline-flex'><button onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button></td>"
 
     if (pieces[nom.value]) { alert('Cette piece existe déja dans la liste'); resetFields(); return; }
 

@@ -29,7 +29,7 @@ class Trajet extends Model
 
     private static $coleurs = [];
 
-   
+
     public function viderTrajet(){
 
         Itineraire::where("id_trajet", $this->id )->delete();
@@ -38,7 +38,7 @@ class Trajet extends Model
     public function carburantUtilise(){
         return doubleval($this->carburant_total);
     }
-    
+
     /**
      * Methode qui retourne le nom de l'itineraire
      *
@@ -228,5 +228,8 @@ class Trajet extends Model
         return $this->hasOne(Carburant::class, "id", "carburant_id");
     }
 
-    
+    public static function trajetsAPrevoir()
+    {
+        return self::where('etat', self::getEtat(0))->get('id');
+    }
 }
