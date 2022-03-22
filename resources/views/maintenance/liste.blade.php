@@ -127,7 +127,7 @@
                                         <th>Agent</th>
                                         <th>Commentaire</th>
                                         <th>Pièces</th>
-                                        <th>Action</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -194,7 +194,7 @@
                                         <th>Agent</th>
                                         <th>Commentaire</th>
                                         <th>Pièces</th>
-                                        <th>Action</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </tfoot>
                             </table>

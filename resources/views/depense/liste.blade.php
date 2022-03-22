@@ -125,7 +125,7 @@
                                         <th>Camion</th>
                                         <th>Chauffeur</th>
                                         <th>Commentaire</th>
-                                        <th>Action</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -167,7 +167,7 @@
                                         <th>Camion</th>
                                         <th>Chauffeur</th>
                                         <th>Commentaire</th>
-                                        <th>Action</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </tfoot>
                             </table>
