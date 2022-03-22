@@ -1113,8 +1113,8 @@ function editPiece (button) {
     let Q = PU.nextElementSibling
     let TOTAL = Q.nextElementSibling
     
-    PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replace('Ar', '').trim().replace(",", "").replace(" ", "") + "'/>"
-    Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.trim().replace(",", "").replace(" ", "") + "'/>"
+    PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replaceAll('Ar', '').trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
+    Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
 
     button.innerHTML = "<i class='fa fa-save'></i>"
     button.setAttribute("onclick", "savePiece(this)")
