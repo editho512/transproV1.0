@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Camion;
+use App\Models\Papier;
 use App\Models\Carburant;
 use App\Models\Chauffeur;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -187,7 +188,12 @@ class CamionController extends Controller
 
             $stock_carburant = $camion->CarburantRestant();
 
-            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs"));
+            $papiers = Papier::all();
+
+            $assurance = Papier::EnCours(Papier::TYPE[0]);
+            $visiteTechnique = Papier::EnCours(Papier::TYPE[1]);
+
+            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique"));
         }
     }
 

@@ -396,8 +396,10 @@
         "searching": true,
         "paging": false,
         "ordering": true,
-        "info": false,
+        "info": false ,            
+        language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
     });
+
 
         $(document).on("click", ".supprimer-camion", function (e) {
             $("#modal-supprimer-camion").modal("show");

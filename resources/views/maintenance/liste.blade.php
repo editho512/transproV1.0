@@ -162,10 +162,22 @@
                                                     Aucune pieces necessaires
                                                 @endif
                                             </td>
-                                            <td class="d-flex justify-content-center">
-                                                <button class="btn btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
-                                                <button class="btn btn-primary mr-2" id="modifier-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-maintenance" data-update-url="{{ route('maintenance.post.modifier', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-edit"></i></button>
-                                                <button class="btn btn-danger" id="supprimer-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-maintenance" data-update-url="{{ route('maintenance.post.supprimer', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-trash"></i></button>
+                                            <td >
+                                                <div class="row">
+                                                    <div class="col-sm-4 text-center"> 
+                                                          <button class="btn btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
+
+                                                    </div>
+                                                    <div class="col-sm-4 text-center">
+                                                        <button class="btn btn-sm btn-primary mr-2" id="modifier-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-maintenance" data-update-url="{{ route('maintenance.post.modifier', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-edit"></i></button>
+
+                                                    </div>
+                                                    <div class="col-sm-4 text-center">
+                                                        <button class="btn btn-sm btn-danger" id="supprimer-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-maintenance" data-update-url="{{ route('maintenance.post.supprimer', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-trash"></i></button>
+
+                                                    </div>
+                                                </div>
+
                                             </td>
                                         </tr>
                                     @empty
@@ -901,13 +913,14 @@
 <script>
 
 $("#maintenances").DataTable({
-    "responsive": true,
-    "autoWidth": false,
-    "searching": true,
-    "paging": true,
-    "ordering": true,
-    "info": false,
-});
+        "responsive": true,
+        "autoWidth": false,
+        "searching": true,
+        "paging": false,
+        "ordering": true,
+        "info": false ,            
+        language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+    });
 
 
 const resetStyle = (input) => {

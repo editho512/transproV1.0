@@ -130,19 +130,28 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($depenses as $depense)
-                                    <tr>
-                                        <td>{{ $depense->type }}</td>
-                                        <td>{{ formatDate($depense->date_heure) }}</td>
-                                        <td>{{ formatMoney($depense->montant) }}</td>
-                                        <td>{{ $depense->infosCamion() }}</td>
-                                        <td>{{ $depense->infosChauffeur() }}</td>
-                                        <td>{{ $depense->commentaire }}</td>
-                                        <td class="d-flex justify-content-center">
-                                            <button class="btn btn-info mr-2" id="voir-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-depense" data-show-url="{{ route('depense.voir', ['depense' => $depense->id]) }}"><i class="fa fa-eye"></i></button>
-                                            <button class="btn btn-primary mr-2" id="modifier-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-depense" data-update-url="{{ route('depense.post.modifier', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-danger" id="supprimer-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-depense" data-update-url="{{ route('depense.post.supprimer', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-trash"></i></button>
-                                        </td>
-                                    </tr>
+
+                                        <tr>
+                                            <td>{{ $depense->type }}</td>
+                                            <td>{{ formatDate($depense->date_heure) }}</td>
+                                            <td>{{ formatMoney($depense->montant) }}</td>
+                                            <td>{{ $depense->infosCamion() }}</td>
+                                            <td>{{ $depense->infosChauffeur() }}</td>
+                                            <td>{{ $depense->commentaire }}</td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-xs-6">
+                                                        <button class="btn btn-sm btn-primary mr-2" id="modifier-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-depense" data-update-url="{{ route('depense.post.modifier', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-edit"></i></button>
+
+                                                    </div>
+                                                    <div class="col-xs-6 ">
+                                                        <button class="btn btn-sm btn-danger" id="supprimer-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-depense" data-update-url="{{ route('depense.post.supprimer', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-trash"></i></button>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
                                     @empty
 
                                     @endforelse
@@ -264,7 +273,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i style="transform: rotate(45deg)" class="fa fa-plus mr-2"></i>Fermer</button>
-                <button type="submit" id="button-ajouter-depense" form="form-ajouter-depense" class="float-right btn btn-primary"><i class="fa fa-save mr-2"></i>Enregistrer</button>
+                <button type="submit" id="button-ajouter-depense" form="form-ajouter-depense" class="float-right btn btn-primary"><span class="fa fa-save mr-2"></span></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Enregistrer</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -368,7 +377,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i style="transform: rotate(45deg)" class="fa fa-plus mr-2"></i>Fermer</button>
-                <button type="submit" id="button-modifier-depense" form="form-modifier-depense" class="float-right btn btn-primary"><i class="fa fa-save mr-2"></i>Enregistrer</button>
+                <button type="submit" id="button-modifier-depense" form="form-modifier-depense" class="float-right btn btn-primary"><span class="fa fa-save mr-2"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Enregistrer</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -580,15 +589,15 @@
 
 <script>
 
-    $("#depenses").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        "searching": true,
-        "paging": true,
-        "ordering": true,
-        "info": false,
-    });
-
+      $("#depenses").DataTable({
+                    "responsive": true,
+                    "autoWidth": false,
+                    "searching": true,
+                    "paging": false,
+                    "ordering": true,
+                    "info": false ,            
+                    language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+                });
 
     const resetStyle = (input) => {
         if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
@@ -642,8 +651,10 @@
                     $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
                 }
             })
+
         })
     })
+
 
     $(document).on("click", "#ajouter-depense", function (e) {
         resetForm("#form-ajouter-depense")
@@ -654,7 +665,6 @@
 
         $.ajax(url, {}, dataType ="JSON").done(function (depense) {
             let date = formatAMPM(new Date(depense.date_heure)).toUpperCase()
-
             $("#modal-voir-depense #type").val(depense.type);
             $("#modal-voir-depense #date_heure_delete input").val(date);
             $("#modal-voir-depense #camion").val(depense.camion_id);

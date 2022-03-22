@@ -16,6 +16,7 @@ class CreateCarburantsTable extends Migration
         Schema::create('carburants', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->double('quantite');
+            $table->double('prix')->nullable();
             $table->boolean('flux')->default(false);
             $table->timestamp('date')->nullable();
             $table->unsignedBigInteger('camion_id')->index('camion_id');

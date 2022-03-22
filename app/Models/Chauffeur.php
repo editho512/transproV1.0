@@ -3,17 +3,19 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class Chauffeur extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name', 'phone', 'cin', 'permis'
+        'name', 'phone', 'cin', 'permis', 'user_id'
     ];
 
 
@@ -61,22 +63,68 @@ class Chauffeur extends Model
     }
 
 
-    public function estDispoEntre(Carbon $depart, ?Carbon $arrivee)
+    public function estDispoEntre(Carbon $date_depart, Carbon $date_arrivee , $trajet = null)
     {
-        $trajets = $this->trajets()->where('date_heure_depart', '>', $depart->toDateTimeString());
+        $depart = Trajet::where("chauffeur_id", $this->id)
+                            ->where("date_heure_depart", ">=", $date_depart->toDateTimeString() )
+                            ->where("date_heure_depart", "<=", $date_arrivee->toDateTimeString());
 
-        if ($arrivee !== null)
-        {
-            $trajets = $trajets->orWhere('date_heure_arrivee', '>', $arrivee->toDateTimeString());
+
+
+        $arrivee = Trajet::where("chauffeur_id", $this->id)
+                    ->where("date_heure_arrivee", ">=", $date_depart->toDateTimeString() )
+                    ->where("date_heure_arrivee", "<=", $date_arrivee->toDateTimeString());
+
+        if($trajet != null){
+            $depart = $depart->where("id", "!=", $trajet->id);
+            $arrivee = $arrivee->where("id", "!=", $trajet->id);
         }
 
-        if ($trajets->count() === 0) return true;
-        else return false;
+        $depart = $depart->get();
+        $arrivee = $arrivee->get();
+        return !isset($depart[0]->id) && !isset($arrivee[0]->id);
+
     }
 
 
     public function nombreTrajetEnAttente() : int
     {
         return $this->trajets()->where('etat', Trajet::getEtat(0))->count();
+    }
+
+
+    public function transporteur() : BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+
+    public function aUnTrajetEntre(string $date_depart, ?string $date_arrivee)
+    {
+        $trajets = collect();
+
+        if ($date_arrivee === null)
+        {
+            $sql = "SELECT trajets.id FROM trajets
+            WHERE (trajets.date_heure_depart < ? AND trajets.date_heure_arrivee > ?)
+            AND trajets.etat <> ? AND trajets.etat <> ?
+            AND trajets.chauffeur_id = ?";
+
+            $trajets = collect(DB::select($sql, [$date_depart, $date_depart, Trajet::getEtat(3), Trajet::getEtat(2),  $this->id]));
+        }
+        else
+        {
+            $sql = "SELECT trajets.id FROM trajets
+            WHERE ((trajets.date_heure_depart < ? AND trajets.date_heure_arrivee > ?) OR (trajets.date_heure_depart < ? AND trajets.date_heure_arrivee > ?))
+            AND trajets.etat <> ? AND trajets.etat <> ?
+            AND trajets.chauffeur_id = ?";
+
+            $trajets = collect(DB::select($sql, [$date_depart, $date_depart, $date_arrivee, $date_arrivee, Trajet::getEtat(3), Trajet::getEtat(2),  $this->id]));
+        }
+
+
+        if ($trajets->isEmpty()) return false;
+        return true;
+
     }
 }

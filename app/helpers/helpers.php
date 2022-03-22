@@ -7,6 +7,33 @@ use App\Models\Trajet;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
+if(!function_exists("nombre_fr")){
+    /***
+     * Fonction permetant de formater les nombre en format français
+     * 
+     * @return double
+     */
+
+    function nombre_fr($nombre){
+        return number_format($nombre, 0, ",", " ");
+    }
+
+}
+
+if(!function_exists("prix_mg")){
+    /***
+     * Fonction permetant de formater les nombre en format français
+     * 
+     * @return double
+     */
+
+    function prix_mg($nombre){
+        return nombre_fr($nombre) . " Ar";
+    }
+
+}
+
+
 /**
 * Fonction permet de detecter si un trajet a depasser la limite d'arrivée
 * Le trajet concerné sont les trajet en cours et les trajets a prevoir
@@ -62,6 +89,7 @@ function detecterSiDateDepartTrajetPrevoirRetard(Camion $camion)
 
     return $messages;
 }
+
 
 
 if (!function_exists('formatDate'))
