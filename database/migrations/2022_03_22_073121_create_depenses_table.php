@@ -19,7 +19,7 @@ class CreateDepensesTable extends Migration
             $table->unsignedBigInteger('camion_id')->nullable()->index('depenses_camion_id_foreign');
             $table->unsignedBigInteger('chauffeur_id')->nullable()->index('depenses_chauffeur_id_foreign');
             $table->string('type', 255);
-            $table->decimal('montant', 12, 0); 
+            $table->decimal('montant', 12, 0);
             $table->string('commentaire', 5000)->nullable();
             $table->timestamps();
         });
