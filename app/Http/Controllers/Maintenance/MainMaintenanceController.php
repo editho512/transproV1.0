@@ -45,8 +45,8 @@ class MainMaintenanceController extends Controller
     }
 
 
-        /**
-     * Permet de supprimer un dépense
+    /**
+     * Permet de supprimer une maintenance
      *
      * @param Maintenance $maintenance
      * @return RedirectResponse
@@ -54,20 +54,21 @@ class MainMaintenanceController extends Controller
     public function supprimer(Request $request, Maintenance $maintenance) : RedirectResponse
     {
         if ($maintenance->delete())
-        {
             $request->session()->flash("notification", [
                 "value" => "Maintenance supprimé avec success" ,
                 "status" => "success"
             ]);
-        }
         else
-        {
             $request->session()->flash("notification", [
                 "value" => "Une erreur s'est produite lors de la suppresion" ,
                 "status" => "error"
             ]);
-        }
 
         return redirect()->back();
+    }
+
+    public function voir(Maintenance $maintenance)
+    {
+        return response()->json($maintenance);
     }
 }

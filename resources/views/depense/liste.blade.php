@@ -6,45 +6,45 @@
 
 <style>
 
-.style-1 {
-    background: linear-gradient(190deg, #3392c5, #0c6edf);
-    color: white;
-}
+    .style-1 {
+        background: linear-gradient(190deg, #3392c5, #0c6edf);
+        color: white;
+    }
 
-.style-2 {
-    background: linear-gradient(146deg, #3064d1, #30d1ca);
-    color: white;
-}
+    .style-2 {
+        background: linear-gradient(146deg, #3064d1, #30d1ca);
+        color: white;
+    }
 
-.style-3 {
-    background: linear-gradient(45deg, #007497, #30b0d1);
-    color: white;
-}
+    .style-3 {
+        background: linear-gradient(45deg, #007497, #30b0d1);
+        color: white;
+    }
 
-.style-4 {
-    background: linear-gradient(146deg, #51b9ff, #306fd1);
-    color: white;
-}
+    .style-4 {
+        background: linear-gradient(146deg, #51b9ff, #306fd1);
+        color: white;
+    }
 
-.style-5 {
-    background: linear-gradient(146deg, #834400, #c6eeff);
-    color: white;
-}
+    .style-5 {
+        background: linear-gradient(146deg, #834400, #c6eeff);
+        color: white;
+    }
 
-.style-6 {
-    background: linear-gradient(146deg, #834400, #c6eeff);
-    color: white;
-}
+    .style-6 {
+        background: linear-gradient(146deg, #834400, #c6eeff);
+        color: white;
+    }
 
-.style-7 {
-    background: linear-gradient(146deg, #834400, #c6eeff);
-    color: white;
-}
+    .style-7 {
+        background: linear-gradient(146deg, #834400, #c6eeff);
+        color: white;
+    }
 
-.total {
-    background: linear-gradient(135deg, #084766, #00a3f2);
-    color: white;
-}
+    .total {
+        background: linear-gradient(135deg, #084766, #00a3f2);
+        color: white;
+    }
 
 </style>
 
@@ -59,44 +59,25 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 @php
-                    $i = 1
+                $i = 1
                 @endphp
 
-                {{-- @foreach ($depensesGroups as $type => $depenseGrpup)
-                    <div class="col-md-6">
-                        <div class="card style-{{ $i }}">
-                            <div class="card-body">
-                                <h4 class="mb-3 font-weight-bold text-white">{{ formatMoney($depenseGrpup->sum('montant')) }}</h4>
-                                <h6>{{ numberToLetter($depenseGrpup->sum('montant')) }}</h6>
-                            </div>
-                            <div class="card-footer">
-                                <h5>{{ $type }}</h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    @php
-                        $i++
-                    @endphp
-
-                @endforeach --}}
-
                 @foreach (typeDepense() as $type)
-                    <div class="col-md-6">
-                        <div class="card style-{{ $i }}">
-                            <div class="card-body">
-                                <h4 class="mb-3 font-weight-bold text-white">{{ $depensesGroups->has($type) === true ? formatMoney($depensesGroups[$type]->sum('montant')) : formatMoney(0) }}</h4>
-                                <h6>{{ $depensesGroups->has($type) === true ? numberToLetter($depensesGroups[$type]->sum('montant')) : numberToLetter(0) }}</h6>
-                            </div>
-                            <div class="card-footer">
-                                <h5>{{ $type }}</h5>
-                            </div>
+                <div class="col-md-6">
+                    <div class="card style-{{ $i }}">
+                        <div class="card-body">
+                            <h4 class="mb-3 font-weight-bold text-white">{{ $depensesGroups->has($type) === true ? formatMoney($depensesGroups[$type]->sum('montant')) : formatMoney(0) }}</h4>
+                            <h6>{{ $depensesGroups->has($type) === true ? numberToLetter($depensesGroups[$type]->sum('montant')) : numberToLetter(0) }}</h6>
+                        </div>
+                        <div class="card-footer">
+                            <h5>{{ $type }}</h5>
                         </div>
                     </div>
+                </div>
 
-                    @php
-                        $i++
-                    @endphp
+                @php
+                $i++
+                @endphp
 
                 @endforeach
             </div>
@@ -149,6 +130,7 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($depenses as $depense)
+
                                         <tr>
                                             <td>{{ $depense->type }}</td>
                                             <td>{{ formatDate($depense->date_heure) }}</td>
@@ -169,6 +151,7 @@
                                                 </div>
                                             </td>
                                         </tr>
+
                                     @empty
 
                                     @endforelse
@@ -220,7 +203,7 @@
                             <select onchange="resetStyle(this)" name="type" id="type" class="form-control">
                                 <option value="">Selectionner le type</option>
                                 @foreach (typeDepense() as $type)
-                                    <option value="{{ $type }}">{{ $type }}</option>
+                                <option value="{{ $type }}">{{ $type }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -248,7 +231,7 @@
                             <select onchange="resetStyle(this)" name="camion_id" id="camion" class="form-control">
                                 <option value="">Selectionner un camion</option>
                                 @foreach ($camions as $camion)
-                                    <option value="{{ $camion->id }}">{{ $camion->name }}</option>
+                                <option value="{{ $camion->id }}">{{ $camion->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -262,7 +245,7 @@
                             <select onchange="resetStyle(this)" name="chauffeur_id" id="chauffeur" class="form-control">
                                 <option value="">Selectionner un chauffeur</option>
                                 @foreach ($chauffeurs as $chauffeur)
-                                    <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                                <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -324,7 +307,7 @@
                             <select onchange="resetStyle(this)" name="type" id="type" class="form-control">
                                 <option value="">Selectionner le type</option>
                                 @foreach (typeDepense() as $type)
-                                    <option value="{{ $type }}">{{ $type }}</option>
+                                <option value="{{ $type }}">{{ $type }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -352,7 +335,7 @@
                             <select onchange="resetStyle(this)" name="camion_id" id="camion" class="form-control">
                                 <option value="">Selectionner un camion</option>
                                 @foreach ($camions as $camion)
-                                    <option value="{{ $camion->id }}">{{ $camion->name }}</option>
+                                <option value="{{ $camion->id }}">{{ $camion->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -366,7 +349,7 @@
                             <select onchange="resetStyle(this)" name="chauffeur_id" id="chauffeur" class="form-control">
                                 <option value="">Selectionner un chauffeur</option>
                                 @foreach ($chauffeurs as $chauffeur)
-                                    <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                                <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -450,7 +433,7 @@
                             <select disabled name="camion_id" id="camion" class="form-control bg-white">
                                 <option value="">Selectionner un camion</option>
                                 @foreach ($camions as $camion)
-                                    <option value="{{ $camion->id }}">{{ $camion->name }}</option>
+                                <option value="{{ $camion->id }}">{{ $camion->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -464,7 +447,7 @@
                             <select disabled name="chauffeur_id" id="chauffeur" class="form-control bg-white">
                                 <option value="">Selectionner un chauffeur</option>
                                 @foreach ($chauffeurs as $chauffeur)
-                                    <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                                <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -500,6 +483,98 @@
     <!-- /.modal-dialog -->
 </div>
 
+{{-- voir un depense --}}
+<div class="modal fade" id="modal-voir-depense">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <h4 class="modal-title">Voir une dépense</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="modal-voir-depense">
+
+                <div class="row mt-1 mb-3">
+                    <div class="col-sm-4">
+                        <label for="type" class="form-label">Type de dépense :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" for="" id="type"  disabled/>
+                    </div>
+                </div>
+
+                <div class="row mt-1 mb-3">
+                    <div class="col-sm-4">
+                        <label for="date_heure">Date et heure :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="input-group date_heure_delete" id="date_heure_delete" data-target-input="nearest">
+                            <input disabled type="text" placeholder="Date & heure du dépense" class="form-control datetimepicker-input" data-target="#date_heure_delete" name="date_heure">
+                            <div class="input-group-append" data-target="#date_heure_delete" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-1 mb-3">
+                    <div class="col-sm-4">
+                        <label for="camion">Camion :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <select disabled name="camion_id" id="camion" class="form-control">
+                            <option value="">Selectionner un camion</option>
+                            @foreach ($camions as $camion)
+                            <option value="{{ $camion->id }}">{{ $camion->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-1 mb-3">
+                    <div class="col-sm-4">
+                        <label for="chauffeur">Chauffeur :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <select disabled name="chauffeur_id" id="chauffeur" class="form-control">
+                            <option value="">Selectionner un chauffeur</option>
+                            @foreach ($chauffeurs as $chauffeur)
+                            <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-1 mb-3">
+                    <div class="col-sm-4">
+                        <label for="montant">Montant :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input disabled type="text" class="form-control" id="montant">
+                    </div>
+                </div>
+
+                <div class="row mt-1 mb-3">
+                    <div class="col-sm-4">
+                        <label for="commentaire">Commentaire :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <textarea disabled name="commentaire" class="form-control" id="commentaire" cols="30" rows="5" placeholder="Commentaire"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i style="transform: rotate(45deg)" class="fa fa-plus mr-2"></i>Fermer</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 @endsection
 
 @section('scripts')
@@ -514,136 +589,160 @@
 
 <script>
 
-$("#depenses").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        "searching": true,
-        "paging": false,
-        "ordering": true,
-        "info": false ,            
-        language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
-    });
+      $("#depenses").DataTable({
+                    "responsive": true,
+                    "autoWidth": false,
+                    "searching": true,
+                    "paging": false,
+                    "ordering": true,
+                    "info": false ,            
+                    language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+                });
 
-
-const resetStyle = (input) => {
-    if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
-    $(input).next().remove();
-}
-
-$(document).on("submit", "#form-ajouter-depense", function (e) {
-    e.preventDefault()
-    let button = $("#button-ajouter-depense");
-    spinning(button);
-
-    $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
-        spinning(button, 2);
-        window.location.href = response.redirect
-    }).fail(function (response) {
-        spinning(button, 2);
-        let errors = response.responseJSON.errors
-
-        Object.entries(errors).forEach((error, key) => {
-            let name = document.getElementsByName(error[0])[0]
-            $(name).addClass(['border-danger', 'has-validation']);
-            $(name).next().remove()
-            $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
-        })
-    })
-})
-
-$(document).on("submit", "#form-modifier-depense", function (e) {
-    e.preventDefault()
-    let button = $("#button-modifier-depense");
-    spinning(button);
-
-    $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
-        spinning(button, 2);
-        window.location.href = response.redirect
-    }).fail(function (response) {
-        spinning(button, 2);
-        let errors = response.responseJSON.errors
-
-        Object.entries(errors).forEach((error, key) => {
-            let name = document.getElementsByName(error[0])[1]
-            $(name).addClass('border-danger');
-            $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
-        })
-    })
-})
-
-$(document).on("click", "#ajouter-depense", function (e) {
-    resetForm("#form-ajouter-depense")
-})
-
-$(document).on("click", "#supprimer-depense", function (e) {
-    url = $(this).attr("data-show-url");
-    url_delete = $(this).attr("data-update-url");
-
-    resetForm("#form-supprimer-depense")
-
-    //$("#modal-modifier-depense").modal("show");
-    $("#form-supprimer-depense").attr("action", url_delete);
-
-    $.ajax(url, {}, dataType ="JSON").done(function (depense) {
-        let date = formatAMPM(new Date(depense.date_heure)).toUpperCase()
-
-        $("#modal-supprimer-depense #type").html(depense.type);
-        $("#modal-supprimer-depense #date_heure_delete input").val(date);
-        $("#modal-supprimer-depense #camion").val(depense.camion_id);
-        $("#modal-supprimer-depense #chauffeur").val(depense.chauffeur_id);
-        $("#modal-supprimer-depense #montant").html(depense.montant);
-        $("#modal-supprimer-depense #commentaire").val(depense.commentaire);
-    })
-})
-
-$(document).on("click", "#modifier-depense", function (e) {
-    url = $(this).attr("data-show-url");
-    url_update = $(this).attr("data-update-url");
-
-    resetForm("#form-modifier-depense")
-
-    //$("#modal-modifier-depense").modal("show");
-    $("#form-modifier-depense").attr("action", url_update);
-
-    $.ajax(url, {}, dataType ="HTML").done(function (depense) {
-        let date = formatAMPM(new Date(depense.date_heure)).toUpperCase()
-
-        $("#modal-modifier-depense #type").val(depense.type);
-        $("#modal-modifier-depense #date_heure_edit input").val(date);
-        $("#modal-modifier-depense #camion").val(depense.camion_id);
-        $("#modal-modifier-depense #chauffeur").val(depense.chauffeur_id);
-        $("#modal-modifier-depense #montant").val(depense.montant);
-        $("#modal-modifier-depense #commentaire").val(depense.commentaire);
-    })
-})
-
-function resetForm (formId) {
-    let class_name = 'border-danger'
-    let form = document.querySelector(formId)
-    let elements = form.getElementsByClassName(class_name)
-
-    for (let i = 0; i < elements.length; i++) {
-        $(elements[i]).next().remove()
+    const resetStyle = (input) => {
+        if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
+        let next = input.nextElementSibling
+        if (next !== undefined && next.tagName === "DIV") $(next.parentElement.nextElementSibling).remove()
+        else $(input).next().remove()
     }
 
-    form.reset()
-    $(elements).removeClass(class_name);
-}
+    $(document).on("submit", "#form-ajouter-depense", function (e) {
+        e.preventDefault()
 
-function formatAMPM(date)
-{
-    let year = date.getFullYear()
-    let month = date.getMonth() + 1
-    let day = date.getDate()
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0'+minutes : minutes;
-    var strTime =  month.toString().padStart(2, 0) + '/' + day.toString().padStart(2, 0) + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-}
+        $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
+            window.location.href = response.redirect
+        }).fail(function (response) {
+            let errors = response.responseJSON.errors
+
+            Object.entries(errors).forEach((error, key) => {
+                let name = document.getElementsByName(error[0])[0]
+                $(name).addClass(['border-danger']);
+                let next = $(name).next()[0]
+
+                if (next !== undefined && next.tagName === "DIV") {
+                    $(next.parentElement.nextElementSibling).remove()
+                    $(next.parentElement).after('<span class="text-danger">' + error[1][0] + '</span>')
+                } else {
+                    $(name).next().remove()
+                    $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
+                }
+            })
+        })
+    })
+
+    $(document).on("submit", "#form-modifier-depense", function (e) {
+        e.preventDefault()
+
+        $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
+            window.location.href = response.redirect
+        }).fail(function (response) {
+            let errors = response.responseJSON.errors
+
+            Object.entries(errors).forEach((error, key) => {
+                let name = document.getElementsByName(error[0])[1]
+                $(name).addClass(['border-danger']);
+                let next = $(name).next()[0]
+
+                if (next !== undefined && next.tagName === "DIV") {
+                    $(next.parentElement.nextElementSibling).remove()
+                    $(next.parentElement).after('<span class="text-danger">' + error[1][0] + '</span>')
+                } else {
+                    $(name).next().remove()
+                    $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
+                }
+            })
+
+        })
+    })
+
+
+    $(document).on("click", "#ajouter-depense", function (e) {
+        resetForm("#form-ajouter-depense")
+    })
+
+    $(document).on("click", "#voir-depense", function (e) {
+        url = $(this).attr("data-show-url");
+
+        $.ajax(url, {}, dataType ="JSON").done(function (depense) {
+            let date = formatAMPM(new Date(depense.date_heure)).toUpperCase()
+            $("#modal-voir-depense #type").val(depense.type);
+            $("#modal-voir-depense #date_heure_delete input").val(date);
+            $("#modal-voir-depense #camion").val(depense.camion_id);
+            $("#modal-voir-depense #chauffeur").val(depense.chauffeur_id);
+            $("#modal-voir-depense #montant").val(depense.montant);
+            $("#modal-voir-depense #commentaire").val(depense.commentaire);
+        })
+    })
+
+    $(document).on("click", "#supprimer-depense", function (e) {
+        url = $(this).attr("data-show-url");
+        url_delete = $(this).attr("data-update-url");
+
+        resetForm("#form-supprimer-depense")
+
+        //$("#modal-modifier-depense").modal("show");
+        $("#form-supprimer-depense").attr("action", url_delete);
+
+        $.ajax(url, {}, dataType ="JSON").done(function (depense) {
+            let date = formatAMPM(new Date(depense.date_heure)).toUpperCase()
+
+            $("#modal-supprimer-depense #type").html(depense.type);
+            $("#modal-supprimer-depense #date_heure_delete input").val(date);
+            $("#modal-supprimer-depense #camion").val(depense.camion_id);
+            $("#modal-supprimer-depense #chauffeur").val(depense.chauffeur_id);
+            $("#modal-supprimer-depense #montant").html(depense.montant);
+            $("#modal-supprimer-depense #commentaire").val(depense.commentaire);
+        })
+    })
+
+    $(document).on("click", "#modifier-depense", function (e) {
+        url = $(this).attr("data-show-url");
+        url_update = $(this).attr("data-update-url");
+
+        resetForm("#form-modifier-depense")
+
+        //$("#modal-modifier-depense").modal("show");
+        $("#form-modifier-depense").attr("action", url_update);
+
+        $.ajax(url, {}, dataType ="HTML").done(function (depense) {
+            let date = formatAMPM(new Date(depense.date_heure)).toUpperCase()
+
+            $("#modal-modifier-depense #type").val(depense.type);
+            $("#modal-modifier-depense #date_heure_edit input").val(date);
+            $("#modal-modifier-depense #camion").val(depense.camion_id);
+            $("#modal-modifier-depense #chauffeur").val(depense.chauffeur_id);
+            $("#modal-modifier-depense #montant").val(depense.montant);
+            $("#modal-modifier-depense #commentaire").val(depense.commentaire);
+        })
+    })
+
+    function resetForm (formId) {
+        let class_name = 'border-danger'
+        let form = document.querySelector(formId)
+        let elements = form.getElementsByClassName(class_name)
+
+        for (let i = 0; i < elements.length; i++) {
+            $(elements[i]).next().remove()
+        }
+
+        form.reset()
+        $(elements).removeClass(class_name);
+    }
+
+    function formatAMPM(date)
+    {
+        let year = date.getFullYear()
+        let month = date.getMonth() + 1
+        let day = date.getDate()
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime =  month.toString().padStart(2, 0) + '/' + day.toString().padStart(2, 0) + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
 
 </script>
 

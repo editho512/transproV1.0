@@ -78,7 +78,9 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="info-box">
+
                         <span class="info-box-icon bg-danger"><img src="{{asset("assets/images/icons/carburant.png")}}" style="width:35px;" alt=""></span>
+
                         <div class="info-box-content">
                             <span class="info-box-text">Carburant restant</span>
                             <p class="info-box-number voir-camion-statistique ">{{nombre_fr($stock_carburant)}}L</p>

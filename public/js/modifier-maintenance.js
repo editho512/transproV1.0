@@ -66,6 +66,8 @@ function populatePieceList (pieces, result, editable = true) {
     pieces = JSON.parse(pieces)
     let edit_result = document.querySelector(result)
 
+    if (pieces === null) return new Object()
+
     Object.entries(pieces).forEach(piece => {
         piece = piece[1]
         let tr = document.createElement('tr')

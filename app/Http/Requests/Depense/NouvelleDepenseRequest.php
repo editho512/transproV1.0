@@ -32,7 +32,7 @@ class NouvelleDepenseRequest extends FormRequest
             "camion_id" => ['nullable', 'numeric', 'exists:camions,id'],
             "chauffeur_id" => ['nullable', 'numeric', 'exists:chauffeurs,id'],
             "commentaire" => ['nullable', 'sometimes', 'min:5', 'max:5000'],
-            "montant" => ['required', 'numeric', 'min:10', 'max:999999999999'],
+            "montant" => ['required', 'numeric', 'min:1', 'max:999999999999'],
         ];
     }
 
@@ -45,7 +45,15 @@ class NouvelleDepenseRequest extends FormRequest
     public function messages() : array
     {
         return [
-
+            "type.required" => "Vous devez selectionner un type dans la liste",
+            "date_heure.required" => "Vous devez renseigner la date et heure",
+            "date_heure.before_or_equal" => "La date et heure doit pas depasser :date",
+            "camion_id.exists" => "Le camion que vous avez selecitonné n'exise pas",
+            "chauffeur_id.exists" => "Le chauffeur que vous avez selectionné n'existe pas",
+            "commentaire.min" => "Le commentaire doit contenir au moins :min caractères",
+            "montant.required" => "Le montant est obligatoire",
+            "montant.min" => "Le montant doit etre supérieur ou égal à :min",
+            "montant.max" => "Le montant doit etre inférieur ou égal à :max",
         ];
     }
 
