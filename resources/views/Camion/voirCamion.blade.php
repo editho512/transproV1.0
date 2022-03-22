@@ -183,8 +183,8 @@
                                         <td >
                                             <div class="row">
                                                 <div class="col-sm-12" style="text-align: center">
-                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
-                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
+                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-sm btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
+                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-sm btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
                                                 </div>
                                             </div>
 
