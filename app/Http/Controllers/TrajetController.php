@@ -618,6 +618,9 @@ class TrajetController extends Controller
     public function supprimer(Request $request, Trajet $trajet) : RedirectResponse
     {
         $trajet->itineraires()->delete();
+        if($trajet->carburant_id !== null){
+            $trajet->carburant->delete();
+        }
         $delete = $trajet->delete();
 
         if ($delete)

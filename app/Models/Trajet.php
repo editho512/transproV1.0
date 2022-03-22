@@ -224,5 +224,9 @@ class Trajet extends Model
         return !isset($next[0]->id) ;
     }
 
+    public function carburant(){
+        return $this->hasOne(Carburant::class, "id", "carburant_id");
+    }
+
     
 }

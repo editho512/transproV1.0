@@ -74,7 +74,7 @@ function populatePieceList (pieces, result, editable = true) {
 
         $action = "<button type='button' onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button>"
 
-        if (editable === false) $action = "Aucune action"
+        if (editable === false) $action = "Aucun action"
 
         let tuple = "<td>" + piece.nom + "</td><td>" + parseFloat(piece.pu) + " Ar</td><td>" + parseFloat(piece.quantite) + "</td><td>" + parseFloat(piece.total) + " Ar</td><td class='d-inline-flex'>" + $action + "</td>"
         tr.innerHTML = tuple

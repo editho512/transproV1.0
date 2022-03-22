@@ -140,12 +140,15 @@
                                             <td>{{ $depense->commentaire }}</td>
                                             <td>
                                                 <div class="row">
-                                                    <div class="col-xs-6">
-                                                        <button class="btn btn-sm btn-primary mr-2" id="modifier-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-depense" data-update-url="{{ route('depense.post.modifier', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-edit"></i></button>
+                                                    <div class="col-sm-4 text-left">
+                                                        <button class="btn btn-xs btn-info " id="voir-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-depense" data-show-url="{{ route('depense.voir', ['depense' => $depense->id]) }}"><i class="fa fa-eye"></i></button>
+                                                    </div>
+                                                    <div class="col-sm-4 text-center">
+                                                        <button class="btn btn-xs btn-primary " id="modifier-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-depense" data-update-url="{{ route('depense.post.modifier', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-edit"></i></button>
 
                                                     </div>
-                                                    <div class="col-xs-6 ">
-                                                        <button class="btn btn-sm btn-danger" id="supprimer-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-depense" data-update-url="{{ route('depense.post.supprimer', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-trash"></i></button>
+                                                    <div class="col-sm-4 text-right">
+                                                        <button class="btn btn-xs btn-danger" id="supprimer-depense" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-depense" data-update-url="{{ route('depense.post.supprimer', ['depense' => $depense->id]) }}" data-show-url="{{ route('depense.modifier', ['depense' => $depense->id]) }}"><i class="fa fa-trash"></i></button>
 
                                                     </div>
                                                 </div>

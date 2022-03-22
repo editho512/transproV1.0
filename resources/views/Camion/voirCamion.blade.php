@@ -183,8 +183,8 @@
                                         <td >
                                             <div class="row">
                                                 <div class="col-sm-12" style="text-align: center">
-                                                    <button class="btn  btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
-                                                    <button class="btn  btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
+                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
+                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
                                                 </div>
                                             </div>
 
@@ -1387,7 +1387,7 @@
             $("#modal-modifier-carburant #modifier_date").val(data.date);
             $("#modal-modifier-carburant #modifier_quantite").val(data.quantite);
             $("#modal-modifier-carburant input[name=prix]").val(data.prix);
-            $("#modal-modifier-carburant #modifier_flux").val(data.flux).change();
+            $("#modal-modifier-carburant #modifier_flux").val(data.flux).attr("readonly", "readonly").change();
 
         })
     })

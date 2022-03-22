@@ -116,7 +116,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="maintenances" class="table table-bordered table-striped">
+                            <table id="maintenances" class="table table-bordered table-striped" >
                                 <thead>
                                     <tr>
                                         <th>Type</th>
@@ -164,16 +164,16 @@
                                             </td>
                                             <td >
                                                 <div class="row">
-                                                    <div class="col-sm-4 text-center"> 
-                                                          <button class="btn btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
+                                                    <div class="col-sm-4 text-left"> 
+                                                          <button class="btn btn-xs btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
 
                                                     </div>
                                                     <div class="col-sm-4 text-center">
-                                                        <button class="btn btn-sm btn-primary mr-2" id="modifier-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-maintenance" data-update-url="{{ route('maintenance.post.modifier', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-edit"></i></button>
+                                                        <button class="btn btn-xs btn-primary mr-2" id="modifier-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-maintenance" data-update-url="{{ route('maintenance.post.modifier', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-edit"></i></button>
 
                                                     </div>
-                                                    <div class="col-sm-4 text-center">
-                                                        <button class="btn btn-sm btn-danger" id="supprimer-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-maintenance" data-update-url="{{ route('maintenance.post.supprimer', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-trash"></i></button>
+                                                    <div class="col-sm-4 text-right">
+                                                        <button class="btn btn-xs btn-danger" id="supprimer-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-maintenance" data-update-url="{{ route('maintenance.post.supprimer', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-trash"></i></button>
 
                                                     </div>
                                                 </div>
@@ -346,9 +346,9 @@
                         <div class="col-md-12 mt-4 mb-4">
                             <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles</h5>
 
-                            <table class="table">
+                            <table class="table" style="width:100%">
                                 <thead>
-                                    <th>Nom de la matérielle</th>
+                                    <th>Nom du matériel</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -521,9 +521,9 @@
                         <div class="col-md-12 mt-4 mb-4">
                             <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles</h5>
 
-                            <table class="table">
+                            <table class="table" style="width:100%">
                                 <thead>
-                                    <th>Nom de la matérielle</th>
+                                    <th>Nom du matériel</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -696,9 +696,9 @@
                         <div class="col-md-12 mt-4 mb-4">
                             <h5 class="text-uppercase mb-4 text-center text-danger font-weight-bold">Détails des matérielles</h5>
 
-                            <table class="table">
+                            <table class="table" style="width:100%">
                                 <thead>
-                                    <th>Nom de la matérielle</th>
+                                    <th>Nom du matériel</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -849,7 +849,7 @@
                         <div class="col-md-12 mt-4 mb-4">
                             <h5 class="text-uppercase mb-4 text-center text-info font-weight-bold">Détails des matérielles</h5>
 
-                            <table class="table">
+                            <table class="table" style="width:100%">
                                 <thead>
                                     <th>Nom de la matérielle</th>
                                     <th>Prix unitaire</th>
@@ -921,8 +921,6 @@ $("#maintenances").DataTable({
         "info": false ,            
         language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
     });
-
-
 const resetStyle = (input) => {
     if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
     let next = input.nextElementSibling
@@ -1039,6 +1037,7 @@ $(document).on("click", "#voir-maintenance", function (e) {
         $("#modal-voir-maintenance #adresse_reparateur").val(maintenance.adresse_reparateur);
 
         pieces = populatePieceList(maintenance.pieces, '#result-voir', false)
+       
     })
 })
 
@@ -1072,6 +1071,8 @@ $(document).on("click", "#modifier-maintenance", function (e) {
         pieces = populatePieceList(maintenance.pieces, '#result-edit')
     })
 })
+
+
 
 function resetForm (formId) {
     let class_name = 'border-danger'
