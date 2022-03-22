@@ -66,14 +66,14 @@
                                                     <div class="row" style="text-align: center;">
                                                         <div class="col-sm-12">
                                                             <a href="{{$chauffeur->permis == null ? "#" : asset('storage/'.$chauffeur->permis)}}" target="{{$chauffeur->permis == null ? '' : '_blank'}}" >
-                                                                <button class="btn  btn-info"><span class="fa fa-eye"></span></button>
+                                                                <button @if ($chauffeur->permis == null) disabled @endif class="btn  btn-sm btn-info"><span class="fa fa-eye"></span></button>
                                                             </a>
                                                             @can('update', $chauffeur)
-                                                                <button class="btn  btn-primary modifier-chauffeur" data-show-url="{{route('chauffeur.modifier', ['chauffeur' => $chauffeur->id])}}"  data-url="{{route('chauffeur.update', ['chauffeur' => $chauffeur->id])}}" ><span class="fa fa-edit"></span></button>
+                                                                <button class="btn  btn-sm btn-primary modifier-chauffeur" data-show-url="{{route('chauffeur.modifier', ['chauffeur' => $chauffeur->id])}}"  data-url="{{route('chauffeur.update', ['chauffeur' => $chauffeur->id])}}" ><span class="fa fa-edit"></span></button>
                                                             @endcan
 
                                                             @can('delete', $chauffeur)
-                                                                <button class="btn  btn-danger supprimer-chauffeur" data-url="{{route('chauffeur.delete', ['chauffeur' => $chauffeur->id])}}"><span class="fa fa-trash"></span></button>
+                                                                <button class="btn  btn-sm btn-danger supprimer-chauffeur" data-url="{{route('chauffeur.delete', ['chauffeur' => $chauffeur->id])}}"><span class="fa fa-trash"></span></button>
                                                             @endcan
                                                         </div>
                                                     </div>

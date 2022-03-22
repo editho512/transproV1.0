@@ -1112,7 +1112,7 @@ function editPiece (button) {
     let PU = LIB.nextElementSibling
     let Q = PU.nextElementSibling
     let TOTAL = Q.nextElementSibling
-
+    
     PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replace('Ar', '').trim().replace(",", "").replace(" ", "") + "'/>"
     Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.replace('Ar', '').trim().replace(",", "").replace(" ", "") + "'/>"
 
