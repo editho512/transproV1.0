@@ -16,7 +16,20 @@ class Trajet extends Model
     use HasFactory;
 
     protected $fillable = [
-        'depart', 'date_heure_depart', 'arrivee', 'date_heure_arrivee', 'etat', 'camion_id', 'chauffeur_id', 'carburant_depart', 'carburant_total', 'carburant_id', 'poids'
+        'depart',
+        'date_heure_depart', 
+        'arrivee', 
+        'date_heure_arrivee',
+         'etat', 
+         'camion_id', 
+         'chauffeur_id', 
+         'carburant_depart', 
+         'carburant_total', 
+         'carburant_id', 
+         'poids', 
+         'chargement' , 
+         'bon', 
+         'bon_enlevement'
     ];
 
     private static $etat = [

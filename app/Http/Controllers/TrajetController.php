@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Session;
 use Carbon\Carbon;
 use App\Models\Camion;
-use App\Models\Carburant;
 use App\Models\Trajet;
+use App\Models\Carburant;
 use App\Models\Chauffeur;
 use App\Models\Itineraire;
-use Illuminate\Database\QueryException;
+use App\Rules\BonEnlevement;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Session;
+use Illuminate\Database\QueryException;
 
 class TrajetController extends Controller
 {
@@ -35,7 +36,10 @@ class TrajetController extends Controller
             "date_heure_depart" => ['required', 'date'],
             "date_heure_arrivee" => ['required', 'date'],
             "carburantRestant" => ['nullable', 'numeric'],
-            "poids" => ['nullable', 'numeric' , "min:0"]
+            "poids" => ['nullable', 'numeric' , "min:0"],
+            "chargement" => ['required','min:3'],
+            "bon" => ['required','min:1'],
+            "bon_enlevement" => [new BonEnlevement($request->etat)]
         ]);
 
         $res = [];
@@ -226,8 +230,10 @@ class TrajetController extends Controller
             'carburant_depart' => ( $request->etat == Trajet::getEtat(1) || $request->etat == Trajet::getEtat(2) ) ? $carburant_depart : null ,
             'carburant_total' => $carburant_total,
             'carburant_id' => isset($carburant->id) === true ? $carburant->id : null ,
-            'poids' => doubleval($request->poids) > 0 ? doubleval($request->poids) : null
-
+            'poids' => doubleval($request->poids) > 0 ? doubleval($request->poids) : null,
+            'chargement' => $request->chargement,
+            'bon' => $request->bon,
+            "bon_enlevement" => $request->bon_enlevement
         ]);
 
         if ($trajet->save())
@@ -304,7 +310,10 @@ class TrajetController extends Controller
             "date_heure_arrivee" => ['required', 'date'],
             "itineraire" => ["required", "sometimes"],
             "carburantRestant" => ['nullable', 'numeric'] ,
-            "poids" => ['nullable', 'numeric' , "min:0"]
+            "poids" => ['nullable', 'numeric' , "min:0"],
+            "chargement" => ["required", "min:3"],
+            "bon" => ["required", "min:1"],
+            "bon_enlevement" => [new BonEnlevement($request->etat)]
         ]);
 
         $res = [];
@@ -541,7 +550,10 @@ class TrajetController extends Controller
             'etat' => $etat,
             'chauffeur_id' => $request->chauffeur === null ? null : intval($request->chauffeur),
             'carburant_id' => isset($carburant->id) === true ? $carburant->id : null,
-            'poids' => doubleval($request->poids) > 0 ? doubleval($request->poids) : null
+            'poids' => doubleval($request->poids) > 0 ? doubleval($request->poids) : null,
+            'chargement' => $request->chargement ,
+            'bon' => $request->bon,
+            'bon_enlevement' => $request->bon_enlevement,
 
         ];
 

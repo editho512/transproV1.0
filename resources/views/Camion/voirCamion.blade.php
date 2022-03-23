@@ -226,7 +226,8 @@
                             <table id="trajets" class="table table-bordered table-striped dataTable">
                                 <thead>
                                     <tr>
-                                        <th>Numéro du trajet</th>
+                                        <th>Numéro</th>
+                                        <th>Chargement</th>
                                         <th>Itinéraire</th>
                                         <th>Date & heure départ</th>
                                         <th>Date & heure arrivée</th>
@@ -240,6 +241,7 @@
                                     @forelse ($camion->trajets()->orderBy('date_heure_depart', 'ASC')->get() as $trajet)
                                     <tr>
                                         <td @if ($trajet->ordreExecution() !== null) style="background-color:{{ $trajet->couleurs() }}" @endif>{{ $trajet->id }}</td>
+                                        <td>{{$trajet->chargement}}</td>
                                         <td>{{ $trajet->nomItineraire() }}</td>
                                         <td>{{ formatDate($trajet->date_heure_depart) }}</td>
                                         <td>{{ formatDate($trajet->date_heure_arrivee) }}</td>
@@ -275,15 +277,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            @if ($trajet->blocked == false)
-                                            <!--
-                                            <a href="{{route('trajet.voir', ['trajet' => $trajet->id])}}">
-                                                <button class="btn btn-sm btn-info" ><span class="fa fa-eye"></span></button>
-                                            </a>-->
-                                            @else
-                                            <button class="btn btn-sm btn-info" disabled ><span class="fa fa-eye"></span></button>
-                                            @endif
-
+                                            <button class="btn btn-sm btn-info voir-trajet"><span class="fa fa-eye"></span></button>
                                             <button @if ($trajet->IsLastFinished() === false ) disabled @endif  class="btn btn-sm btn-primary modifier-trajet"  data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}"><span class="fa fa-edit"></span></button>
                                             <button {{ isset($trajet->reservation->id) === true ? "disabled": "" }} class="btn btn-sm btn-danger supprimer-trajet" data-url="{{route('trajet.supprimer', ['trajet' => $trajet->id])}}" data-delete-url="{{route('trajet.delete', ['trajet' => $trajet->id])}}"><span class="fa fa-trash"></span></button>
                                         </td>
@@ -294,7 +288,8 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>Numéro du trajet</th>
+                                        <th>Numéro</th>
+                                        <th>Chargement</th>
                                         <th>Itinéraire</th>
                                         <th>Date & heure départ</th>
                                         <th>Date & heure arrivée</th>
@@ -338,7 +333,7 @@
                                         <td >
                                             <div class="row">
                                                 <div class="col-sm-12" style="text-align: center">
-                                                    <a  href="{{$papier->photo == null ? "#" : asset('storage/'.$papier->photo)}}" >
+                                                    <a  href="{{$papier->photo == null ? "#" : asset('storage/'.$papier->photo)}}" target="_blank">
                                                         <button class="btn btn-sm btn-info"><span class="fa fa-eye"></span></button>
                                                     </a>
                                                     <button class="btn btn-sm btn-primary btn-papier-modifier" data-url="{{route('papier.update', ["papier" => $papier->id])}}"  data-show="{{route('papier.modifier', ["papier" => $papier->id])}}" ><span class="fa fa-edit"></span></button>
@@ -393,6 +388,7 @@
                 <form action="{{route('carburant.ajouter')}}" method="post" role="form" id="form-ajouter-carburant" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="camion_id" value={{$camion->id}}>
+                   
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
                             <label for="date">Date :</label>
@@ -615,6 +611,36 @@
                         @csrf
     
                         <input type="hidden" name="camion_id" value={{ $camion->id }}>
+
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="chargement" class="form-label">Chargement :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input placeholder="Chargement" type="text" class="form-control" name="chargement" >
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="bon" class="form-label">Bon N° :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input placeholder="Numéro de bon" type="text"  class="form-control" name="bon" >
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3 bon_enlevement" style="margin-top: 3px;display:none; ">
+                            <div class="col-sm-4">
+                                <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input placeholder="Bon d'enlevement" type="text"  class="form-control" name="bon_enlevement" >
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
     
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
@@ -762,6 +788,36 @@
                         @method('patch')
     
                         <input type="hidden" name="camion_id" value={{ $camion->id }}>
+
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="chargement" class="form-label">Chargement :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input placeholder="Chargement" type="text" class="form-control" name="chargement" >
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" style="margin-top: 3px; ">
+                            <div class="col-sm-4">
+                                <label for="bon" class="form-label">Bon N° :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input placeholder="Numéro de bon" type="text"  class="form-control" name="bon" >
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3 bon_enlevement" style="margin-top: 3px;display:none; ">
+                            <div class="col-sm-4">
+                                <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input placeholder="Bon d'enlevement" type="text"  class="form-control" name="bon_enlevement" >
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
     
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
@@ -901,6 +957,36 @@
 
                     <div class="row mb-3" style="margin-top: 3px; ">
                         <div class="col-sm-4">
+                            <label for="chargement" class="form-label">Chargement :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input placeholder="Chargement" type="text" disabled class="form-control" name="chargement" >
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
+                            <label for="bon" class="form-label">Bon N° :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input placeholder="Numéro de bon" type="text" disabled class="form-control" name="bon" >
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 " style="margin-top: 3px;">
+                        <div class="col-sm-4">
+                            <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <input placeholder="Bon d'enlevement" type="text" disabled class="form-control" name="bon_enlevement" >
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3" style="margin-top: 3px; ">
+                        <div class="col-sm-4">
                             <label for="chauffeur" class="form-label">Chauffeur :</label>
                         </div>
                         <div class="col-sm-8">
@@ -974,6 +1060,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+
 
 {{-- Fin trajets --}}
 
@@ -1438,6 +1526,7 @@
             backdrop: 'static',
             keyboard: false
         });
+
         $("#form-modifier-trajet").attr("action", url_update);
 
         $.get(url, {}, dataType="JSON").done(function (data) {
@@ -1474,8 +1563,10 @@
             $("#modal-modifier-trajet #modifier_date_heure_depart").val(data.trajet.date_heure_depart);
             $("#modal-modifier-trajet #modifier_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
             $("#modal-modifier-trajet #modifier-etat").val(data.trajet.etat);
+            $("#modal-modifier-trajet input[name=chargement]").val(data.trajet.chargement);
+            $("#modal-modifier-trajet input[name=bon]").val(data.trajet.bon);
+            $("#modal-modifier-trajet input[name=bon_enlevement]").val(data.trajet.bon_enlevement);
             $("#modifier-etat").change();
-
 
             if(data.reservation != null){
                 $("#modal-modifier-trajet #modifier_date_heure_depart").attr("readonly", "readonly");
@@ -1494,11 +1585,19 @@
                 $("#modal-modifier-trajet #carburant-restant").val(data.trajet.carburant_depart - data.trajet.carburant_total);
             }
 
-
         })
     })
 
+    $(document).on("click", ".voir-trajet", function (e) {
+        
+        $(this).next().next().trigger("click");
+        $("#modal-supprimer-trajet").find(".modal-header").removeClass("modal-header-danger").find("h4").html("Voir un trajet");
+        $("#button-supprimer-trajet").parent().hide();
+    })
+
     $(document).on("click", ".supprimer-trajet", function (e) {
+        $("#modal-supprimer-trajet").find(".modal-header").addClass("modal-header-danger").find("h4").html("Supprimer un trajet");
+        $("#button-supprimer-trajet").parent().show();
 
         let url = $(this).prev().attr("data-show-url");
         let url_delete = $(this).attr("data-url");
@@ -1529,9 +1628,16 @@
             $("#modal-supprimer-trajet #supprimer_date_heure_depart").val(data.trajet.date_heure_depart);
             $("#modal-supprimer-trajet #supprimer_date_heure_arrivee").val(data.trajet.date_heure_arrivee);
             $("#modal-supprimer-trajet #supprimer-etat").html(data.trajet.etat);
+            $("#modal-supprimer-trajet input[name=chargement]").val(data.trajet.chargement);
+            $("#modal-supprimer-trajet input[name=bon]").val(data.trajet.bon);
+            $("#modal-supprimer-trajet input[name=bon_enlevement]").val(data.trajet.bon_enlevement);
+
         })
 
     })
+
+    
+
     
     $(document).on("click", "#button-ajouter-trajet", function(e){
         let me = $(this);
@@ -1559,6 +1665,7 @@
                         $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                         $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
 
+                        
                         if
                         (   data.value == "Camion non disponible entre les dates que vous avez selectionnées" ||
                             date.value == "Le camion a encore un trajet en cours" ||
@@ -1617,9 +1724,34 @@
                            
                             console.log(donnee.errors.etat );
 
+                            if(donnee.errors.hasOwnProperty("bon") === true){
+                                $("#form-ajouter-trajet input[name=bon]").addClass("is-invalid");
+                                $("#form-ajouter-trajet input[name=bon]").next().html("Le bon est obligatoire pour ce statut et doit contenir au moins un caractère").show(200);
+                            }else{
+                                $("#form-ajouter-trajet input[name=bon]").removeClass("is-invalid");
+                                $("#form-ajouter-trajet input[name=bon]").next().html("").hide();
+                            }
+
+                            if(donnee.errors.hasOwnProperty("bon_enlevement") === true){
+                                $("#form-ajouter-trajet input[name=bon_enlevement]").addClass("is-invalid");
+                                $("#form-ajouter-trajet input[name=bon_enlevement]").next().html("Le bon d'enlevement est obligatoire pour ce statut et doit contenir au moins un caractère").show(200);
+                            }else{
+                                $("#form-ajouter-trajet input[name=bon_enlevement]").removeClass("is-invalid");
+                                $("#form-ajouter-trajet input[name=bon_enlevement]").next().html("").hide();
+                            }
+
+                            if(donnee.errors.hasOwnProperty("chargement") === true){
+                                $("#form-ajouter-trajet input[name=chargement]").addClass("is-invalid");
+                                $("#form-ajouter-trajet input[name=chargement]").next().html("Le chargement doit contenir au moins 3 caractères").show(200);
+                            }else{
+                                $("#form-ajouter-trajet input[name=chargement]").removeClass("is-invalid");
+                                $("#form-ajouter-trajet input[name=chargement]").next().html("").hide();
+                            }
+
+
                             if(donnee.errors.hasOwnProperty("etat") === true){
                                 $("#status-feedback").prev().addClass("is-invalid");
-                                $("#status-feedback").html("la date de départ est obligatoire").show(300);
+                                $("#status-feedback").html("La date de départ est obligatoire").show(300);
                             }else{
                                 $("#status-feedback").prev().removeClass("is-invalid");
                                 $("#status-feedback").html("").hide(300);
@@ -1741,12 +1873,36 @@
 
                 donnee = $.parseJSON(data.responseText);
 
+                if(donnee.errors.hasOwnProperty("bon") === true){
+                    $("#form-modifier-trajet input[name=bon]").addClass("is-invalid");
+                    $("#form-modifier-trajet input[name=bon]").next().html("Le bon est obligatoire pour ce statut et doit contenir au moins un caractère").show(200);
+                }else{
+                    $("#form-modifier-trajet input[name=bon]").removeClass("is-invalid");
+                    $("#form-modifier-trajet input[name=bon]").next().html("").hide();
+                }
+
+                if(donnee.errors.hasOwnProperty("bon_enlevement") === true){
+                    $("#form-modifier-trajet input[name=bon_enlevement]").addClass("is-invalid");
+                    $("#form-modifier-trajet input[name=bon_enlevement]").next().html("Le bon d'enlevement est obligatoire pour ce statut et doit contenir au moin un caractère").show(200);
+                }else{
+                    $("#form-modifier-trajet input[name=bon_enlevement]").removeClass("is-invalid");
+                    $("#form-modifier-trajet input[name=bon_enlevement]").next().html("").hide();
+                }
+
+
+                if(donnee.errors.hasOwnProperty("chargement") === true){
+                    $("#form-modifier-trajet input[name=chargement]").addClass("is-invalid");
+                    $("#form-modifier-trajet input[name=chargement]").next().html("Le chargement doit contenir au moins 3 caractères").show(200);
+                }else{
+                    $("#form-modifier-trajet input[name=chargement]").removeClass("is-invalid");
+                    $("#form-modifier-trajet input[name=chargement]").next().html("").hide();
+                }
 
                 if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
-                    $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
+                    $("#form-modifier-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
                                 
                 }else{
-                    $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
+                    $("#form-modifier-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                 }
 
                 if(donnee.errors.hasOwnProperty("date_heure_arrivee") === true ){
@@ -1789,16 +1945,24 @@
         let etat = select.value
         let carburant = $(action + " .carburant") 
         let poids = $(action + " .poids-content")
+        let bon_enlevement = $(action + " .bon_enlevement");
+
 
         if (etat == '{{ App\Models\Trajet::getEtat(2) }}'|| etat == '{{ App\Models\Trajet::getEtat(1) }}' ) {
             carburant.show(200).find("input").val("");
             poids.show(200);
 
+            if(etat == '{{ App\Models\Trajet::getEtat(2) }}' ){
+                bon_enlevement.show(200)
+            }else{
+                bon_enlevement.hide(200);
+            }
+
         } else {
 
             carburant.hide(200).find("input").val("");
             poids.hide(200);
-
+            bon_enlevement.hide(200);
         }
     }
 
