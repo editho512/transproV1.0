@@ -41,6 +41,29 @@ class ModifierMaintenanceRequest extends FormRequest
         ];
     }
 
+    public function messages() : array
+    {
+        return [
+            "type.required" => "Le type est obligatoire (Reparation / Maintenance)",
+            "titre.required" => "Vous devez specifier un titre",
+
+            "date_heure.required" => "La date et heure est obligatoire",
+            "date_heure.before_or_equal" => "La date et heure ne doit pas depasser :date",
+
+            "camion_id.required" => "Vous devez selectionner un camion",
+            "camion_id.exists" => "Le camion selectionné n'existe pas",
+
+            "main_oeuvre.required" => "Vous devez remplir le montant de la main d'oeuvre",
+            "main_oeuvre.min" => "Le montant doit être superieur ou égal a :min",
+            "nom_reparateur.required" => "Le nom de l'agent est obligatoire",
+
+            "tel_reparateur.required" => "Le telephone de l'agent est obligatoire",
+            "tel_reparateur.regex" => "Le format du téléphone est invalide",
+
+            "adresse_reparateur.required" => "L'adresse de l'agent est obligatoire",
+        ];
+    }
+
 
     /**
      * Traitements avant la validation de la réquete

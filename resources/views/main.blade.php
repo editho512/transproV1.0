@@ -173,6 +173,15 @@
             var result = text.slice(0, count) + (text.length > count ? "..." : "");
             return result;
         }
+
+        function inArray(needle, haystack) {
+            var length = haystack.length;
+            for(var i = 0; i < length; i++) {
+                if(haystack[i] == needle) return true;
+            }
+            return false;
+        }
+
     </script>
         @php
             $notification = Session::has("notification") === true ? Session::get("notification") : null;

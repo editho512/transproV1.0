@@ -28,7 +28,7 @@ class ModifierDepenseRequest extends FormRequest
     {
         return [
             "type" => ['required', 'min:5', 'max:255'],
-            "date_heure" => ['required', 'date', 'date_format:Y-m-d H:i:s', 'before_or_equal:' . Carbon::now()->toDateTimeString()],
+            "date_heure" => ['required', 'date', 'date_format:Y-m-d H:i:s'],
             "camion_id" => ['nullable', 'numeric', 'exists:camions,id'],
             "chauffeur_id" => ['nullable', 'numeric', 'exists:chauffeurs,id'],
             "commentaire" => ['nullable', 'sometimes', 'min:5', 'max:5000'],
@@ -47,7 +47,6 @@ class ModifierDepenseRequest extends FormRequest
         return [
             "type.required" => "Vous devez selectionner un type dans la liste",
             "date_heure.required" => "Vous devez renseigner la date et heure",
-            "date_heure.before_or_equal" => "La date et heure doit pas depasser :date",
             "camion_id.exists" => "Le camion que vous avez selecitonné n'exise pas",
             "chauffeur_id.exists" => "Le chauffeur que vous avez selectionné n'existe pas",
             "commentaire.min" => "Le commentaire doit contenir au moins :min caractères",

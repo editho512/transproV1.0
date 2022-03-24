@@ -611,8 +611,13 @@
 
     $(document).on("submit", "#form-ajouter-depense", function (e) {
         e.preventDefault()
+        
+        let bouton = $("#button-ajouter-depense");
+        spinning(bouton);
+
 
         $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
+            spinning(bouton, 2);
             window.location.href = response.redirect
         }).fail(function (response) {
             let errors = response.responseJSON.errors
@@ -630,13 +635,18 @@
                     $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
                 }
             })
+            spinning(bouton, 2);
         })
     })
 
     $(document).on("submit", "#form-modifier-depense", function (e) {
         e.preventDefault()
 
+        let bouton = $("#button-modifier-depense");
+        spinning(bouton);
+
         $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
+            spinning(bouton, 2);
             window.location.href = response.redirect
         }).fail(function (response) {
             let errors = response.responseJSON.errors
@@ -654,7 +664,7 @@
                     $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
                 }
             })
-
+            spinning(bouton, 2);
         })
     })
 

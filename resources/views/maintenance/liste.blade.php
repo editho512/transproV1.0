@@ -375,7 +375,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i style="transform: rotate(45deg)" class="fa fa-plus mr-2"></i>Fermer</button>
-                <button type="submit" id="button-ajouter-maintenance" form="form-ajouter-maintenance" class="float-right btn btn-primary"><i class="fa fa-save mr-2"></i>Enregistrer</button>
+                <button type="submit" id="button-ajouter-maintenance" form="form-ajouter-maintenance" class="float-right btn btn-primary"><span class="fa fa-save mr-2"></span><span style="display:none" class="spinner-border spinner-border-sm"></span>&nbsp;Enregistrer</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -550,7 +550,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i style="transform: rotate(45deg)" class="fa fa-plus mr-2"></i>Fermer</button>
-                <button type="submit" id="button-modifier-maintenance" form="form-modifier-maintenance" class="float-right btn btn-primary"><i class="fa fa-save mr-2"></i>Enregistrer</button>
+                <button type="submit" id="button-modifier-maintenance" form="form-modifier-maintenance" class="float-right btn btn-primary"><span class="fa fa-save mr-2"></span><span style="display:none" class="spinner-border spinner-border-sm"></span>&nbsp;Enregistrer</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -931,10 +931,14 @@ const resetStyle = (input) => {
 
 $(document).on("submit", "#form-ajouter-maintenance", function (e) {
     e.preventDefault()
+    
+    let bouton = $("#button-ajouter-maintenance");
+    spinning(bouton);
 
     $("#pieces").val(JSON.stringify(pieces));
 
     $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
+        spinning(bouton, 2);
         window.location.href = response.redirect
     }).fail(function (response) {
         let errors = response.responseJSON.errors
@@ -952,16 +956,21 @@ $(document).on("submit", "#form-ajouter-maintenance", function (e) {
                 $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
             }
         })
+
+        spinning(bouton, 2);
     })
 })
 
 
 $(document).on("submit", "#form-modifier-maintenance", function (e) {
     e.preventDefault()
+    let bouton = $("#button-modifier-maintenance");
+    spinning(bouton);
 
     $("#pieces-edit").val(JSON.stringify(pieces));
 
     $.post($(e.target).attr("action"), $(e.target).serialize(), dataType="JSON").done(function (response) {
+        spinning(bouton, 2);
         window.location.href = response.redirect
     }).fail(function (response) {
         let errors = response.responseJSON.errors
@@ -979,6 +988,7 @@ $(document).on("submit", "#form-modifier-maintenance", function (e) {
                 $(name).after('<span class="text-danger">' + error[1][0] + '</span>')
             }
         })
+        spinning(bouton, 2);
     })
 })
 
@@ -1080,7 +1090,14 @@ function resetForm (formId) {
     let elements = form.getElementsByClassName(class_name)
 
     for (let i = 0; i < elements.length; i++) {
-        $(elements[i]).next().remove()
+        
+        let className = elements[i].classList;
+
+        if( inArray("datetimepicker-input", className) ){
+            $(elements[i]).parent().next().remove()
+        }else{
+            $(elements[i]).next().remove()
+        }
     }
 
     pieces = new Object()
