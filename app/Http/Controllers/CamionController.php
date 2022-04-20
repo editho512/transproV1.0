@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -23,6 +24,7 @@ class CamionController extends Controller
     public function __construct()
     {
         $this->middleware('super-admin')->except(['add', 'index', 'voir']);
+        //Artisan::call("storage:link");
     }
 
 
