@@ -186,7 +186,7 @@ class CamionController extends Controller
             $active_camion_index = "active";
 
             $carburants = $camion->carburants;
-            $chauffeurs = Chauffeur::where('user_session', session()->getId())->orderBy('name', 'asc')->get();
+            $chauffeurs = Chauffeur::orderBy('name', 'asc')->get();
 
             $stock_carburant = $camion->CarburantRestant();
 
