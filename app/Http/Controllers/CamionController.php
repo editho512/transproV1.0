@@ -186,11 +186,11 @@ class CamionController extends Controller
             $active_camion_index = "active";
 
             $carburants = $camion->carburants;
-            $chauffeurs = Chauffeur::orderBy('name', 'asc')->get();
+            $chauffeurs = Chauffeur::where('user_session', session()->getId())->orderBy('name', 'asc')->get();
 
             $stock_carburant = $camion->CarburantRestant();
 
-            $papiers = Papier::all();
+            $papiers = $camion->papiers;
 
             $assurance = Papier::EnCours(Papier::TYPE[0]);
             $visiteTechnique = Papier::EnCours(Papier::TYPE[1]);

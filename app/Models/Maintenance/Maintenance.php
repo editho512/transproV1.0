@@ -63,4 +63,42 @@ class Maintenance extends Model
     {
         return self::ALL_TYPE;
     }
+
+    public static function dashboard($debut = null, $fin = null){
+        $req = self::join("camions", "camions.id", "=", "maintenances.camion_id")
+                    ->selectRaw("camions.name as camion, maintenances.type, maintenances.pieces, maintenances.main_oeuvre");
+        
+        if($debut != null){
+            $req = $req->where("maintenances.date_heure", ">=", $debut);
+        }
+        if($fin != null){
+            $req = $req->where("maintenances.date_heure", "<=", $fin);
+        }
+
+        $req = $req->selectRaw("camions.name as camion, maintenances.type, maintenances.pieces, maintenances.main_oeuvre");
+
+       
+        $req = $req->get();
+
+        $res = [];
+
+        foreach ($req as $key => $liste) {
+            # code...
+            $pieces = doubleval($liste->main_oeuvre);
+            $array_pieces = json_decode($liste->pieces);
+            
+            if( $array_pieces != null ){
+
+                foreach ($array_pieces as $key => $value) {
+                    # code...
+                    $pieces += doubleval($value->total);
+                }
+            }
+
+            //array_push($res, ["maintenance" => $liste, "montant" => ($pieces + doubleval($liste->main_oeuvre))]);
+            $res[$liste->camion][$liste->type] = isset($res[$liste->camion][$liste->type]) ? $res[$liste->camion][$liste->type] + $pieces : $pieces ;
+        }   
+
+        return $res;
+    }
 }
