@@ -11,8 +11,11 @@ class Carburant extends Model
 
     protected $fillable = [
         'quantite',
+        'prix',
         'flux',
         'date',
         'camion_id'
     ];
+
+    
 }

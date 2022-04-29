@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCarburantsTable extends Migration
+class CreateItinerairesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateCarburantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('carburants', function (Blueprint $table) {
-            $table->id();
-            $table->double("quantite");
-            $table->boolean("flux")->default(0);
-            $table->timestamp('date')->nullable();
-            $table->integer('camion_id');
+        Schema::create('itineraires', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nom', 255);
             $table->timestamps();
+            $table->unsignedBigInteger('id_trajet')->index('itineraires_id_trajet_foreign');
         });
     }
 
@@ -30,6 +28,6 @@ class CreateCarburantsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carburants');
+        Schema::dropIfExists('itineraires');
     }
 }

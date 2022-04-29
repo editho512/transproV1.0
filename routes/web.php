@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Depense\MainDepenseController;
+use App\Http\Controllers\Depense\ModifierDepenseController;
+use App\Http\Controllers\Depense\NouvelleDepenseController;
+use App\Http\Controllers\Maintenance\MainMaintenanceController;
+use App\Http\Controllers\Maintenance\ModifierMaintenanceController;
+use App\Http\Controllers\Maintenance\NouvelleMaintenanceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +30,20 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// -------------------- PAPIERS ------------------- //
+
+Route::get("/papier/supprimer/{papier}", [App\Http\Controllers\PapierController::class, 'supprimer'])->name("papier.supprimer");
+
+Route::patch("/papier/update/{papier}", [App\Http\Controllers\PapierController::class, 'update'])->name("papier.update");
+
+Route::get("/papier/modifier/{papier}", [App\Http\Controllers\PapierController::class, 'modifier'])->name("papier.modifier");
+
+Route::post("/papier/ajouter", [App\Http\Controllers\PapierController::class, 'ajouter'])->name("papier.ajouter");
+
+Route::get("/papier", [App\Http\Controllers\PapierController::class, 'index'])->name("papier.liste");
+
+// -------------------- PAPIERS ------------------- //
+
 // --------------------- CARBURANTS ---------------//
 
 Route::get('/Carburant/delete/{carburant}/{type?}',  [App\Http\Controllers\CarburantController::class, 'delete'])->name("carburant.delete");
@@ -39,13 +59,17 @@ Route::post('/Carburant/ajouter', [App\Http\Controllers\CarburantController::cla
 
 Route::prefix('trajet')->group(function() {
 
-    Route::get('/delete/{carburant}/{type?}',  [App\Http\Controllers\TrajetController::class, 'delete'])->name("trajet.delete");
+    Route::get('/delete/{trajet}/{type?}',  [App\Http\Controllers\TrajetController::class, 'delete'])->name("trajet.delete");
 
-    Route::patch('/update/{carburant}', [App\Http\Controllers\TrajetController::class, 'update'])->name('trajet.update');
+    Route::patch('/update/{trajet}', [App\Http\Controllers\TrajetController::class, 'update'])->name('trajet.update');
 
-    Route::get('/modifier/{carburant}', [App\Http\Controllers\TrajetController::class, 'modifier'])->name('trajet.modifier');
+    Route::get('/modifier/{trajet}', [App\Http\Controllers\TrajetController::class, 'modifier'])->name('trajet.modifier');
 
     Route::post('/ajouter', [App\Http\Controllers\TrajetController::class, 'add'])->name('trajet.ajouter');
+
+    Route::get('/voir/{trajet}/',  [App\Http\Controllers\TrajetController::class, 'voir'])->name("trajet.voir");
+
+    Route::get('/supprimer/{trajet}',  [App\Http\Controllers\TrajetController::class, 'supprimer'])->name("trajet.supprimer");
 
 });
 
@@ -64,7 +88,7 @@ Route::get('/Chauffeur', [App\Http\Controllers\ChauffeurController::class, 'inde
 
 // --------------------- CAMIONS -----------------//
 
-Route::get('/Camion/voir/{camion}/',  [App\Http\Controllers\CamionController::class, 'voir'])->name("camion.voir");
+Route::get('/Camion/voir/{camion}/{tab?}/',  [App\Http\Controllers\CamionController::class, 'voir'])->name("camion.voir");
 
 Route::get('/Camion/delete/{camion}/{type?}',  [App\Http\Controllers\CamionController::class, 'delete'])->name("camion.delete");
 
@@ -96,3 +120,55 @@ Route::prefix('Utilisateur')->middleware('super-admin')->group(function () {
 });
 
 // --------------------- UTILISATEUR -------------//
+
+
+/**
+ * Regroupe toutes les toutes qui concerne les depenses
+ * URL prefixé par depense/
+ */
+Route::prefix('depense')->middleware(['auth'])->group(function () {
+
+    // Page d'accueil de la depense
+    Route::get('/', [MainDepenseController::class, 'index'])->name('depense.index');
+
+    // Enregistrer un dépense
+    Route::get('nouvelle', [NouvelleDepenseController::class, 'create'])->name('depense.nouvelle');
+    Route::post('nouvelle', [NouvelleDepenseController::class, 'store'])->name('depense.post.nouvelle');
+
+    // Voir un dépense
+    Route::get('voir/{depense}', [MainDepenseController::class, 'voir'])->name('depense.voir');
+
+    // Modifier un dépense
+    Route::get('modifier/{depense}', [ModifierDepenseController::class, 'create'])->name('depense.modifier');
+    Route::post('modifier/{depense}', [ModifierDepenseController::class, 'store'])->name('depense.post.modifier');
+
+    // Supprimer une dépense
+    Route::post('supprimer/{depense}', [MainDepenseController::class, 'supprimer'])->name('depense.post.supprimer');
+
+});
+
+
+/**
+ * Regroupe toutes les toutes qui concerne les maintenances et reparations
+ * URL prefixé par maintenance/
+ */
+Route::prefix('maintenance')->middleware(['auth'])->group(function () {
+
+    // Page d'accueil de la depense
+    Route::get('/', [MainMaintenanceController::class, 'index'])->name('maintenance.index');
+
+    // Enregistrer un dépense
+    Route::get('nouvelle', [NouvelleMaintenanceController::class, 'create'])->name('maintenance.nouvelle');
+    Route::post('nouvelle', [NouvelleMaintenanceController::class, 'store'])->name('maintenance.post.nouvelle');
+
+    // Voir details maintenance
+    Route::get('voir/{maintenance}', [MainMaintenanceController::class, 'voir'])->name('maintenance.voir');
+
+    // Modifier un dépense
+    Route::get('modifier/{maintenance}', [ModifierMaintenanceController::class, 'create'])->name('maintenance.modifier');
+    Route::post('modifier/{maintenance}', [ModifierMaintenanceController::class, 'store'])->name('maintenance.post.modifier');
+
+    // Supprimer une dépense
+    Route::post('supprimer/{maintenance}', [MainMaintenanceController::class, 'supprimer'])->name('maintenance.post.supprimer');
+
+});

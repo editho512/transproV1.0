@@ -74,7 +74,16 @@
                             @endcan
 
                             @cannot('acceder-dashboard')
-                                <h5>Vous ne pouvez pas acceder au dashboard</h5>
+                            <form class="contact100-form m-t-10 m-b-10" action="{{route('logout')}}" method="POST" id="deconnexion">
+                                @csrf
+                                <div class="wrap-input100 m-lr-auto-lg" >
+                                    <button type="submit" form="deconnexion" class="s2-txt1 placeholder0 input100 trans-04" style="color: #40A8DF"><strong style="font-size: large">Deconnexion</strong></button>
+
+                                    <button type="submit" form="deconnexion" class="flex-c-m ab-t-r size2 hov1">
+                                        <i class="zmdi zmdi-long-arrow-right fs-30 cl1 trans-04"></i>
+                                    </button>
+                                </div>
+                            </form>
                             @endcannot
 
                         @endif

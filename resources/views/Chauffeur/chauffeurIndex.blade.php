@@ -9,9 +9,6 @@
 @endsection
 
 @section('content')
-
-
-
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper teste" style="min-height: inherit!important;">
         <!-- Content Header (Page header) -->
@@ -55,35 +52,40 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @if(isset($chauffeurs) && $chauffeurs->count() > 0)
-                                        @foreach($chauffeurs as $chauffeur)
+                                        @forelse($chauffeurs as $chauffeur)
                                             <tr style='{{$chauffeur->blocked == true ? "color:gray;" : ""}}'>
-                                                <td>{{ucwords($chauffeur->name)}}</td>
+                                                <td>{{ ucwords($chauffeur->name) }} @if ($chauffeur->disponible() === false) - <span class="badge badge-info">En cours de travail</span> @endif</td>
                                                 <td>{{$chauffeur->phone}}</td>
-                                                <td>{{$chauffeur->cin}}</td>
+                                                <td>
+                                                    {{$chauffeur->cin}}
+                                                    @if ($chauffeur->nombreTrajetEnAttente() > 0)
+                                                        <div class="badge badge-info">({{ $chauffeur->nombreTrajetEnAttente() }} - Trajet(s) en attente)</div>
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <div class="row" style="text-align: center;">
                                                         <div class="col-sm-12">
-                                                            <button class="btn btn-xs btn-info"><span class="fa fa-eye"></span></button>
+                                                            <a href="{{$chauffeur->permis == null ? "#" : asset('storage/'.$chauffeur->permis)}}" target="{{$chauffeur->permis == null ? '' : '_blank'}}" >
+                                                                <button @if ($chauffeur->permis == null) disabled @endif class="btn  btn-sm btn-info"><span class="fa fa-eye"></span></button>
+                                                            </a>
                                                             @can('update', $chauffeur)
-                                                                <button class="btn btn-xs btn-primary modifier-chauffeur" data-show-url="{{route('chauffeur.modifier', ['chauffeur' => $chauffeur->id])}}"  data-url="{{route('chauffeur.update', ['chauffeur' => $chauffeur->id])}}" ><span class="fa fa-edit"></span></button>
+                                                                <button class="btn  btn-sm btn-primary modifier-chauffeur" data-show-url="{{route('chauffeur.modifier', ['chauffeur' => $chauffeur->id])}}"  data-url="{{route('chauffeur.update', ['chauffeur' => $chauffeur->id])}}" ><span class="fa fa-edit"></span></button>
                                                             @endcan
 
                                                             @can('delete', $chauffeur)
-                                                                <button class="btn btn-xs btn-danger supprimer-chauffeur" data-url="{{route('chauffeur.delete', ['chauffeur' => $chauffeur->id])}}"><span class="fa fa-trash"></span></button>
+                                                                <button class="btn  btn-sm btn-danger supprimer-chauffeur" data-url="{{route('chauffeur.delete', ['chauffeur' => $chauffeur->id])}}"><span class="fa fa-trash"></span></button>
                                                             @endcan
                                                         </div>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                    @else
-                                     <tr>
-                                         <td style="text-align: center" colspan="6">
-                                            Aucun chauffeur dans la liste
-                                        </td>
-                                     </tr>
-                                    @endif
+                                        @empty
+                                            <tr>
+                                                <td style="text-align: center" colspan="6">
+                                                    Aucun chauffeur dans la liste
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                     <tfoot>
                                     <tr>
@@ -331,7 +333,8 @@
                     "searching": true,
                     "paging": false,
                     "ordering": true,
-                    "info": false,
+                    "info": false ,            
+                    language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
                 });
 
     $(document).on("click", ".modifier-chauffeur", function (e) {

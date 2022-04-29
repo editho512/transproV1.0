@@ -340,19 +340,16 @@
     <!-- page script -->
     <script>
         $(function () {
-          
 
             $("#utilisateurs").DataTable({
-                "responsive": true,
-                "autoWidth": true,
-                "searching": true,
-                "paging": false,
-                "ordering": true,
-                "info": false,
-            });
-
-            
-
+                    "responsive": true,
+                    "autoWidth": false,
+                    "searching": true,
+                    "paging": false,
+                    "ordering": true,
+                    "info": false ,            
+                    language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+                });
 
             $(document).on("click", ".modifier-utilisateur" , function(e){
                 $(".invalid-feedback").hide();
