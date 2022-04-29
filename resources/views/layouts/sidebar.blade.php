@@ -49,6 +49,16 @@
                     </a>
                 </li>
 
+                <li class="nav-item has-treeview @if(isset($active_localisation_index)) menu-open @endif">
+                    <a href="{{ route('localisation.index') }}" class="nav-link @if(isset($active_localisation_index)) {{ $active_localisation_index }} @endif">
+                        <i class="nav-icon fa fa-map-marker-alt"></i>
+                        <p>
+                            Localisations
+                            {{--<i class="right fas fa-angle-left"></i>--}}
+                        </p>
+                    </a>
+                </li>
+
                 <li class="nav-item has-treeview @if(isset($active_chauffeur_index)) menu-open @endif">
                     <a href="{{route('chauffeur.liste')}}" class="nav-link @if(isset($active_chauffeur_index)) {{$active_chauffeur_index}} @endif">
                         <i class="nav-icon fas fa-id-card"></i>
