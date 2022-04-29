@@ -176,6 +176,7 @@
 
                                     <tr>
                                         <td>{{$carburant->date}}</td>
+
                                         <td class="text-left" >{{nombre_fr($carburant->quantite)."L"}}</td>
                                         <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix)}}</td>
                                         <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix * $carburant->quantite, 0, ",", ".")}}</td>
@@ -189,7 +190,6 @@
                                             </div>
 
                                         </td>
-
                                     </tr>
 
                                     @endforeach
@@ -220,6 +220,7 @@
                         <div class="card-header">
                             <h3 class="card-title" style="color: gray;display:none;" >Liste des trajets</h3>
                             <button class="float-right btn btn-success" id="btn-modal-trajet" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-trajet"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
+
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -234,6 +235,7 @@
                                         <th>Chauffeur</th>
                                         <th>Statut</th>
                                         <th>Détail</th>
+
                                         <th style="text-align:center;">Actions</th>
                                     </tr>
                                 </thead>
@@ -296,6 +298,7 @@
                                         <th>Chauffeur</th>
                                         <th>Statut</th>
                                         <th>Détail</th>
+
                                         <th style="text-align:center;">Actions</th>
                                     </tr>
                                 </tfoot>
@@ -366,6 +369,7 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+
                 </div>
 
             </div>
@@ -373,8 +377,6 @@
     </div>
 </div>
 
-
-<!---- modal pour ajouter carburants --->
 <div class="modal fade" id="modal-carburant">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -584,7 +586,6 @@
     <!-- /.modal-dialog -->
 </div>
 <!---- / modal pour modification camion-->
-
 @if ($errors->any())
     <div class="row">
         <div class="col-xl-12">
@@ -592,6 +593,7 @@
         </div>
     </div>
 @endif
+
 
 {{-- -Tous ce qui concerne les trajets --}}
 
@@ -726,7 +728,6 @@
                             <div class="col-sm-8">
                                 <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
                                 <div class="invalid-feedback"></div>
-
                             </div>
                         </div>
     
