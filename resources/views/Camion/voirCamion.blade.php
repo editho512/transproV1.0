@@ -189,7 +189,6 @@
                                             </div>
 
                                         </td>
-
                                     </tr>
 
                                     @endforeach
@@ -373,8 +372,6 @@
     </div>
 </div>
 
-
-<!---- modal pour ajouter carburants --->
 <div class="modal fade" id="modal-carburant">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -584,7 +581,6 @@
     <!-- /.modal-dialog -->
 </div>
 <!---- / modal pour modification camion-->
-
 @if ($errors->any())
     <div class="row">
         <div class="col-xl-12">
@@ -592,6 +588,7 @@
         </div>
     </div>
 @endif
+
 
 {{-- -Tous ce qui concerne les trajets --}}
 
@@ -726,7 +723,6 @@
                             <div class="col-sm-8">
                                 <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
                                 <div class="invalid-feedback"></div>
-
                             </div>
                         </div>
     
