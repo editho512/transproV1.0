@@ -3,6 +3,7 @@
 use App\Http\Controllers\Depense\MainDepenseController;
 use App\Http\Controllers\Depense\ModifierDepenseController;
 use App\Http\Controllers\Depense\NouvelleDepenseController;
+use App\Http\Controllers\Localisation\MainLocalisationController;
 use App\Http\Controllers\Maintenance\MainMaintenanceController;
 use App\Http\Controllers\Maintenance\ModifierMaintenanceController;
 use App\Http\Controllers\Maintenance\NouvelleMaintenanceController;
@@ -184,5 +185,16 @@ Route::prefix('maintenance')->middleware(['auth'])->group(function () {
 
     // Supprimer une dépense
     Route::post('supprimer/{maintenance}', [MainMaintenanceController::class, 'supprimer'])->name('maintenance.post.supprimer');
+
+});
+
+/**
+ * Regroupe toutes les routes concernant la geolocalisation d'un camion ainsi que la partage e lient envers un client
+ * Url préfixé par /localisation
+ */
+Route::prefix('localisation')->middleware('auth')->group(function () {
+
+    // Page d'accueil de la localisation
+    Route::get('/', [MainLocalisationController::class, 'index'])->name('localisation.index');
 
 });
