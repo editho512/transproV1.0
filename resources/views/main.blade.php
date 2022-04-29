@@ -7,8 +7,8 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="{{asset('assets/images/logo/favicon.ico')}}"/>
-    
-    
+
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('assets/adminlte/plugins/fontawesome-free/css/all.min.css')}}">
     <!-- Ionicons -->
@@ -32,14 +32,15 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('assets/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+
     <!-- include the style
-    
+
         <link rel="stylesheet" href="{{asset('assets/alertifyjs/css/alertify.min.css')}}" />
     -->
-    <!-- include a theme 
+    <!-- include a theme
         <link rel="stylesheet" href="{{asset('assets/alertifyjs/css/themes/default.min.css')}}" />
     -->
-    <!-- include the script 
+    <!-- include the script
         <script src="{{asset('assets/alertifyjs/alertify.min.js')}}"></script>
     -->
 
@@ -94,7 +95,7 @@
             color: white;
         }
     </style>
-   
+
     @yield('styles')
 
 </head>
@@ -105,7 +106,7 @@
         @include('layouts.header')
 
         @include('layouts.sidebar')
-        
+
         @yield('content')
 
         @include('layouts.footer')
@@ -115,7 +116,7 @@
 
     @yield('modals')
 
-    
+    <script src="{{ asset('js/format-number.js') }}"></script>
 
     <!-- jQuery -->
     <script src="{{asset('assets/adminlte/plugins/jquery/jquery.min.js')}}"></script>
@@ -152,6 +153,80 @@
     <script src="{{asset('assets/adminlte/dist/js/pages/dashboard.js')}}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{asset('assets/adminlte/dist/js/demo.js')}}"></script>--}}
+
+    <script>
+        function spinning(me, flux){
+            flux = flux == undefined ? 1 : flux;
+            if(flux == 1){
+                me.attr("disabled", true);
+                me.find(".fa").hide();
+                me.find(".spinner-border").show();
+            }else{
+
+                me.find(".spinner-border").hide();
+                me.find(".fa").show()
+                me.removeAttr("disabled");
+            }
+        }
+
+        function etc(text, count){
+            var result = text.slice(0, count) + (text.length > count ? "..." : "");
+            return result;
+        }
+
+        function inArray(needle, haystack) {
+            var length = haystack.length;
+            for(var i = 0; i < length; i++) {
+                if(haystack[i] == needle) return true;
+            }
+            return false;
+        }
+
+
+        function mois(index) {
+            switch (index) {
+                case 1:
+                    return "janvier"
+                    break;
+                case 2:
+                    return "février"
+                    break;
+                case 3:
+                    return "mars"
+                    break;
+                case 4:
+                    return "avril"
+                    break;
+                case 5:
+                    return "mai"
+                    break;
+                case 6:
+                    return "juin"
+                    break;
+                case 7:
+                    return "juillet"
+                    break;
+                case 8:
+                    return "août"
+                    break;
+                case 9:
+                    return "septembre"
+                    break;
+                case 10:
+                    return "octobre"
+                    break;
+                case 11:
+                    return "novembre"
+                    break;
+                case 12:
+                    return "décembre"
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    </script>
         @php
             $notification = Session::has("notification") === true ? Session::get("notification") : null;
             Session::forget("notification");
@@ -163,7 +238,7 @@
                             status : "{{$notification['status']}}" ,
                             value :  "{{$notification['value']}}"
                         }
-                      
+
                         alertify.set('notifier','position', 'bottom-right');
                         if(notif.status == "success"){
                             alertify.success(notif.value);
@@ -171,9 +246,9 @@
                             alertify.error(notif.value);
                         }
                     })
-            
+
             </script>
-           
+
         @endif
     @yield('scripts')
 

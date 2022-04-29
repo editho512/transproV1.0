@@ -58,7 +58,11 @@
                                     @if(isset($camions) && $camions->count() > 0)
                                         @foreach($camions as $camion)
                                             <tr style='{{$camion->blocked == true ? "color:gray;" : ""}}' >
-                                                <td>{{ucwords($camion->name)}}</td>
+                                                <td>
+                                                    {{ucwords($camion->name)}}
+                                                    @if ($camion->aUnTrajetEncours()) -<span class="badge badge-info">A un trajet en cours</span> @endif
+                                                    &nbsp; @if ($camion->nombreTrajetEnAttente() > 0)<div class="badge badge-info">({{ $camion->nombreTrajetEnAttente() }} Trajet(s) en attente)</div>@endif
+                                                </td>
                                                 <td>{{$camion->numero_chassis}}</td>
                                                 <td>{{$camion->model}}</td>
                                                 <td>{{$camion->marque}}</td>
@@ -387,13 +391,15 @@
     <script>
 
     $("#camions").DataTable({
-                    "responsive": true,
-                    "autoWidth": false,
-                    "searching": true,
-                    "paging": false,
-                    "ordering": true,
-                    "info": false,
-                });
+        "responsive": true,
+        "autoWidth": false,
+        "searching": true,
+        "paging": false,
+        "ordering": true,
+        "info": false ,            
+        language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+    });
+
 
         $(document).on("click", ".supprimer-camion", function (e) {
             $("#modal-supprimer-camion").modal("show");

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use File;
 use Session;
 use App\Models\Chauffeur;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,8 +16,10 @@ class ChauffeurController extends Controller
         $this->middleware('super-admin')->except(['index', 'add']);
     }
 
-    //
-    public function index(){
+    
+
+    public function index() : View
+    {
         $chauffeurs = Chauffeur::all();
         $active_chauffeur_index = "active";
         return view("Chauffeur.chauffeurIndex", compact("active_chauffeur_index", "chauffeurs" ));
@@ -26,10 +29,12 @@ class ChauffeurController extends Controller
         $data = $request->except("permis");
         $chauffeur = Chauffeur::create($data);
 
+       
+
         if( $request->file('permis') !== null){
 
             $validator = Validator::make($request->all(), [
-                        'permis' => 'mimes:pdf,jpeg,png,bmp,tiff,pdf |max:10096',
+                        'permis' => 'mimes:pdf,jpeg,png,bmp,tiff,pdf',
                     ],
                     $messages = [
                         'required' => 'Le :attribute est obligatoire.',
@@ -64,11 +69,10 @@ class ChauffeurController extends Controller
         $chauffeur->phone = $data["phone"];
         $chauffeur->cin = $data["cin"];
 
-
         if( $request->file('permis') !== null){
 
             $validator = Validator::make($request->all(), [
-                                'permis' => 'mimes:pdf,jpeg,png,bmp,tiff |max:10096',
+                                'permis' => 'mimes:pdf,jpeg,png,bmp,tiff',
                             ],
                                 $messages = [
                                     'required' => 'Le :attribute est obligatoire.',

@@ -4,9 +4,9 @@
         background-color: #3490c1 !important;
     }
     @media screen and (min-width: 576px) {
-          #tableau_bord {
+        #tableau_bord {
             display: none !important;
-          }
+        }
     }
 </style>
 <!-- Main Sidebar Container -->
@@ -14,7 +14,7 @@
     <!-- Brand Logo -->
     <a href="" class="brand-link">
         <img src="{{asset('assets/images/logo/logo-tsaravidy.jpg')}}" alt="Tsaravidy Logo" class="brand-image img-circle elevation-3"
-             style="opacity: .8">
+        style="opacity: .8">
         <span class="brand-text font-weight-light">{{ config('app.name') }} V1.0</span>
     </a>
 
@@ -32,6 +32,7 @@
         <div class="user-panel  d-flex" id="tableau_bord" style="">
             <a style="@if(isset($active_dashboard_index))  color:white !important; @endif" href="" class="nav-link"><i class="nav-icon fas fa-tachometer-alt"></i>&nbsp;&nbsp;Dashboard</a>
         </div>
+
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -40,8 +41,10 @@
                     <a href="{{route('camion.liste')}}" class="nav-link @if(isset($active_camion_index)) {{$active_camion_index}} @endif">
                         <i class="nav-icon fas fa-truck"></i>
                         <p>
-                            Camions
-                            {{--<i class="right fas fa-angle-left"></i>--}}
+                            <span>Camions</span>
+                            @if (allTrajetsAPrevoir()->count() > 0)
+                                <span data-toggle="tooltip" title="Nombre total des trajets a prévoir" class="badge badge-danger ml-5 rounded-circle" style="padding: .4rem!important; width: 25px; height: auto">{{ allTrajetsAPrevoir()->count() }}</span>
+                            @endif
                         </p>
                     </a>
                 </li>
@@ -56,9 +59,8 @@
                     </a>
                 </li>
 
-
                 <li class="nav-item has-treeview @if(isset($active_depense_index)) menu-open @endif">
-                    <a href="" class="nav-link @if(isset($active_depense_index)) {{$active_depense_index}} @endif">
+                    <a href="{{ route('depense.index') }}" class="nav-link @if(isset($active_depense_index)) {{$active_depense_index}} @endif">
                         <i class="nav-icon fas fa-dollar-sign"></i>
                         <p>
                             Depenses
@@ -68,7 +70,7 @@
                 </li>
 
                 <li class="nav-item has-treeview @if(isset($active_maintenance_index)) menu-open @endif">
-                    <a href="" class="nav-link @if(isset($active_maintenance_index)) {{$active_maintenance_index}} @endif">
+                    <a href="{{ route('maintenance.index') }}" class="nav-link @if(isset($active_maintenance_index)) {{ $active_maintenance_index }} @endif">
                         <i class="nav-icon fas fa-wrench"></i>
                         <p>
                             Maintenances
@@ -77,7 +79,7 @@
                     </a>
                 </li>
 
-               @can("viewAny" ,auth()->user())
+                @can("viewAny" ,auth()->user())
                 <li class="nav-item has-treeview @if(isset($active_parametre_index) || isset($active_utilisateur) ) menu-open @endif">
                     <a href="#" class="nav-link @if(isset($active_parametre_index)|| isset($active_utilisateur) ) active @endif">
                         <i class="nav-icon fas fa-cogs"></i>
