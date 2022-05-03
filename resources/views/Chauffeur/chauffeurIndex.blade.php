@@ -40,7 +40,6 @@
                                 <button class="btn  float-right" style="background: #007bff;color:white;" data-toggle="modal" id="nouveau-chauffeur" data-target="#modal-ajouter-chauffeur"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
 
                             </div>
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="chauffeurs" class="table table-bordered table-striped">
                                     <thead>
@@ -128,7 +127,7 @@
                         @csrf
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="name">Nom :</label>
+                                <label for="name">Nom : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="name" class="form-control" placeholder="Nom" required>
@@ -136,7 +135,7 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="phone">Téléphone :</label>
+                                <label for="phone">Téléphone : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="phone" placeholder="Téléphone" class="form-control" required>
@@ -144,7 +143,7 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="cin">CIN :</label>
+                                <label for="cin">CIN : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="cin" placeholder="CIN" class="form-control" required>
@@ -153,7 +152,7 @@
 
                         <div class="row mt-3">
                             <div class="col-sm-4">
-                                <label for="permis">Permis</label>
+                                <label for="permis">Permis : </label>
                             </div>
                             <div class="col-sm-8">
                                 <div class="input-group">
@@ -198,7 +197,7 @@
                         @method('patch')
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="name">Nom :</label>
+                                <label for="name">Nom : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="name" id="modifier_name" class="form-control" placeholder="Nom" required>
@@ -206,7 +205,7 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="phone">Téléphone :</label>
+                                <label for="phone">Téléphone : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="phone" id="modifier_phone"placeholder="Téléphone" class="form-control" required>
@@ -214,7 +213,7 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="cin">CIN :</label>
+                                <label for="cin">CIN : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="cin" id="modifier_cin" placeholder="CIN" class="form-control" required>
@@ -223,7 +222,7 @@
 
                         <div class="row mt-3">
                             <div class="col-sm-4">
-                                <label for="permis">Permis</label>
+                                <label for="permis">Permis : </label>
                             </div>
                             <div class="col-sm-8">
                                 <div class="input-group">
@@ -333,7 +332,7 @@
                     "searching": true,
                     "paging": false,
                     "ordering": true,
-                    "info": false ,            
+                    "info": false ,
                     language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
                 });
 

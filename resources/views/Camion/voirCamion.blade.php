@@ -43,9 +43,7 @@
                             <h5 class="mt-2">{{$camion->model ." - ". $camion->annee}} </h5>
                             <h6 class="mt-2">{{$camion->numero_chassis}}</h6>
                         </div>
-
                     </div>
-
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -109,11 +107,11 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="info-box">
-                        <span class="info-box-icon bg-warning" style="background-color: #ff9609 !important;"><img src="{{asset('assets/images/icons/assurance.png')}}" style="width:55px;" alt=""></span>
+                        <span class="info-box-icon bg-warning" style="background-color: #ff9609 !important;"><img src="{{ asset('assets/images/icons/assurance.png') }}" style="width:55px;" alt=""></span>
                         <div class="info-box-content" >
                             <span class="info-box-text">Assurance</span>
                             <p class="info-box-number voir-camion-statistique" >
-                                {{isset($assurance[0]->date_echeance) === true ? date("d/m/Y",strtotime($assurance[0]->date_echeance)) : "Aucune"}}
+                                {{ isset($assurance[0]->date_echeance) === true ? date("d/m/Y",strtotime($assurance[0]->date_echeance)) : "Aucune" }}
                             </p>
                         </div>
                         <!-- /.info-box-content -->
@@ -176,7 +174,6 @@
 
                                     <tr>
                                         <td>{{$carburant->date}}</td>
-
                                         <td class="text-left" >{{nombre_fr($carburant->quantite)."L"}}</td>
                                         <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix)}}</td>
                                         <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix * $carburant->quantite, 0, ",", ".")}}</td>
@@ -190,12 +187,13 @@
                                             </div>
 
                                         </td>
+
                                     </tr>
 
                                     @endforeach
 
                                     @else
-                                   
+
                                     @endif
 
                                 </tbody>
@@ -220,7 +218,6 @@
                         <div class="card-header">
                             <h3 class="card-title" style="color: gray;display:none;" >Liste des trajets</h3>
                             <button class="float-right btn btn-success" id="btn-modal-trajet" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-trajet"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
-
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -235,7 +232,6 @@
                                         <th>Chauffeur</th>
                                         <th>Statut</th>
                                         <th>Détail</th>
-
                                         <th style="text-align:center;">Actions</th>
                                     </tr>
                                 </thead>
@@ -285,7 +281,7 @@
                                         </td>
                                     </tr>
                                     @empty
-                                   
+
                                     @endforelse
                                 </tbody>
                                 <tfoot>
@@ -298,7 +294,6 @@
                                         <th>Chauffeur</th>
                                         <th>Statut</th>
                                         <th>Détail</th>
-
                                         <th style="text-align:center;">Actions</th>
                                     </tr>
                                 </tfoot>
@@ -342,7 +337,7 @@
                                                     <button class="btn btn-sm btn-primary btn-papier-modifier" data-url="{{route('papier.update', ["papier" => $papier->id])}}"  data-show="{{route('papier.modifier', ["papier" => $papier->id])}}" ><span class="fa fa-edit"></span></button>
                                                     <button class="btn btn-sm btn-danger btn-papier-supprimer" data-url="{{route('papier.supprimer', ["papier" => $papier->id])}}" data-show="{{route('papier.modifier', ["papier" => $papier->id])}}"><span class="fa fa-trash"></span></button>
                                                 </div>
-                                               
+
                                             </div>
 
                                         </td>
@@ -352,7 +347,7 @@
                                     @endforeach
 
                                     @else
-                                   
+
                                     @endif
 
                                 </tbody>
@@ -369,7 +364,6 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
-
                 </div>
 
             </div>
@@ -377,6 +371,8 @@
     </div>
 </div>
 
+
+<!---- modal pour ajouter carburants --->
 <div class="modal fade" id="modal-carburant">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -390,10 +386,10 @@
                 <form action="{{route('carburant.ajouter')}}" method="post" role="form" id="form-ajouter-carburant" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="camion_id" value={{$camion->id}}>
-                   
+
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="date">Date :</label>
+                            <label for="date">Date : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date" data-target-input="nearest">
@@ -406,7 +402,7 @@
                     </div>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="quantite">Quantité :</label>
+                            <label for="quantite">Quantité (Litre) : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="number"  placeholder="Quantité" class="form-control" name="quantite" required>
@@ -415,7 +411,7 @@
 
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="prix">Prix unitaire :</label>
+                            <label for="prix">Prix unitaire : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
@@ -424,15 +420,11 @@
 
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="flux">Flux :</label>
+                            <label for="flux">Flux : <x-not-editable-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <select readonly="readonly" name="flux" class="form-control" id="">
                                 <option value=0 selected>Entrée</option>
-                                <!--
-                                <option value=1>Sortie</option>-->
-
-                                {{-- <option value=1>Sortie</option> --}}
                             </select>
                         </div>
                     </div>
@@ -466,7 +458,7 @@
                     <input type="hidden" name="camion_id" value={{$camion->id}}>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="date">Date :</label>
+                            <label for="date">Date : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date_modifier" data-target-input="nearest">
@@ -479,7 +471,7 @@
                     </div>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="quantite">Quantité :</label>
+                            <label for="quantite">Quantité (Litre ): <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="number" placeholder="Quantité" class="form-control" name="quantite" id="modifier_quantite" required>
@@ -487,7 +479,7 @@
                     </div>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="prix">Prix unitaire :</label>
+                            <label for="prix">Prix unitaire : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
@@ -495,7 +487,7 @@
                     </div>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="flux">Flux :</label>
+                            <label for="flux">Flux : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <select name="flux" class="form-control" id="modifier_flux">
@@ -533,7 +525,7 @@
                     @csrf
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="date">Date :</label>
+                            <label for="date">Date : <x-not-editable-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date_modifier" data-target-input="nearest">
@@ -546,7 +538,7 @@
                     </div>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="quantite">Quantité :</label>
+                            <label for="quantite">Quantité : <x-not-editable-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" name="quantite" id="supprimer_quantite" required>
@@ -554,7 +546,7 @@
                     </div>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="prix">Prix unitaire :</label>
+                            <label for="prix">Prix unitaire : <x-not-editable-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
@@ -562,10 +554,10 @@
                     </div>
                     <div class="row" style="margin-top: 5px; ">
                         <div class="col-sm-4">
-                            <label for="flux">Flux :</label>
+                            <label for="flux">Flux : <x-not-editable-mark /></label>
                         </div>
                         <div class="col-sm-8">
-                            <select name="flux" class="form-control" id="supprimer_flux">
+                            <select name="flux" disabled class="form-control" id="supprimer_flux">
                                 <option value=0 selected>Entrée</option>
                                 <option value=1>Sortie</option>
                             </select>
@@ -586,15 +578,9 @@
     <!-- /.modal-dialog -->
 </div>
 <!---- / modal pour modification camion-->
-@if ($errors->any())
-    <div class="row">
-        <div class="col-xl-12">
-            @dump($errors->all())
-        </div>
-    </div>
-@endif
 
 
+{{-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- --}}
 {{-- -Tous ce qui concerne les trajets --}}
 
 <div class="modal fade" id="modal-trajet">
@@ -609,14 +595,14 @@
             <div class="modal-body" id="modal-ajouter-trajet">
                 <div class="row">
                     <form class="col-sm-12" action="{{route('trajet.ajouter')}}" method="post" role="form" id="form-ajouter-trajet" enctype="multipart/form-data">
-    
+
                         @csrf
-    
+
                         <input type="hidden" name="camion_id" value={{ $camion->id }}>
 
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="chargement" class="form-label">Chargement :</label>
+                                <label for="chargement" class="form-label">Chargement : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input placeholder="Chargement" type="text" class="form-control" name="chargement" >
@@ -626,14 +612,14 @@
 
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="bon" class="form-label">Bon N° :</label>
+                                <label for="bon" class="form-label">Bon N° : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input placeholder="Numéro de bon" type="text"  class="form-control" name="bon" >
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3 bon_enlevement" style="margin-top: 3px;display:none; ">
                             <div class="col-sm-4">
                                 <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
@@ -643,7 +629,7 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
                                 <label for="chauffeur" class="form-label">Chauffeur :</label>
@@ -660,10 +646,10 @@
                                 <div id="chauffeur-feedback"  class="invalid-feedback"></div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="date">Départ :</label>
+                                <label for="date">Départ : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
@@ -676,10 +662,10 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="date">Arrivée :</label>
+                                <label for="date">Arrivée : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
@@ -691,13 +677,13 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="etat">Statut :</label>
+                                <label for="etat">Statut : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
-    
+
                                 <select name="etat" class="form-control " id="etat" onchange="checkCarburant(this)" required>
                                     <option value="">Selectionner le statut</option>
                                     @foreach (App\Models\Trajet::getEtat() as $status)
@@ -708,8 +694,8 @@
 
                             </div>
                         </div>
-    
-    
+
+
                         <div class="row mb-3 mt-3  carburant" id="carburant" style="display: none;">
                             <div class="col-sm-4">
                                 <label for="carburant-restant">Carburant restant :</label>
@@ -720,7 +706,7 @@
 
                             </div>
                         </div>
-    
+
                         <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
                             <div class="col-sm-4">
                                 <label for="poids">Poids :</label>
@@ -728,15 +714,16 @@
                             <div class="col-sm-8">
                                 <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
                                 <div class="invalid-feedback"></div>
+
                             </div>
                         </div>
-    
-    
+
+
                         {{-- Bloc pour gerer les itinéraires --}}
                         <div id="content-itineraire" class="mb-3">
                             <input type="hidden" name="itineraire" class="itineraire_data" value="">
                             <div class="form-group">
-                                <label for="nombre_itineraire">Itinéraires :</label>
+                                <label for="nombre_itineraire">Itinéraires : <x-required-mark /></label>
                                 <div id="itineraire_formulaire">
                                     <div class="row">
                                         <div class="col-sm-12" style="padding-top:1%;">
@@ -747,13 +734,12 @@
                                 <div class="mt-1 row">
                                     <div class="col-sm-12" style="text-align:right;">
                                         <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
-    
                                         <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-    
+
                     </form>
                 </div>
                 <div class="row" style="display: none;">
@@ -787,12 +773,12 @@
                     <form action="#" class="col-sm-12" method="post" id="form-modifier-trajet" enctype="multipart/form-data">
                         @csrf
                         @method('patch')
-    
+
                         <input type="hidden" name="camion_id" value={{ $camion->id }}>
 
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="chargement" class="form-label">Chargement :</label>
+                                <label for="chargement" class="form-label">Chargement : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input placeholder="Chargement" type="text" class="form-control" name="chargement" >
@@ -802,14 +788,14 @@
 
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="bon" class="form-label">Bon N° :</label>
+                                <label for="bon" class="form-label">Bon N° : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input placeholder="Numéro de bon" type="text"  class="form-control" name="bon" >
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3 bon_enlevement" style="margin-top: 3px;display:none; ">
                             <div class="col-sm-4">
                                 <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
@@ -819,7 +805,7 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
                                 <label for="chauffeur" class="form-label">Chauffeur :</label>
@@ -836,10 +822,10 @@
                                 <div id="chauffeur-modifier-feedback"  class="invalid-feedback"></div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="date">Départ :</label>
+                                <label for="date">Départ : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <div class="input-group date" id="date_heure_depart_modifier" data-target-input="nearest">
@@ -851,10 +837,10 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="date">Arrivée :</label>
+                                <label for="date">Arrivée : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <div class="input-group date_heure_arrivee" id="date_heure_arrivee_modifier" data-target-input="nearest">
@@ -866,12 +852,12 @@
                                 </div>
                             </div>
                         </div>
-    
-                       
-    
+
+
+
                         <div class="row mb-3" style="margin-top: 3px; ">
                             <div class="col-sm-4">
-                                <label for="etat">Statut :</label>
+                                <label for="etat">Statut : <x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <select name="etat" class="form-control " id="modifier-etat" required onchange="checkCarburant(this, '#modal-modifier-trajet')">
@@ -883,7 +869,7 @@
                                 <div  id="status-modifier-feedback" class="invalid-feedback"></div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3 mt-3  carburant" style="display: none;">
                             <div class="col-sm-4">
                                 <label for="carburant-restant">Carburant restant :</label>
@@ -893,7 +879,7 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
                             <div class="col-sm-4">
                                 <label for="poids">Poids :</label>
@@ -904,14 +890,14 @@
 
                             </div>
                         </div>
-    
+
                         {{-- Bloc pour gerer les itinéraires --}}
                         <div id="content-itineraire" class="mb-3">
                             <input type="hidden" name="itineraire" id="data-itineraire" class="itineraire_data" value="">
                             <div class="form-group">
-                                <label for="nombre_itineraire">Itinéraires :</label>
+                                <label for="nombre_itineraire">Itinéraires : <x-required-mark /></label>
                                 <div id="itineraire_formulaire">
-                                    
+
                                 </div>
                                 <div class="mt-1 row">
                                     <div class="col-sm-12" style="text-align:right;">
@@ -921,7 +907,7 @@
                                 </div>
                             </div>
                         </div>
-    
+
                     </form>
                 </div>
                 <div class="row" style="display: none;">
@@ -1001,7 +987,7 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
+                                <input disabled type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
                                 <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
@@ -1015,7 +1001,7 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
+                                <input disabled type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
                                 <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
@@ -1039,7 +1025,7 @@
                             <div id="itineraire_delete_formulaire">
                                 <div class="row">
                                     <div class="col-sm-12" style="padding-top:1%;" id="list-delete-itineraire">
-                                        <input type="text" placeholder="Nom de l'itinéraire" class='form-control' value="test"> 
+                                        <input type="text" placeholder="Nom de l'itinéraire" class='form-control' value="test">
                                     </div>
                                 </div>
                             </div>
@@ -1063,9 +1049,11 @@
 </div>
 
 
-
 {{-- Fin trajets --}}
+{{-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- --}}
 
+
+{{-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- --}}
 
 {{-- Debut papier --}}
 <!---- modal pour ajouter papier --->
@@ -1084,7 +1072,7 @@
                     <input type="hidden" name="camion_id" value={{$camion->id}}>
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="designation">Désignation:</label>
+                            <label for="designation">Désignation : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" name="designation" placeholder="Désignation">
@@ -1093,7 +1081,7 @@
                     </div>
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="date">Date d'obtention:</label>
+                            <label for="date">Date d'obtention : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date-obtention" data-target-input="nearest">
@@ -1102,14 +1090,13 @@
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                                 <div  class="invalid-feedback"></div>
-
                             </div>
                         </div>
                     </div>
 
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="date">Date d'échéance:</label>
+                            <label for="date">Date d'échéance : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date-echeance" data-target-input="nearest">
@@ -1118,13 +1105,12 @@
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                                 <div  class="invalid-feedback"></div>
-
                             </div>
                         </div>
                     </div>
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="quantite">Type :</label>
+                            <label for="quantite">Type : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <select name="type" id="" class="form-control">
@@ -1187,7 +1173,7 @@
                     <input type="hidden" name="camion_id" value={{$camion->id}}>
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="designation">Désignation:</label>
+                            <label for="designation">Désignation : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" name="designation" placeholder="Désignation">
@@ -1196,7 +1182,7 @@
                     </div>
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="date">Date d'obtention:</label>
+                            <label for="date">Date d'obtention : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date-obtention-modifier" data-target-input="nearest">
@@ -1212,7 +1198,7 @@
 
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="date">Date d'échéance:</label>
+                            <label for="date">Date d'échéance : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date" id="date-echeance-modifier" data-target-input="nearest">
@@ -1227,7 +1213,7 @@
                     </div>
                     <div class="row mt-3" >
                         <div class="col-sm-4">
-                            <label for="quantite">Type :</label>
+                            <label for="quantite">Type : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <select name="type" id="" class="form-control">
@@ -1342,7 +1328,7 @@
 
                         </div>
                     </div>
-                    
+
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
@@ -1401,7 +1387,7 @@
         nb_itineraire_formulaire+"' class='row added'>"+itineraire_formulaire
         +"</div>").find(".row:last input").val("");
 
-        
+
     })
 
 
@@ -1420,7 +1406,7 @@
         _this.find("#itineraire_formulaire .row").each(function(){
 
                 let nom_itineraire = $(this).find("input:first").val();
-                
+
                 if(nom_itineraire != ''){
                     data_itineraire.push({
                         nom : nom_itineraire
@@ -1440,7 +1426,7 @@
         _this.find('#itineraire_formulaire .row').each(function(){
 
             let nom_itineraire = $(this).find("input:first").val();
-             
+
             if(nom_itineraire != ''){
                 data_itineraire.push({
                     nom : nom_itineraire
@@ -1457,7 +1443,7 @@
         "searching": true,
         "paging": false,
         "ordering": true,
-        "info": false ,            
+        "info": false ,
         language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
     });
 
@@ -1501,7 +1487,7 @@
         })
 
     })
-   
+
 
     $(document).on("click","#nav-trajet-tab", function(){
 
@@ -1536,7 +1522,7 @@
 
             $("#form-modifier-trajet").find("input[name=poids]").val(data.trajet.poids);
             $("#form-modifier-trajet").find(".added").remove();
-            
+
             itineraires.forEach((itineraire, index) => {
                 let element = "";
                 if(index === 0){
@@ -1590,7 +1576,7 @@
     })
 
     $(document).on("click", ".voir-trajet", function (e) {
-        
+
         $(this).next().next().trigger("click");
         $("#modal-supprimer-trajet").find(".modal-header").removeClass("modal-header-danger").find("h4").html("Voir un trajet");
         $("#button-supprimer-trajet").parent().hide();
@@ -1637,9 +1623,9 @@
 
     })
 
-    
 
-    
+
+
     $(document).on("click", "#button-ajouter-trajet", function(e){
         let me = $(this);
         spinning(me);
@@ -1666,7 +1652,7 @@
                         $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                         $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
 
-                        
+
                         if
                         (   data.value == "Camion non disponible entre les dates que vous avez selectionnées" ||
                             date.value == "Le camion a encore un trajet en cours" ||
@@ -1678,7 +1664,7 @@
                         }else{
                             $("#form-ajouter-trajet").parent().next().find(".alert").html("");
                             $("#form-ajouter-trajet").parent().next().hide(300);
-        
+
                         }
 
                         if(data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" || data.value == "Chauffeur non disponible entre les dates que vous avez selectionné"){
@@ -1690,17 +1676,17 @@
                         }
 
                         if
-                        (   data.value == "La date de depart doit être supérieur a ce moment précis si le statut est à prévoir" || 
+                        (   data.value == "La date de depart doit être supérieur a ce moment précis si le statut est à prévoir" ||
                             data.value == "La date de depart doit être inférieur a la date d'arrivée")
                         {
-                            
+
                             $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html(data.value).show(300)
                         }else{
                             $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                         }
 
                         if
-                        (   data.value == "Veuillez remplir la quantité de carburant restant" || 
+                        (   data.value == "Veuillez remplir la quantité de carburant restant" ||
                             data.value == "Le carburant du véhicule est encore insuffisant" ||
                             data.value == "La quantité de carburant que vous avez saisi est superieur au stock")
                         {
@@ -1712,17 +1698,17 @@
 
                     }
 
-                    
+
 
 
                     spinning(me, 2);
                 },
                 error: function (data) {
                         donnee = $.parseJSON(data.responseText);
-                      
+
 
                         if(donnee.message == "The given data was invalid."){
-                           
+
                             console.log(donnee.errors.etat );
 
                             if(donnee.errors.hasOwnProperty("bon") === true){
@@ -1760,22 +1746,22 @@
 
                             if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
                                 $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
-                                
+
                             }else{
                                     $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                             }
 
                             if(donnee.errors.hasOwnProperty("date_heure_arrivee") === true ){
                                 $("#form-ajouter-trajet input[name=date_heure_arrivee]").addClass("is-invalid").next().next().html("La date d'arrivée approximative est obligatoire").show(300)
-                                
+
                             }else{
                                     $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
                             }
 
                             if(donnee.errors.hasOwnProperty("poids") === true ){
-                                
+
                                 $("#form-ajouter-trajet input[name=poids]").addClass("is-invalid").next().html("Le poids doit être supérieur à zéro").show(300)
-                                
+
                             }else{
                                     $("#form-ajouter-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
                             }
@@ -1784,7 +1770,7 @@
                     }
                 }
             )
-        
+
     });
 
     $(document).on("click", "#button-modifier-trajet", function(e){
@@ -1818,11 +1804,11 @@
                     }else{
                         $("#form-modifier-trajet").parent().next().find(".alert").html("");
                         $("#form-modifier-trajet").parent().next().hide(300);
-        
+
                     }
 
                     if(
-                        data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" || 
+                        data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" ||
                         data.value == "Chauffeur non disponible entre les dates que vous avez selectionné"
                     ){
                             $("#chauffeur-modifier-feedback").prev().addClass("is-invalid");
@@ -1848,7 +1834,7 @@
                             data.value == "La date de depart doit être inférieur a la date d'arrivée"
                             )
                         {
-                            
+
                             $("#form-modifier-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html(data.value).show(300)
                         }else{
                             $("#form-modifier-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
@@ -1856,7 +1842,7 @@
 
 
                     if
-                    (   data.value == "Veuillez remplir la quantité de carburant restant" || 
+                    (   data.value == "Veuillez remplir la quantité de carburant restant" ||
                         data.value == "Le carburant du véhicule est encore insuffisant" ||
                         data.value == "La quantité de carburant que vous avez saisi est superieur au stock")
                     {
@@ -1901,14 +1887,14 @@
 
                 if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
                     $("#form-modifier-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
-                                
+
                 }else{
                     $("#form-modifier-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                 }
 
                 if(donnee.errors.hasOwnProperty("date_heure_arrivee") === true ){
                     $("#form-modifier-trajet input[name=date_heure_arrivee]").addClass("is-invalid").next().next().html("La date d'arrivée approximative est obligatoire").show(300)
-                                
+
                 }else{
                     $("#form-modifier-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
                 }
@@ -1923,7 +1909,7 @@
 
                 if(donnee.errors.hasOwnProperty("poids") === true ){
                     $("#form-modifier-trajet input[name=poids]").addClass("is-invalid").next().html("Le poids doit être supérieur à zéro").show(300)
-                                
+
                 }else{
                         $("#form-modifier-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
                 }
@@ -1944,7 +1930,7 @@
         action = action === undefined ? "#modal-trajet" : action ;
 
         let etat = select.value
-        let carburant = $(action + " .carburant") 
+        let carburant = $(action + " .carburant")
         let poids = $(action + " .poids-content")
         let bon_enlevement = $(action + " .bon_enlevement");
 
@@ -1967,11 +1953,11 @@
         }
     }
 
-   
+
 
 
     // -------------------- EVENEMENT LIEE AU PAPIER ------------------------ //
-  
+
     $(document).on("click", ".btn-papier-supprimer", function(e){
         let url = $(this).attr("data-show");
         let url_delete = $(this).attr("data-url");
@@ -1989,8 +1975,8 @@
             $("#modal-supprimer-papier").find("input[name=date_obtention]").val(data.date);
             $("#modal-supprimer-papier").find("input[name=date_echeance]").val(data.date_echeance);
             $("#modal-supprimer-papier").find("select[name=type]").val(data.type).change();
-           
-            
+
+
         });
     })
 
@@ -2011,8 +1997,8 @@
             $("#modal-modifier-papier").find("input[name=date_obtention]").val(data.date);
             $("#modal-modifier-papier").find("input[name=date_echeance]").val(data.date_echeance);
             $("#modal-modifier-papier").find("select[name=type]").val(data.type).change();
-           
-            
+
+
         });
     });
 
@@ -2040,14 +2026,14 @@
             error : function (data) {
                 let donnees = $.parseJSON(data.responseText);
                 name_list = Object.keys(donnees.errors);
-                
+
 
                 me.find(".form-control").each(function (value, index) {
                     let name = $(this).attr("name");
-                    if(donnees.errors.hasOwnProperty(name)){                        
+                    if(donnees.errors.hasOwnProperty(name)){
                         me.find("input[name="+name+"] , select[name="+name+"]").addClass("is-invalid")
                         .parent().find(".invalid-feedback").html(donnees.errors[name][0]).show(300);
-                        
+
                         if(name == "photo"){
                             me.find(".photo-feedback").html(donnees.errors[name][0]).show(300);
                         }
@@ -2103,7 +2089,7 @@
 
 
 
-    
+
 
 
 </script>

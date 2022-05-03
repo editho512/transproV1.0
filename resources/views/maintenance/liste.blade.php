@@ -234,8 +234,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="type" class="form-label">Type de dépense</label>
-                                    <label for="">:</label>
+                                    <label for="type" class="form-label">Type de dépense <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <select onchange="resetStyle(this)" name="type" id="type" class="form-control">
@@ -250,7 +250,7 @@
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
                                     <label for="titre">Intitulé / Titre</label>
-                                    <label for="">:</label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" name="titre" class="form-control" id="titre" placeholder="Titre ou intitulé" />
@@ -259,8 +259,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="date_heure">Date et heure</label>
-                                    <label for="">:</label>
+                                    <label for="date_heure">Date et heure <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <div class="input-group date_heure" id="date_heure" data-target-input="nearest">
@@ -274,8 +274,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="camion">Camion</label>
-                                    <label for="">:</label>
+                                    <label for="camion">Camion <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <select onchange="resetStyle(this)" name="camion_id" id="camion" class="form-control">
@@ -289,8 +289,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="main_oeuvre">Main d'&oelig;uvre</label>
-                                    <label for="">:</label>
+                                    <label for="main_oeuvre">Main d'&oelig;uvre <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="number" name="main_oeuvre" class="form-control" id="main_oeuvre" placeholder="Montant de la main d'oeuvre" />
@@ -314,8 +314,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="nom_reparateur" class="form-label">Nom de l'agent</label>
-                                    <label for="">:</label>
+                                    <label for="nom_reparateur" class="form-label">Nom de l'agent <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" class="form-control" name="nom_reparateur" id="nom_reparateur" placeholder="Nom et prénoms de l'agent">
@@ -324,8 +324,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="tel_reparateur" class="form-label">Téléphone</label>
-                                    <label for="">:</label>
+                                    <label for="tel_reparateur" class="form-label">Téléphone <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" class="form-control" name="tel_reparateur" id="tel_reparateur" placeholder="Téléphone de l'agent">
@@ -334,8 +334,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="adresse_reparateur" class="form-label">Adresse</label>
-                                    <label for="">:</label>
+                                    <label for="adresse_reparateur" class="form-label">Adresse <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" class="form-control" name="adresse_reparateur" id="adresse_reparateur" placeholder="Adresse de l'agent">
@@ -344,7 +344,7 @@
                         </div>
 
                         <div class="col-md-12 mt-4 mb-4">
-                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles</h5>
+                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles (<span class="text-info">Facultatif</span>)</h5>
 
                             <table class="table" style="width:100%">
                                 <thead>
@@ -409,7 +409,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="type" class="form-label">Type de dépense</label>
+                                    <label for="type" class="form-label">Type de dépense <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -434,7 +434,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="date_heure_edit">Date et heure</label>
+                                    <label for="date_heure_edit">Date et heure <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -449,7 +449,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="camion">Camion</label>
+                                    <label for="camion">Camion <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -464,7 +464,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="main_oeuvre">Main d'&oelig;uvre</label>
+                                    <label for="main_oeuvre">Main d'&oelig;uvre <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -489,7 +489,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="nom_reparateur" class="form-label">Nom de l'agent</label>
+                                    <label for="nom_reparateur" class="form-label">Nom de l'agent <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -499,7 +499,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="tel_reparateur" class="form-label">Téléphone</label>
+                                    <label for="tel_reparateur" class="form-label">Téléphone <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -509,7 +509,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="adresse_reparateur" class="form-label">Adresse</label>
+                                    <label for="adresse_reparateur" class="form-label">Adresse <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -519,7 +519,7 @@
                         </div>
 
                         <div class="col-md-12 mt-4 mb-4">
-                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles</h5>
+                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles (<span class="text-info">Facultatif</span>)</h5>
 
                             <table class="table" style="width:100%">
                                 <thead>
@@ -931,7 +931,7 @@ const resetStyle = (input) => {
 
 $(document).on("submit", "#form-ajouter-maintenance", function (e) {
     e.preventDefault()
-    
+
     let bouton = $("#button-ajouter-maintenance");
     spinning(bouton);
 
@@ -1090,7 +1090,7 @@ function resetForm (formId) {
     let elements = form.getElementsByClassName(class_name)
 
     for (let i = 0; i < elements.length; i++) {
-        
+
         let className = elements[i].classList;
 
         if( inArray("datetimepicker-input", className) ){
