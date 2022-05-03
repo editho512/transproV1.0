@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +13,7 @@ class Camion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo', 
+        'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo',
     ];
 
 
@@ -169,5 +167,10 @@ class Camion extends Model
     public function stockCarburant() : int
     {
         return doubleval($this->carburants()->where('flux', 0)->sum('quantite') - $this->carburants()->where('flux', 1)->sum('quantite'));
+    }
+
+    public function papiers() : HasMany
+    {
+        return $this->hasMany(Papier::class);
     }
 }

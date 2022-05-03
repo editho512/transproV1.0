@@ -14,13 +14,14 @@ class Papier extends Model
 
     protected $fillable = ["designation", "type", "date", "date_echeance", "camion_id", "photo"];
 
-    public static function EnCours($type){
-
-        $sql = "SELECT * FROM papiers as pap WHERE pap.type = '".$type."' AND pap.date_echeance = ( SELECT MAX(papiers.date_echeance) FROM papiers WHERE papiers.type = '".$type."') ";
-
-        $papier = collect(DB::select($sql));
-
-        return $papier;
-        
+    public static function EnCours($type, int $camionId = null)
+    {
+        if ($camionId === null OR $camionId === 0)
+        {
+            $sql = "SELECT * FROM papiers as pap WHERE pap.type = '".$type."' AND pap.date_echeance = ( SELECT MAX(papiers.date_echeance) FROM papiers WHERE papiers.type = '".$type."')";
+            return collect(DB::select($sql));
+        }
+        $sql = "SELECT * FROM papiers as pap WHERE pap.type = '".$type."' AND pap.date_echeance = ( SELECT MAX(papiers.date_echeance) FROM papiers WHERE papiers.type = '".$type."') AND camion_id=?";
+        return collect(DB::select($sql, [$camionId]));
     }
 }
