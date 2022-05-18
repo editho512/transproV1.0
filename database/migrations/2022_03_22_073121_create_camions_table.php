@@ -16,6 +16,7 @@ class CreateCamionsTable extends Migration
         Schema::create('camions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('plaque');            
             $table->string('annee')->nullable();
             $table->string('model')->nullable();
             $table->string('marque')->nullable();

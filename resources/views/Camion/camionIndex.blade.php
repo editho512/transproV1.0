@@ -140,12 +140,23 @@
                 <div class="modal-body" id="modal-ajouter-camion">
                     <form action="{{route('camion.ajouter')}}" method="post" role="form" id="form-ajouter-camion" enctype="multipart/form-data">
                         @csrf
+
+                        <!--
                         <div class="row mt-1">
                             <div class="col-sm-4">
                                 <label for="name">Désignation :</label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="name" class="form-control" placeholder="Désignation" required>
+                            </div>
+                        </div>
+                        -->
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="plaque">Plaque :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="plaque" placeholder="Plaque" class="form-control" required>
                             </div>
                         </div>
                         <div class="row mt-1">
@@ -225,6 +236,7 @@
                     <form action="#" method="post" id="form-modifier-camion" enctype="multipart/form-data">
                         @csrf
                         @method('patch')
+                        <!--
                         <div class="row mt-1">
                             <div class="col-sm-4">
                                 <label for="name">Désignation :</label>
@@ -232,7 +244,17 @@
                             <div class="col-sm-8">
                                 <input type="text" name="name" id="name" class="form-control" placeholder="Désignation" required>
                             </div>
+                        </div>-->
+
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="plaque">Plaque :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="plaque" id="plaque" placeholder="Plaque" class="form-control" required>
+                            </div>
                         </div>
+
                         <div class="row mt-1">
                             <div class="col-sm-4">
                                 <label for="marque">Marque :</label>
@@ -433,7 +455,9 @@
             $.ajax(url, {}, dataType ="HTML").done(function (data) {
                 console.log(data);
 
-                $("#modal-modifier-camion #name").val(data.name);
+                //$("#modal-modifier-camion #name").val(data.name);
+
+                $("#modal-modifier-camion #plaque").val(data.plaque);
                 $("#modal-modifier-camion #marque").val(data.marque);
                 $("#modal-modifier-camion #model").val(data.model);
                 $("#modal-modifier-camion #annee").val(data.annee);

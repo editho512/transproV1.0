@@ -57,6 +57,9 @@ class CamionController extends Controller
     public function add(Request $request) : RedirectResponse
     {
         $data = $request->except("photo");
+        
+        $data["name"] = $data["marque"] . "-" .  $data["model"] . "-" . $data["plaque"];
+       
         $camion = Camion::create($data);
 
         if( $request->file('photo') !== null){
@@ -112,12 +115,13 @@ class CamionController extends Controller
      */
     public function update(Request $request, Camion $camion)
     {
-
+        
         $data = $request->except("photo");
-        $camion->name = $data["name"];
+        $camion->name = $data["marque"] . "-" .  $data["model"] . "-" . $data["plaque"];
         $camion->marque = $data["marque"];
         $camion->model = $data["model"];
         $camion->annee = $data["annee"];
+        $camion->plaque = $data["plaque"];
         $camion->numero_chassis = $data["numero_chassis"];
 
 
@@ -191,11 +195,15 @@ class CamionController extends Controller
             $stock_carburant = $camion->CarburantRestant();
 
             $papiers = $camion->papiers;
+            
+            $assurance = Papier::EnCours(Papier::TYPE[0], $camion->id);
+            $visiteTechnique = Papier::EnCours(Papier::TYPE[1], $camion->id);
 
-            $assurance = Papier::EnCours(Papier::TYPE[0]);
-            $visiteTechnique = Papier::EnCours(Papier::TYPE[1]);
+            $carteGrise = Papier::EnCours(Papier::TYPE[2], $camion->id);
+            $patenteTransport = Papier::EnCours(Papier::TYPE[3], $camion->id);
 
-            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique"));
+
+            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique", "carteGrise", "patenteTransport"));
         }
     }
 

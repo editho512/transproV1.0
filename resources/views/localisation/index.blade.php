@@ -53,7 +53,7 @@
                                             <td>{{ $camion->marque }}</td>
                                             <td>{{ $camion->annee }}</td>
                                             <td class="d-flex justify-content-center">
-                                                <a href="" class="btn btn-primary mr-2" data-toggle="tooltip" data-placement="top" title="Localiser le camion"><i class="fa fa-map-marker-alt"></i></a>
+                                                <a href="{{route('localisation.trouver')}}"  class="btn btn-primary mr-2" data-toggle="tooltip" data-placement="top" title="Localiser le camion"><i class="fa fa-map-marker-alt"></i></a>
                                                 <a href="" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Obtenir le lien de localisation du camion"><i class="fa fa-link"></i></a>
                                             </td>
                                         </tr>
