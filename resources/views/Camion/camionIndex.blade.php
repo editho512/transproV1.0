@@ -153,7 +153,7 @@
                         -->
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="plaque">Plaque :</label>
+                                <label for="plaque">Plaque (*):</label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="plaque" placeholder="Plaque" class="form-control" required>
@@ -207,6 +207,19 @@
                                     </div>
                                 </div>
 
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-4">
+                                <label for="gps">Fournisseur GPS :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="gps" id="gps" autocomplete="off">
+                                    <option value="">Aucun</option>
+                                    @foreach (App\Models\Camion::TYPEGPS as $gps)                                        
+                                        <option value="{{$gps}}">{{$gps}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </form>

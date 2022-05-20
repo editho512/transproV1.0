@@ -18,6 +18,9 @@ class Camion extends Model
         'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo', 'plaque', 
     ];
 
+    CONST TYPEGPS = [ "Dago-it"];
+
+
     /**
     * Recuperer tous les papier du camion
     *

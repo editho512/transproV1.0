@@ -16,16 +16,27 @@ class DashboardController extends Controller
     }
 
     public function index(){
+
         $active_dashboard_index = true;
-        $carburants = Carburant::consomation();
-        
+
+        $carburants = Carburant::consomation();  
+
         $depense = Depense::depensePerDriver();
 
         $depenseCamion = Depense::depensePerCamion();
         
         $maintenance = Maintenance::dashboard();
 
-        return view("dashboard.dashboard", compact("active_dashboard_index", "carburants", "depense", "depenseCamion", "maintenance"));
+        $mainOeuvre = maintenance::mainOeuvre();
+        
+        return view("dashboard.dashboard", compact("active_dashboard_index", "carburants", "depense", "depenseCamion", "maintenance", "mainOeuvre"));
+    
+    }
+
+    public function mainoeuvre($page = 0){
+        
+        $maintenance = Maintenance::mainOeuvre($page);
+        return response()->json($maintenance);
     }
 
     public function maintenance(Request $request){
@@ -39,8 +50,10 @@ class DashboardController extends Controller
         return response()->json($maintenance);
 
     }
+    
 
     public function carburant($mois){
+
             $mois = intval($mois) >= 0 ? intval($mois) : 0 ;
             $date = date("Y-m-d", strtotime("-". intval($mois) ." month", strtotime(date("d-m-Y"))));
 

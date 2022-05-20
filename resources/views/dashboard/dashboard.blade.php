@@ -33,6 +33,7 @@
 
         <section class="content">
             <div class="container-fluid">
+                
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="row">
@@ -302,6 +303,43 @@
                         </div>
                     </div>
                     
+                </div>
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        <div class="card card-outline card-info" style="border-color: #3a0ca3 !important;">
+                            <div class="card-header">
+                                <h3 class="card-title"></h3>
+                                <div class="card-tools">
+                                   
+                                    <!-- Buttons, labels, and many other things can be placed here! -->
+                                    <!-- Here is a label for example -->
+                                    <span class="badge badge-info" style="background-color:#3a0ca3 !important;">Main d'oeuvre par mois</span>
+        
+                                </div>
+        
+                                <div class="card-tools">
+                                   
+                                  <!-- Buttons, labels, and many other things can be placed here! -->
+                                  <!-- Here is a label for example -->
+        
+                                </div>
+                                <!-- /.card-tools -->
+                            </div>
+                            <div class="card-body" >
+                                <div>
+                                    <canvas id="mainOeuvreChart" width="200" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div class="card-footer" >
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <button id="btn-mois-mainOeuvre-moins" class="btn" style="background-color:rgba(53,12,163,0.15);color: #3a0ca3;border-color:#3a0ca3;margin-right:2%" ><span class="fa fa-arrow-left"></span></button>
+                                        <button disabled id="btn-mois-mainOeuvre-plus"  class="btn" style="background-color:rgba(53,12,163,0.15);color: #3a0ca3;border-color:#3a0ca3;margin-left:2%" ><span class="fa fa-arrow-right"></span></button>
+                                    </div>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
                 </div>
                 
                 
@@ -685,8 +723,107 @@
             config
         );
 
+
+        // ------------------ Mains d'oeuvre ----------------
+            let MainOeuvre = JSON.parse('{!! json_encode($mainOeuvre->toArray()) !!}')
+            
+            let labelsMainOeuvre = []
+            let dataMainOeuvre = []
+            MainOeuvre.forEach(function(mainOeuvre){
+                labelsMainOeuvre.push(mois(mainOeuvre.month) + " - " + mainOeuvre.year);
+                dataMainOeuvre.push(mainOeuvre.quantite);
+            });
+
+        
+            let MainOeuvreData = {
+                labels: labelsMainOeuvre,
+                datasets: [{
+                    label: 'Main d\' oeuvre par mois ',
+                    data: dataMainOeuvre ,
+                    fill: true,
+                    borderColor: '#3a0ca3',
+                    backgroundColor: 'rgba(58,12,163,0.15)',
+                    tension: 0.1
+                }]
+            };
+            const configMainOeuvre = {
+                type: 'line',
+                data: MainOeuvreData,
+                options: {   
+                    responsive : true   ,
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += prix(tooltipItem.yLabel) + " Ar";
+                                return label;
+                            }
+                        }
+                    }   
+                }
+            };
+        
+            var myChartMainOeuvre = new Chart(
+                document.getElementById('mainOeuvreChart'),
+                configMainOeuvre
+            );
+
         
         // -------------- EVENT ---------------------------- //
+            // ----- CHART MAINOEUVRE ---------------- //
+            let mainOeuvreBouton = 0;
+
+            mainOeuvre(mainOeuvreBouton);
+
+            $(document).on("click", "#btn-mois-mainOeuvre-moins", function(e){
+                mainOeuvreBouton++;
+                mainOeuvre(mainOeuvreBouton)
+
+            });
+
+            $(document).on("click", "#btn-mois-mainOeuvre-plus", function(e){
+                mainOeuvreBouton--;
+                mainOeuvre(mainOeuvreBouton)
+
+            });
+
+            function mainOeuvre(page){
+                let url = "{{route('tableaubord.mainoeuvre')}}" + "/" + page
+
+                $.get(url, {}, dataType = "JSON").done(function(data){
+                    
+                    myChartMainOeuvre.data.datasets[0].label =   "Main d'oeuvre par mois "
+                
+                    if(data != null && data.length > 0){
+                        // vider les anciens données
+                        myChartMainOeuvre.data.labels = [];
+                        myChartMainOeuvre.data.datasets[0].data = [];
+                        myChartMainOeuvre.update();
+
+                        data.forEach(function(e , i){
+
+                            myChartMainOeuvre.data.labels[i] = mois(e.month) + " - " + e.year;
+                            myChartMainOeuvre.data.datasets[0].data[i] = e.quantite;
+                            myChartMainOeuvre.update();
+                        })
+                        
+                    }
+                    else{
+                        //--
+                        removeData(myChartMainOeuvre);
+                    }
+                        
+                    if(page > 0){
+                        $("#btn-mois-mainOeuvre-plus").removeAttr("disabled");
+                    }else{
+                        $("#btn-mois-mainOeuvre-plus").attr("disabled", true);
+                    }
+                });
+                }
 
             // ----- CHART CARBURANT ------------------ //
 
@@ -707,14 +844,16 @@
                 carburantConsomation(url)
             })
 
+            
+
 
             
             // ----- CHART CARBURANT ------------------ //
             carburantConsomation("{{route('tableaubord.carburant')}}" + "/" + carburantBouton)
             
             function carburantConsomation(url){
+
                 $.get(url, {}, dataType = "JSON").done(function(data){
-                    console.log(myChartCarburant.data.datasets[0].label)
                     myChartCarburant.data.datasets[0].label =   "Consommation de carburant en "+ mois( (today.getMonth() + 1 ) - carburantBouton)
                 
                     if(data != null && data.length > 0){

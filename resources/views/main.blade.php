@@ -155,6 +155,11 @@
     <script src="{{asset('assets/adminlte/dist/js/demo.js')}}"></script>--}}
 
     <script>
+
+        function prix(value){
+           return  (new Intl.NumberFormat()).format(value);
+        }
+
         function spinning(me, flux){
             flux = flux == undefined ? 1 : flux;
             if(flux == 1){

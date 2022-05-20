@@ -3,6 +3,7 @@
 namespace App\Models\Maintenance;
 
 use App\Models\Camion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,21 @@ class Maintenance extends Model
     protected $fillable = [
         "titre", "date_heure", "camion_id", "type", "commentaire", "nom_reparateur", "tel_reparateur", "adresse_reparateur", "main_oeuvre", "pieces"
     ];
+
+
+
+    public function mainOeuvre($page = 0){
+
+        $req = self::selectRaw('year(created_at) year, extract(month from created_at) month, sum(main_oeuvre) quantite')
+                    ->groupBy('year', 'month')
+                    ->orderBy('year', 'desc')
+                    ->orderBy('month', 'desc')
+                    ->skip($page)
+                    ->take(5)
+                    ->get();
+        
+        return $req;
+    }
 
 
     public function montantTotal() : float
@@ -65,6 +81,7 @@ class Maintenance extends Model
     }
 
     public static function dashboard($debut = null, $fin = null){
+
         $req = self::join("camions", "camions.id", "=", "maintenances.camion_id")
                     ->selectRaw("camions.name as camion, maintenances.type, maintenances.pieces, maintenances.main_oeuvre");
         

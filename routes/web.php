@@ -43,6 +43,9 @@ Route::post("/tableau-bord/depense/camion/", [App\Http\Controllers\DashboardCont
 
 Route::post("/tableau-bord/maintenance/", [App\Http\Controllers\DashboardController::class, 'maintenance'])->name("tableaubord.maintenance");
 
+Route::get("/tableau-bord/mainoeuvre/{page?}", [App\Http\Controllers\DashboardController::class, 'mainoeuvre'])->name("tableaubord.mainoeuvre");
+
+
 // -------------------- Dashboard ----------------- //
 
 // -------------------- PAPIERS ------------------- //

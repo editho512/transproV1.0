@@ -22,7 +22,7 @@
 
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row" >
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
@@ -32,10 +32,10 @@
                             </div>
                         </div>
 
-                        <div class="card-body">
+                        <div class="card-body" >
                             <div class="row">
                                <div class="col-sm-12">
-                                    <div id="map"></div>                               
+                                   <iframe src="https://tracking.dago-it.com/mod/share/index.php?su=5B3F001E289F4A9FE6563FF466A30D16&m=true" frameborder="0"     width="100%" height="400px" ></iframe>
                                 </div>
 
                             </div>
@@ -55,31 +55,4 @@
 
 @endsection
 @section('scripts')
-
-<script
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeKHX66emRCkc6dtuPSMkQnej6H2xiTeY&callback=initMap&v=weekly"
-defer
-></script>
-
-<script>
-    // Initialize and add the map
-function initMap() {
-  // The location of Uluru
-  const uluru = { lat: -25.344, lng: 131.031 };
-  // The map, centered at Uluru
-  const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 4,
-    center: uluru,
-  });
-  // The marker, positioned at Uluru
-  const marker = new google.maps.Marker({
-    position: uluru,
-    map: map,
-  });
-}
-
-window.initMap = initMap;
-
-</script>
-
 @endsection
