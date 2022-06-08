@@ -20,7 +20,16 @@ class Maintenance extends Model
         "titre", "date_heure", "camion_id", "type", "commentaire", "nom_reparateur", "tel_reparateur", "adresse_reparateur", "main_oeuvre", "pieces"
     ];
 
+    protected $with = ['camion'];
 
+    protected $withSum = ['main_oeuvre'];
+
+
+    /**
+     * Montant total de la mainténance
+     *
+     * @return float
+     */
     public function montantTotal() : float
     {
         $montant = $this->main_oeuvre;
@@ -35,7 +44,7 @@ class Maintenance extends Model
         return doubleval($montant);
     }
 
-        /**
+    /**
      * Recuperer le camion concerné s'il existe
      *
      * @return BelongsTo

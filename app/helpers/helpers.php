@@ -33,7 +33,6 @@ if(!function_exists("prix_mg")){
 
 }
 
-
 function allTrajetsAPrevoir()
 {
     return Trajet::trajetsAPrevoir();
@@ -144,11 +143,13 @@ function totalDepense() : float
     return doubleval(Depense::sum('montant'));
 }
 
-function totalMaintenance() : float
+function totalMaintenance(?Collection $maintenances = null) : float
 {
-    $montant = doubleval(Maintenance::sum('main_oeuvre'));
+    if ($maintenances === null) $maintenances = Maintenance::all();
 
-    foreach (Maintenance::all() as $maintenance)
+    $montant = doubleval($maintenances->sum('main_oeuvre'));
+
+    foreach ($maintenances as $maintenance)
     {
         if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
         {

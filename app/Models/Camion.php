@@ -16,6 +16,8 @@ class Camion extends Model
         'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo',
     ];
 
+    protected $with = [];
+
 
     /**
     * Recuperer la quantité de carburant restant d'un camion

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Maintenance;
 
 use App\Models\Camion;
 use Illuminate\Http\Request;
-use App\Models\Depense\Depense;
 use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -32,7 +31,7 @@ class MainMaintenanceController extends Controller
     {
         $maintenances = Maintenance::all();
         $active_maintenance_index = "active";
-        $maintenancesGroups = Maintenance::all()->groupBy(function($data) {
+        $maintenancesGroups = $maintenances->groupBy(function($data) {
             return $data->type;
         });
 

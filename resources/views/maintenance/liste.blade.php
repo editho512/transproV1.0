@@ -93,8 +93,8 @@
                 <div class="col-12">
                     <div class="card total">
                         <div class="card-body">
-                            <h4 class="mb-3 font-weight-bold text-white">{{ formatMoney(totalMaintenance()) }}</h4>
-                            <h6>{{ numberToLetter(totalMaintenance()) }}</h6>
+                            <h4 class="mb-3 font-weight-bold text-white">{{ formatMoney(totalMaintenance($maintenances)) }}</h4>
+                            <h6>{{ numberToLetter(totalMaintenance($maintenances)) }}</h6>
                         </div>
                         <div class="card-footer" >
                             <h5>Total des dépenses pour maintenance</h5>
@@ -166,15 +166,12 @@
                                                 <div class="row">
                                                     <div class="col-sm-4 text-left">
                                                           <button class="btn btn-xs btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
-
                                                     </div>
                                                     <div class="col-sm-4 text-center">
                                                         <button class="btn btn-xs btn-primary mr-2" id="modifier-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-maintenance" data-update-url="{{ route('maintenance.post.modifier', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-edit"></i></button>
-
                                                     </div>
                                                     <div class="col-sm-4 text-right">
                                                         <button class="btn btn-xs btn-danger" id="supprimer-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-maintenance" data-update-url="{{ route('maintenance.post.supprimer', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-trash"></i></button>
-
                                                     </div>
                                                 </div>
 
@@ -227,9 +224,7 @@
                     @csrf
 
                     <div class="row">
-
                         <div class="col-md-6 p-3">
-
                             <h5 class="text-uppercase mb-4 text-primary font-weight-bold">Information de la maintenance</h5>
 
                             <div class="row mt-1 mb-3">
@@ -309,7 +304,6 @@
                         </div>
 
                         <div class="col-md-6 p-3">
-
                             <h5 class="text-uppercase mb-4 text-primary font-weight-bold">Information de l'agent</h5>
 
                             <div class="row mt-1 mb-3">
@@ -346,7 +340,7 @@
                         <div class="col-md-12 mt-4 mb-4">
                             <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles (<span class="text-info">Facultatif</span>)</h5>
 
-                            <table class="table" style="width:100%">
+                            <table class="table w-100">
                                 <thead>
                                     <th>Nom du matériel</th>
                                     <th>Prix unitaire</th>
@@ -558,6 +552,8 @@
     <!-- /.modal-dialog -->
 </div>
 
+{{-- Fin modifier maintenance --}}
+
 {{-- Supprimer un maintenance --}}
 
 <div class="modal fade" id="modal-supprimer-maintenance">
@@ -722,6 +718,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+{{-- Fin supprimer maintenance --}}
 
 {{-- Voir une maintenance --}}
 
@@ -894,7 +892,6 @@
     </div>
 </div>
 
-
 @endsection
 
 @section('scripts')
@@ -913,14 +910,14 @@
 <script>
 
 $("#maintenances").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        "searching": true,
-        "paging": false,
-        "ordering": true,
-        "info": false ,
-        language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
-    });
+    "responsive": true,
+    "autoWidth": false,
+    "searching": true,
+    "paging": false,
+    "ordering": true,
+    "info": false ,
+    language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+});
 
 const resetStyle = (input) => {
     if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
