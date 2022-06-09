@@ -53,7 +53,7 @@ addMateriel.addEventListener('click', e => {
 })
 
 function resetFields () {
-    nom.value = null; pu.value = null; quantite.value = null; total.value = null;
+    nom.value = null; pu.value = null; quantite.value = null; total.value = null; frs.value = null; contactFrs.value = null;
 }
 
 

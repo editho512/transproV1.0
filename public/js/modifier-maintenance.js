@@ -50,7 +50,7 @@ addMaterielEdit.addEventListener('click', e => {
 })
 
 function resetFieldsEdit () {
-    nomEdit.value = null; puEdit.value = null; quantiteEdit.value = null; totalEdit.value = null;
+    nomEdit.value = null; puEdit.value = null; quantiteEdit.value = null; totalEdit.value = null; frsEdit.value = null; contactFrsEdit.value = null;
 }
 
 nomEdit.addEventListener('blur', e => {

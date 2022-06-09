@@ -10,6 +10,7 @@ use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Maintenance\Maintenance;
+use App\Models\MaintenancePieceFrs;
 
 class MainMaintenanceController extends Controller
 {
@@ -59,6 +60,8 @@ class MainMaintenanceController extends Controller
      */
     public function supprimer(Request $request, Maintenance $maintenance) : RedirectResponse
     {
+        MaintenancePieceFrs::where("maintenance", $maintenance->id)->delete();
+        
         if ($maintenance->delete())
             $request->session()->flash("notification", [
                 "value" => "Maintenance supprimé avec success" ,

@@ -355,7 +355,7 @@ ul.ui-autocomplete {
                                     <tr>
                                         <td><input class="form-control" value="" type="text" id="nom" placeholder="Nom de la pièce"></td>
                                         <td><input class="form-control" value="" type="text" id="frs" placeholder="Fournisseur"></td>
-                                        <td><input class="form-control" value="" type="text" id="contact-frs" placeholder="Cintact du fournisseur"></td>
+                                        <td><input class="form-control" value="" type="text" id="contact-frs" placeholder="Contact du fournisseur"></td>
                                         <td><input class="form-control" value="" type="number" id="pu" placeholder="Prix unitaire"></td>
                                         <td><input class="form-control" value="" type="number" id="quantite" placeholder="Quantité "></td>
                                         <td><input class="form-control" value="" readonly type="number" id="total" placeholder="Montant total"></td>
@@ -704,6 +704,8 @@ ul.ui-autocomplete {
                             <table class="table" style="width:100%">
                                 <thead>
                                     <th>Nom du matériel</th>
+                                    <th>Fournisseur</th>
+                                    <th>Contact du fournisseur</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -859,6 +861,8 @@ ul.ui-autocomplete {
                             <table class="table" style="width:100%">
                                 <thead>
                                     <th>Nom de la matérielle</th>
+                                    <th>Fournisseur</th>
+                                    <th>Contact du fournisseur</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -940,11 +944,14 @@ $("#frs").autocomplete({
     source: fournisseurs,
     close: function (e) {
         const value = e.target.value
-        $.get("fournisseur", { name: value },
-            function (data, textStatus, jqXHR) {
-                $("#contact-frs").val(data.contact);
-            },
-        );
+
+        if (value !== "") {
+            $.get("fournisseur", { name: value },
+                function (data, textStatus, jqXHR) {
+                    $("#contact-frs").val(data.contact);
+                },
+            );
+        }
     }
 })
 
@@ -952,11 +959,14 @@ $("#frs-edit").autocomplete({
     source: fournisseurs,
     close: function (e) {
         const value = e.target.value
-        $.get("fournisseur", { name: value },
-            function (data, textStatus, jqXHR) {
-                $("#frs-contact-edit").val(data.contact);
-            },
-        );
+
+        if (value !== "") {
+            $.get("fournisseur", { name: value },
+                function (data, textStatus, jqXHR) {
+                    $("#frs-contact-edit").val(data.contact);
+                },
+            );
+        }
     }
 })
 
@@ -1182,9 +1192,9 @@ function editPiece (button) {
     let Q = PU.nextElementSibling // Quantité de la pièce
     let TOTAL = Q.nextElementSibling // Total de pièce
 
-    LIB.innerHTML = "<input type='text' class='form-control' value='" + LIB.innerHTML.trim() + "'/>"
-    FRS.innerHTML = "<input type='text' class='form-control' value='" + FRS.innerHTML.trim() + "'/>"
-    FRSCONTACT.innerHTML = "<input type='text' class='form-control' value='" + FRSCONTACT.innerHTML.trim() + "'/>"
+    LIB.innerHTML = "<input type='text' id='editingLib' class='form-control' value='" + LIB.innerHTML.trim() + "'/>"
+    FRS.innerHTML = "<input type='text' id='editingFrs' class='form-control' value='" + FRS.innerHTML.trim() + "'/>"
+    FRSCONTACT.innerHTML = "<input type='text' id='editingContact' class='form-control' value='" + FRSCONTACT.innerHTML.trim() + "'/>"
     PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replaceAll('Ar', '').trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
     Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
     TOTAL.innerHTML = "<input type='number' class='form-control' disabled value='" + TOTAL.innerHTML.replaceAll('Ar', '').trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
@@ -1193,6 +1203,24 @@ function editPiece (button) {
     button.setAttribute("onclick", "savePiece(this)")
 
     editing = LIB.firstElementChild.value
+
+    $("#editingLib").autocomplete({
+        source: pcs
+    })
+
+    $("#editingFrs").autocomplete({
+        source: fournisseurs,
+        close: function (e) {
+            const value = e.target.value
+            if (value !== "") {
+                $.get("fournisseur", { name: value },
+                    function (data, textStatus, jqXHR) {
+                        $("#editingContact").val(data.contact);
+                    },
+                );
+            }
+        }
+    })
 }
 
 function savePiece (button) {
