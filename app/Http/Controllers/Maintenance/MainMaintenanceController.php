@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Maintenance;
 
+use App\Models\Piece;
 use App\Models\Camion;
+use App\Models\Fournisseur;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
@@ -35,11 +37,16 @@ class MainMaintenanceController extends Controller
             return $data->type;
         });
 
+        $pieces = Piece::all();
+        $fournisseurs = Fournisseur::all();
+
         return view('maintenance.liste', [
             'maintenances' => $maintenances,
             'camions' => Camion::all(),
             'active_maintenance_index' => $active_maintenance_index,
             'maintenancesGroups' => $maintenancesGroups,
+            'pieces' => $pieces,
+            'fournisseurs' => $fournisseurs,
         ]);
     }
 

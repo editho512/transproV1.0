@@ -38,6 +38,9 @@ class NouvelleMaintenanceRequest extends FormRequest
             "tel_reparateur" => ["required", new PhoneNumber],
             "adresse_reparateur" => ["required", "sometimes"],
             "pieces" => ["nullable", "sometimes"],
+
+            "frs" => ["nullable", "sometimes"],
+            "contact_frs" => ["nullable", new PhoneNumber],
         ];
     }
 

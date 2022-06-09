@@ -2,6 +2,8 @@
 let addMaterielEdit = document.getElementById('addMaterielEdit')
 
 let nomEdit = document.getElementById('nom-edit')
+let frsEdit = document.getElementById('frs-edit')
+let contactFrsEdit = document.getElementById('frs-contact-edit')
 let puEdit = document.getElementById('pu-edit')
 let quantiteEdit = document.getElementById('quantite-edit')
 let totalEdit = document.getElementById('total-edit')
@@ -17,7 +19,16 @@ addMaterielEdit.addEventListener('click', e => {
     if (isNaN(parseFloat(totalEdit.value)) || parseFloat(totalEdit.value) < 0) { $('#error p').html("Montant total vide ou invalide"); $('#error').modal('show'); return; }
 
     let tr = document.createElement('tr')
-    let tuple = "<td>" + nomEdit.value + "</td><td>" + formatNumber(parseFloat(puEdit.value), 2, "Ar") + "</td><td>" + formatNumber(parseInt(quantite.value), 0) + "</td><td>" + formatNumber(parseFloat(totalEdit.value), 2, "Ar") + "</td><td class='d-inline-flex'><button onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button></td>"
+    let tuple = `<td>${nomEdit.value}</td>
+                <td>${frsEdit.value}</td>
+                <td>${contactFrsEdit.value}</td>
+                <td>${formatNumber(parseFloat(puEdit.value), 2, "Ar")}</td>
+                <td>${formatNumber(parseInt(quantiteEdit.value), 0)}</td>
+                <td>${formatNumber(parseFloat(totalEdit.value), 2, "Ar")}</td>
+                <td class='d-inline-flex'>
+                    <button onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button>
+                    <button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button>
+                </td>`
 
     if (pieces[nomEdit.value]) { alert('Cette piece existe déja dans la liste'); resetFields(); return; }
 
@@ -28,6 +39,8 @@ addMaterielEdit.addEventListener('click', e => {
 
     pieces[key] = {
         nom: nomEdit.value,
+        frs: frsEdit.value,
+        contactFrs: contactFrsEdit.value,
         pu: puEdit.value,
         quantite: quantiteEdit.value,
         total: totalEdit.value
@@ -62,22 +75,51 @@ function calculerMontantEdit () {
 }
 
 
+/**
+ * Remplir la liste des pièces
+ *
+ * @param   {Array}  pieces    Tableau des pieces associé a un maintenance
+ * @param   {String}  result    Identifiant du dom pour mettre le resultat
+ * @param   {Boolean}  editable  Pour determiner si les élements son editables
+ *
+ * @return  {Array}            Retourne le tableau des pièces modifié
+ */
 function populatePieceList (pieces, result, editable = true) {
-    pieces = JSON.parse(pieces)
+    //pieces = JSON.parse(pieces)
     let edit_result = document.querySelector(result)
 
-    if (pieces === null) return new Object()
+    if (pieces === []) return new Object()
 
-    Object.entries(pieces).forEach(piece => {
-        piece = piece[1]
+    pieces.forEach(piece => {
         let tr = document.createElement('tr')
-        action = "<button type='button' onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button>"
+        let action = "<button type='button' onclick='editPiece(this)' class='btn btn-primary mr-2'><i class='fa fa-edit'></i></button><button onclick='removePiece(this)' class='btn btn-danger'><i class='fa fa-minus'></i></button>"
         if (editable === false) action = "Aucun action"
 
-        let tuple = "<td>" + piece.nom + "</td><td>" + formatNumber(parseFloat(piece.pu), 2, "Ar") + "</td><td>" + formatNumber(parseInt(piece.quantite), 0) + "</td><td>" + formatNumber(parseFloat(piece.total), 2, "Ar") + "</td><td class='d-inline-flex'>" + action + "</td>"
+        let tuple = `<td>${piece.designation}</td>
+                    <td>${piece.fournisseur[0].nom}</td>
+                    <td>${piece.fournisseur[0].contact}</td>
+                    <td>${formatNumber(parseFloat(piece.pivot.pu), 2, "Ar")}</td>
+                    <td>${formatNumber(parseInt(piece.pivot.quantite), 0)}</td>
+                    <td>${formatNumber(parseFloat(piece.pivot.total), 2, "Ar")}</td>
+                    <td class='d-inline-flex'>${action}</td>`
+
         tr.innerHTML = tuple
         edit_result.appendChild(tr)
     })
 
+    let tmp = []
+
+    pieces.forEach(piece => {
+        tmp[piece.designation] = {
+            nom: piece.designation,
+            frs: piece.fournisseur[0].nom,
+            contactFrs: piece.fournisseur[0].contact,
+            pu: piece.pivot.pu,
+            quantite: piece.pivot.quantite,
+            total: piece.pivot.total,
+        }
+    });
+
+    pieces = Object.assign({}, tmp)
     return pieces
 }
