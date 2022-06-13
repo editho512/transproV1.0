@@ -4,6 +4,7 @@ namespace App\Models\Maintenance;
 
 use App\Models\Camion;
 use App\Models\Piece;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +33,21 @@ class Maintenance extends Model
      *
      * @return float
      */
+
+    public function mainOeuvre($page = 0){
+
+        $req = self::selectRaw('year(created_at) year, extract(month from created_at) month, sum(main_oeuvre) quantite')
+                    ->groupBy('year', 'month')
+                    ->orderBy('year', 'desc')
+                    ->orderBy('month', 'desc')
+                    ->skip($page)
+                    ->take(5)
+                    ->get();
+        
+        return $req;
+    }
+
+
     public function montantTotal() : float
     {
         $montant = $this->main_oeuvre;
@@ -89,5 +105,43 @@ class Maintenance extends Model
     {
         return $this->belongsToMany(Piece::class, 'maintenance_piece_frs', 'maintenance', 'piece')
             ->withPivot(['pu', 'quantite', 'total']);
+    }
+    public static function dashboard($debut = null, $fin = null){
+
+        $req = self::join("camions", "camions.id", "=", "maintenances.camion_id")
+                    ->selectRaw("camions.name as camion, maintenances.type, maintenances.pieces, maintenances.main_oeuvre");
+        
+        if($debut != null){
+            $req = $req->where("maintenances.date_heure", ">=", $debut);
+        }
+        if($fin != null){
+            $req = $req->where("maintenances.date_heure", "<=", $fin);
+        }
+
+        $req = $req->selectRaw("camions.name as camion, maintenances.type, maintenances.pieces, maintenances.main_oeuvre");
+
+       
+        $req = $req->get();
+
+        $res = [];
+
+        foreach ($req as $key => $liste) {
+            # code...
+            $pieces = doubleval($liste->main_oeuvre);
+            $array_pieces = json_decode($liste->pieces);
+            
+            if( $array_pieces != null ){
+
+                foreach ($array_pieces as $key => $value) {
+                    # code...
+                    $pieces += doubleval($value->total);
+                }
+            }
+
+            //array_push($res, ["maintenance" => $liste, "montant" => ($pieces + doubleval($liste->main_oeuvre))]);
+            $res[$liste->camion][$liste->type] = isset($res[$liste->camion][$liste->type]) ? $res[$liste->camion][$liste->type] + $pieces : $pieces ;
+        }   
+
+        return $res;
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -23,6 +24,7 @@ class CamionController extends Controller
     public function __construct()
     {
         $this->middleware('super-admin')->except(['add', 'index', 'voir']);
+        //Artisan::call("storage:link");
     }
 
 
@@ -55,6 +57,9 @@ class CamionController extends Controller
     public function add(Request $request) : RedirectResponse
     {
         $data = $request->except("photo");
+        
+        $data["name"] = $data["marque"] . "-" .  $data["model"] . "-" . $data["plaque"];
+       
         $camion = Camion::create($data);
 
         if( $request->file('photo') !== null){
@@ -106,11 +111,13 @@ class CamionController extends Controller
     */
     public function update(Request $request, Camion $camion)
     {
+
         $data = $request->except("photo");
-        $camion->name = $data["name"];
+        $camion->name = $data["marque"] . "-" .  $data["model"] . "-" . $data["plaque"];
         $camion->marque = $data["marque"];
         $camion->model = $data["model"];
         $camion->annee = $data["annee"];
+        $camion->plaque = $data["plaque"];
         $camion->numero_chassis = $data["numero_chassis"];
 
         if( $request->file('photo') !== null)
@@ -176,11 +183,16 @@ class CamionController extends Controller
             $carburants = $camion->carburants; // La liste des carburants du camion
             $chauffeurs = Chauffeur::orderBy('name', 'asc')->get();
             $stock_carburant = $camion->CarburantRestant();
-            $papiers = $camion->papiers; // Tous les papiers du camion
-            $assurance = Papier::EnCours(Papier::TYPE[0], $camion->id); // Assurance en cours du camion
-            $visiteTechnique = Papier::EnCours(Papier::TYPE[1], $camion->id); // Visite technique en cours du camion
 
-            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique"));
+            $papiers = $camion->papiers;
+            
+            $assurance = Papier::EnCours(Papier::TYPE[0], $camion->id);
+            $visiteTechnique = Papier::EnCours(Papier::TYPE[1], $camion->id);
+
+            $carteGrise = Papier::EnCours(Papier::TYPE[2], $camion->id);
+            $patenteTransport = Papier::EnCours(Papier::TYPE[3], $camion->id);
+
+            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique", "carteGrise", "patenteTransport"));
         }
     }
 

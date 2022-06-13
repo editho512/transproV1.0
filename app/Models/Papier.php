@@ -10,18 +10,17 @@ class Papier extends Model
 {
     use HasFactory;
 
-    CONST TYPE = [ "Assurance", "Visite technique"];
+    CONST TYPE = [ "Assurance", "Visite technique", "Carte grise", "Patente transport"];
 
     protected $fillable = ["designation", "type", "date", "date_echeance", "camion_id", "photo"];
 
-    public static function EnCours($type, int $camionId = null)
-    {
-        if ($camionId === null OR $camionId === 0)
-        {
-            $sql = "SELECT * FROM papiers as pap WHERE pap.type = '".$type."' AND pap.date_echeance = ( SELECT MAX(papiers.date_echeance) FROM papiers WHERE papiers.type = '".$type."')";
-            return collect(DB::select($sql));
-        }
-        $sql = "SELECT * FROM papiers as pap WHERE pap.type = '".$type."' AND pap.date_echeance = ( SELECT MAX(papiers.date_echeance) FROM papiers WHERE papiers.type = '".$type."') AND camion_id=?";
-        return collect(DB::select($sql, [$camionId]));
+    public static function EnCours($type, $camion_id){
+
+        $sql = "SELECT * FROM papiers as pap WHERE pap.type = '".$type."' AND pap.date_echeance = ( SELECT MAX(papiers.date_echeance) FROM papiers WHERE papiers.type = '".$type."') AND pap.camion_id = ". $camion_id;
+
+        $papier = collect(DB::select($sql));
+
+        return $papier;
+        
     }
 }

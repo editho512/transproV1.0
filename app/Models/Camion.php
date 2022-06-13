@@ -13,10 +13,23 @@ class Camion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo',
+       'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo', 'plaque'
     ];
 
     protected $with = [];
+
+    CONST TYPEGPS = [ "Dago-it"];
+
+
+    /**
+    * Recuperer tous les papier du camion
+    *
+    * @return HasMany
+    */
+    public function papiers() : HasMany
+    {
+        return $this->hasMany(Papier::class);
+    }
 
 
     /**

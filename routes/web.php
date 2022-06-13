@@ -34,6 +34,23 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// -------------------- Dashboard ----------------- //
+
+Route::get("/tableau-bord", [App\Http\Controllers\DashboardController::class, 'index'])->name("tableaubord");
+
+Route::get("/tableau-bord/carburant/{mois?}", [App\Http\Controllers\DashboardController::class, 'carburant'])->name("tableaubord.carburant");
+
+Route::post("/tableau-bord/depense/chauffeur/", [App\Http\Controllers\DashboardController::class, 'depensePerDriver'])->name("tableaubord.depense.chauffeur");
+
+Route::post("/tableau-bord/depense/camion/", [App\Http\Controllers\DashboardController::class, 'depensePerCamion'])->name("tableaubord.depense.camion");
+
+Route::post("/tableau-bord/maintenance/", [App\Http\Controllers\DashboardController::class, 'maintenance'])->name("tableaubord.maintenance");
+
+Route::get("/tableau-bord/mainoeuvre/{page?}", [App\Http\Controllers\DashboardController::class, 'mainoeuvre'])->name("tableaubord.mainoeuvre");
+
+
+// -------------------- Dashboard ----------------- //
+
 // -------------------- PAPIERS ------------------- //
 
 Route::get("/papier/supprimer/{papier}", [App\Http\Controllers\PapierController::class, 'supprimer'])->name("papier.supprimer");
@@ -185,6 +202,7 @@ Route::prefix('localisation')->middleware('auth')->group(function () {
 
     // Page d'accueil de la localisation
     Route::get('/', [MainLocalisationController::class, 'index'])->name('localisation.index');
+    Route::get('/trouver', [MainLocalisationController::class, 'trouver'])->name('localisation.trouver');
 
 });
 

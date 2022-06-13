@@ -17,4 +17,8 @@ class MainLocalisationController extends Controller
             'camions' => $camions,
         ]);
     }
+
+    public function trouver(){
+        return view('localisation.trouver');
+    }
 }

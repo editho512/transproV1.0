@@ -119,34 +119,54 @@
                 </div>
                 <!-- /.col -->
             </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </section>
+            
 
-    <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
+            <!-- /.container-fluid -->
+        </section>
 
-<!---- modal pour ajouter camions --->
-<div class="modal fade" id="modal-ajouter-camion">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-success">
-                <h4 class="modal-title">Ajouter un camion</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-ajouter-camion">
-                <form action="{{route('camion.ajouter')}}" method="post" role="form" id="form-ajouter-camion" enctype="multipart/form-data">
-                    @csrf
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="name">Désignation : <x-required-mark /></label>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!---- modal pour ajouter camions --->
+    <div class="modal fade" id="modal-ajouter-camion">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-success">
+                    <h4 class="modal-title">Ajouter un camion</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-ajouter-camion">
+                    <form action="{{route('camion.ajouter')}}" method="post" role="form" id="form-ajouter-camion" enctype="multipart/form-data">
+                        @csrf
+
+                        <!--
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="name">Désignation :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="name" class="form-control" placeholder="Désignation" required>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="name" class="form-control" placeholder="Désignation" required>
+                        -->
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="plaque">Plaque (*):</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="plaque" placeholder="Plaque" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="marque">Marque :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="marque" placeholder="Marque" class="form-control" required>
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-1">
@@ -198,40 +218,73 @@
                             </div>
 
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="submit" id="button-ajouter-camion" form="form-ajouter-camion" class="float-right btn btn-success">Ajouter</button>
+
+                        <div class="row mt-3">
+                            <div class="col-sm-4">
+                                <label for="gps">Fournisseur GPS :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="gps" id="gps" autocomplete="off">
+                                    <option value="">Aucun</option>
+                                    @foreach (App\Models\Camion::TYPEGPS as $gps)                                        
+                                        <option value="{{$gps}}">{{$gps}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                    <button type="submit" id="button-ajouter-camion" form="form-ajouter-camion" class="float-right btn btn-success">Ajouter</button>
+                </div>
             </div>
         </div>
         <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-<!---- / modal pour ajouter camions-->
 
-<!---- modal pour modification camion --->
-<div class="modal fade" id="modal-modifier-camion">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Modifier un camion</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-modifier-camion" >
-                <form action="#" method="post" id="form-modifier-camion" enctype="multipart/form-data">
-                    @csrf
-                    @method('patch')
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="name">Désignation :<x-required-mark /></label>
+    <!---- / modal pour ajouter camions-->
+
+    <!---- modal pour modification camion --->
+    <div class="modal fade" id="modal-modifier-camion">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-primary">
+                    <h4 class="modal-title">Modifier un camion</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-modifier-camion" >
+                    <form action="#" method="post" id="form-modifier-camion" enctype="multipart/form-data">
+                        @csrf
+                        @method('patch')
+                        <!--
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="name">Désignation :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Désignation" required>
+                            </div>
+                        </div>-->
+
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="plaque">Plaque :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="plaque" id="plaque" placeholder="Plaque" class="form-control" required>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="name" id="name" class="form-control" placeholder="Désignation" required>
+
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="marque">Marque :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="marque" id="marque" placeholder="Marque" class="form-control" required>
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-1">
@@ -420,22 +473,26 @@
             $("#modal-supprimer-camion #supprimer_annee").val(data.annee).attr("disabled", true);
             $("#modal-supprimer-camion #supprimer_numero_chassis").val(data.numero_chassis).attr("disabled", true);
         })
-    })
 
-    $(document).on("click", ".modifier-camion", function (e) {
-        url = $(this).attr("data-show-url");
-        url_update = $(this).attr("data-update-url");
-        $("#modal-modifier-camion").modal("show");
-        $("#form-modifier-camion").attr("action", url_update);
 
-        $.ajax(url, {}, dataType ="HTML").done(function (data) {
-            console.log(data);
+        $(document).on("click", ".modifier-camion", function (e) {
+            url = $(this).attr("data-show-url");
+            url_update = $(this).attr("data-update-url");
+            $("#modal-modifier-camion").modal("show");
+            $("#form-modifier-camion").attr("action", url_update);
 
-            $("#modal-modifier-camion #name").val(data.name);
-            $("#modal-modifier-camion #marque").val(data.marque);
-            $("#modal-modifier-camion #model").val(data.model);
-            $("#modal-modifier-camion #annee").val(data.annee);
-            $("#modal-modifier-camion #numero_chassis").val(data.numero_chassis);
+            $.ajax(url, {}, dataType ="HTML").done(function (data) {
+                console.log(data);
+
+                //$("#modal-modifier-camion #name").val(data.name);
+
+                $("#modal-modifier-camion #plaque").val(data.plaque);
+                $("#modal-modifier-camion #marque").val(data.marque);
+                $("#modal-modifier-camion #model").val(data.model);
+                $("#modal-modifier-camion #annee").val(data.annee);
+                $("#modal-modifier-camion #numero_chassis").val(data.numero_chassis);
+            })
+
         })
     })
 
