@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $maintenance = Maintenance::dashboard();
 
         $mainOeuvre = maintenance::mainOeuvre();
-        
+
         return view("dashboard.dashboard", compact("active_dashboard_index", "carburants", "depense", "depenseCamion", "maintenance", "mainOeuvre"));
     
     }

@@ -49,6 +49,16 @@
                     </a>
                 </li>
 
+                <li class="nav-item has-treeview @if(isset($active_remorque_index)) menu-open @endif">
+                    <a href="{{route('remorque.index')}}" class="nav-link @if(isset($active_remorque_index)) {{$active_remorque_index}} @endif">
+                        <i class="nav-icon fas fa-truck-loading"></i>
+                        <p>
+                            <span>Remorques</span>
+                            
+                        </p>
+                    </a>
+                </li>
+
                 <li class="nav-item has-treeview @if(isset($active_localisation_index)) menu-open @endif">
                     <a href="{{ route('localisation.index') }}" class="nav-link @if(isset($active_localisation_index)) {{ $active_localisation_index }} @endif">
                         <i class="nav-icon fa fa-map-marker-alt"></i>

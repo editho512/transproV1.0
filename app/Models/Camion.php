@@ -91,17 +91,21 @@ class Camion extends Model
         return $this->hasMany(Trajet::class, 'camion_id', 'id');
     }
 
-
     /**
     * [dernierTrajet description]
     *
     * @return  Trajet  [return description]
     */
-    public function dernierTrajet(bool $enCours = false)
+    public function dernierTrajet(bool $enCours = false, bool $avantAujourdhui = false)
     {
         if ($enCours === true)
         {
             return $this->trajets()->orderBy('id', 'desc')->where('etat', Trajet::getEtat(1))->first();
+        }
+        else 
+        if($avantAujourdhui === true){
+
+            return $this->trajets()->orderBy('id', 'desc')->where('trajets.date_heure_depart', '<=', Carbon::today())->first();
         }
         return $this->trajets()->orderBy('id', 'desc')->first();
     }
@@ -183,4 +187,7 @@ class Camion extends Model
     {
         return doubleval($this->carburants()->where('flux', 0)->sum('quantite') - $this->carburants()->where('flux', 1)->sum('quantite'));
     }
+
+    
+   
 }

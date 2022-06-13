@@ -202,3 +202,20 @@ Route::prefix('localisation')->middleware('auth')->group(function () {
     Route::get('/trouver', [MainLocalisationController::class, 'trouver'])->name('localisation.trouver');
 
 });
+
+Route::prefix('remorque')->group(function(){
+
+    Route::get('/', [App\Http\Controllers\RemorqueController::class, 'index'])->name('remorque.index');
+    Route::post('/ajouter', [App\Http\Controllers\RemorqueController::class, 'store'])->name('remorque.ajouter');
+    Route::get('/modifier/{remorque}', [App\Http\Controllers\RemorqueController::class, 'edit'] )->name('remorque.edit');
+    Route::patch('/update/{remorque}', [App\Http\Controllers\RemorqueController::class, 'update'])->name('remorque.update');
+    Route::get('/supprimer/{remorque}', [App\Http\Controllers\RemorqueController::class, 'delete'])->name('remorque.delete');
+    Route::get('/voir/{remorque}', [App\Http\Controllers\RemorqueController::class, 'voir'])->name('remorque.voir');
+    Route::post('/papier/ajouter', [App\Http\Controllers\RemorqueController::class, 'ajouter_papier'])->name('remorque.papier.ajouter');
+    Route::get('/papier/modifier/{papier}', [App\Http\Controllers\RemorqueController::class, 'modifier_papier'])->name('remorque.papier.modifier');
+    Route::patch('/papier/update/{papier}', [App\Http\Controllers\RemorqueController::class, 'update_papier'])->name('remorque.papier.update');
+    Route::get('/papier/supprimer/{papier}', [App\Http\Controllers\RemorqueController::class, 'supprimer_papier'])->name('remorque.papier.supprimer');
+    Route::get('/dernier/{camion}', [App\Http\Controllers\RemorqueController::class, 'dernier_remorque'])->name('remorque.dernier');
+
+
+});

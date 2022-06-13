@@ -153,7 +153,7 @@
                         -->
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="plaque">Plaque (*):</label>
+                                <label for="plaque">Plaque :</label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="plaque" placeholder="Plaque" class="form-control" required>

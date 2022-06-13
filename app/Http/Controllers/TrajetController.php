@@ -9,7 +9,10 @@ use App\Models\Trajet;
 use App\Models\Carburant;
 use App\Models\Chauffeur;
 use App\Models\Itineraire;
+use App\Models\TrajetRemorque;
+use App\Models\Remorque;
 use App\Rules\BonEnlevement;
+use App\Rules\Remorque as RemorqueRule;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
@@ -27,20 +30,22 @@ class TrajetController extends Controller
     public function add(Request $request) 
     {
         // Validation des données reçues
-
-        
+     
         $data = $request->validate([
-            "camion_id" => ['required', 'numeric', 'exists:camions,id'],
-            "etat" => ['required', Rule::in(Trajet::getEtat())],
-            "chauffeur" => ['nullable', 'exists:chauffeurs,id'],
-            "date_heure_depart" => ['required', 'date'],
-            "date_heure_arrivee" => ['required', 'date'],
-            "carburantRestant" => ['nullable', 'numeric'],
-            "poids" => ['nullable', 'numeric' , "min:0"],
-            "chargement" => ['required','min:3'],
-            "bon" => ['required','min:1'],
-            "bon_enlevement" => [new BonEnlevement($request->etat)]
-        ]);
+                "camion_id" => ['required', 'numeric', 'exists:camions,id'],
+                "etat" => ['required', Rule::in(Trajet::getEtat())],
+                "chauffeur" => ['nullable', 'exists:chauffeurs,id'],
+                "date_heure_depart" => ['required', 'date'],
+                "date_heure_arrivee" => ['required', 'date'],
+                "carburantRestant" => ['nullable', 'numeric'],
+                "poids" => ['nullable', 'numeric' , "min:0"],
+                "chargement" => ['required','min:3'],
+                "bon" => ['required','min:1'],
+                "bon_enlevement" => [new BonEnlevement($request->etat)],
+                "remorque" => ['required', new RemorqueRule()]
+            ],
+            ["remorque.required" => "Le remorque est obligatoire"]    
+        );
 
         $res = [];
 
@@ -62,6 +67,21 @@ class TrajetController extends Controller
 
             return response()->json($res);
         }
+
+        foreach ($request->remorque as $key => $value) {
+           $remorque = Remorque::find($value);
+
+           if($remorque->estDispoEntre($date_depart, $date_arrivee) !== true){
+   
+               $res = [
+                   "value" => "Remorque non disponible entre les dates que vous avez selectionnées" ,
+                   "status" => "error"
+               ];
+   
+               return response()->json($res);
+           }
+        }
+
 
         if ($request->chauffeur !== null)
         {
@@ -90,6 +110,7 @@ class TrajetController extends Controller
                 return response()->json($res);
             }
         }
+        
 
         // Verifier l'etat en fonction de la trajet en cours: Si a un trajet en cours, l'état ne doit pas etre en cours aussi, ou terminé
         if ($camion->aUnTrajetEnCours() AND ($request->etat === Trajet::getEtat(1) OR $request->etat === Trajet::getEtat(2)))
@@ -242,6 +263,16 @@ class TrajetController extends Controller
                 'quantite' =>
             ]);*/
 
+            // Enregistrement des remorque utilisés
+
+            foreach ($request->remorque as $key => $value) {
+                # code...
+                TrajetRemorque::create([
+                    'remorque_id' => $value,
+                    'trajet_id' => $trajet->id
+                ]);
+            }
+
             // Enregistrement de tous les itinéraires
             foreach ($itineraires as $itineraire)
             {
@@ -288,6 +319,7 @@ class TrajetController extends Controller
             "itineraires" => $itineraires,
             "chauffeur" => $trajet->chauffeur,
             "reservation" => $trajet->reservation,
+            "remorque" => TrajetRemorque::where("trajet_id", $trajet->id)->get("remorque_id")->toArray()
         ]);
     }
 
@@ -313,7 +345,9 @@ class TrajetController extends Controller
             "poids" => ['nullable', 'numeric' , "min:0"],
             "chargement" => ["required", "min:3"],
             "bon" => ["required", "min:1"],
-            "bon_enlevement" => [new BonEnlevement($request->etat)]
+            "bon_enlevement" => [new BonEnlevement($request->etat)],
+            "remorque" => ['required', new RemorqueRule()]
+
         ]);
 
         $res = [];
@@ -325,6 +359,21 @@ class TrajetController extends Controller
         $camion = Camion::findOrFail($request->camion_id);
 
         $carburant = collect();
+
+        foreach ($request->remorque as $key => $value) {
+            $remorque = Remorque::find($value);
+ 
+            if($remorque->estDispoEntre($date_depart, $date_arrivee, $trajet) !== true){
+    
+                $res = [
+                    "value" => "Remorque non disponible entre les dates que vous avez selectionnées" ,
+                    "status" => "error"
+                ];
+    
+                return response()->json($res);
+            }
+         }
+        
 
         if($camion->estDispoEntre($date_depart, $date_arrivee, $trajet ) !== true){
 
@@ -572,6 +621,17 @@ class TrajetController extends Controller
 
         if ($update)
         {
+            TrajetRemorque::where("trajet_id", $trajet->id)->delete();
+
+            foreach ($request->remorque as $key => $value) {
+                # code...
+
+                TrajetRemorque::create([
+                    "trajet_id" => $trajet->id,
+                    "remorque_id" => $value
+                ]);
+            }
+
             if( isset($trajet->reservation->id) === true ){
 
                 if($trajet->etat == Trajet::getEtat(2)){
@@ -629,6 +689,8 @@ class TrajetController extends Controller
     */
     public function supprimer(Request $request, Trajet $trajet) : RedirectResponse
     {
+
+        $trajet->remorques()->delete();
         $trajet->itineraires()->delete();
         if($trajet->carburant_id !== null){
             $trajet->carburant->delete();

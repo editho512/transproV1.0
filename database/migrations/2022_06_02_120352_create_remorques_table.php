@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddEtatToCamionsTable extends Migration
+class CreateRemorquesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddEtatToCamionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('camions', function (Blueprint $table) {
-            $table->boolean('disponible')->default(true)->nullable(false);
+        Schema::create('remorques', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddEtatToCamionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('camions', function (Blueprint $table) {
-            $table->dropColumn('disponible');
-        });
+        Schema::dropIfExists('remorques');
     }
 }
