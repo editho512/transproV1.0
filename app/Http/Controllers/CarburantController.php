@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Session;
 use Carbon\Carbon;
 use App\Models\Carburant;
 use Illuminate\Http\Request;
@@ -36,13 +35,13 @@ class CarburantController extends Controller
             return redirect()->back();
         }
 
-        if ($validator->passes()) {
+        if (!$validator->fails()) {
 
             $data = $request->all();
-    
+
             $data['date'] = Carbon::parse($data['date'])->toDateTimeString();
             $carburant = new Carburant($data);
-    
+
             try
             {
                 if ($carburant->save())
@@ -69,20 +68,22 @@ class CarburantController extends Controller
 
     }
 
-    public function modifier(Carburant $carburant){
+    public function modifier(Carburant $carburant)
+    {
         return response()->json($carburant);
     }
 
-    public function update(Request $request, Carburant $carburant){
+    public function update(Request $request, Carburant $carburant)
+    {
         $validator = Validator::make($request->all(), [
             "date" => ['required', 'date'],
             "quantite" => ['required', 'numeric', 'min:0'],
             "flux" => ['required', 'numeric', 'min:0', 'max:0'],
             "prix" => ['required', 'numeric', 'min:0']
-
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails())
+        {
             $request->session()->flash("notification", [
                 "value" => "Echec de modification de carburant" ,
                 "status" => "error"
@@ -90,41 +91,44 @@ class CarburantController extends Controller
             return redirect()->back();
         }
 
-        if ($validator->passes()) {
-
+        if (!$validator->fails())
+        {
             $data = $request->except("_token");
-           
-            if(isset($data['quantite']) && intval($data['quantite']) >= 0 && isset($data['date']) && isset($data['flux']) ){
+
+            if(isset($data['quantite']) && intval($data['quantite']) >= 0 && isset($data['date']) && isset($data['flux']) )
+            {
                 $data["date"] = date("Y-m-d", strtotime($data["date"]));
-    
+
                 $carburant->date = $data["date"];
                 $carburant->quantite = $data["quantite"];
                 $carburant->prix = $data["prix"];
                 $carburant->flux = $data["flux"];
                 $carburant->camion_id = $data["camion_id"];
                 $carburant->update();
-                Session::put("notification", ["value" => "Carburant modifié" ,
+                $request->session()->put("notification", [
+                    "value" => "Carburant modifié" ,
                     "status" => "success"
                 ]);
-
-            }else{
-                Session::put("notification", ["value" => "echec d'ajout" ,
+            }
+            else
+            {
+                $request->session()->put("notification", [
+                    "value" => "echec d'ajout" ,
                     "status" => "error"
                 ]);
-            
             }
             return redirect()->route('camion.voir', ['camion' => $carburant->camion_id, 'tab' => 1]);
         }
-
-
     }
 
-    public function delete(Carburant $carburant){
+    public function delete(Carburant $carburant)
+    {
         $carburant->delete();
-        Session::put("notification", ["value" => "Carburant supprimé" ,
-        "status" => "success"
-    ]);
-    return redirect()->route('camion.voir', ['camion' => $carburant->camion_id, 'tab' => 1]);
+        request()->session()->put("notification", [
+            "value" => "Carburant supprimé" ,
+            "status" => "success"
+        ]);
+        return redirect()->route('camion.voir', ['camion' => $carburant->camion_id, 'tab' => 1]);
 
     }
 }

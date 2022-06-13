@@ -4,6 +4,8 @@
 
 @section('styles')
 
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+
 <style>
 
 .style-1 {
@@ -44,6 +46,10 @@
 .total {
     background: linear-gradient(135deg, #084766, #00a3f2);
     color: white;
+}
+
+ul.ui-autocomplete {
+    z-index: 1100!important;
 }
 
 </style>
@@ -93,8 +99,8 @@
                 <div class="col-12">
                     <div class="card total">
                         <div class="card-body">
-                            <h4 class="mb-3 font-weight-bold text-white">{{ formatMoney(totalMaintenance()) }}</h4>
-                            <h6>{{ numberToLetter(totalMaintenance()) }}</h6>
+                            <h4 class="mb-3 font-weight-bold text-white">{{ formatMoney(totalMaintenance($maintenances)) }}</h4>
+                            <h6>{{ numberToLetter(totalMaintenance($maintenances)) }}</h6>
                         </div>
                         <div class="card-footer" >
                             <h5>Total des dépenses pour maintenance</h5>
@@ -114,6 +120,7 @@
                             <h3 class="card-title">Historique des dépenses (Maintenances et reparations)</h3>
                             <button class="btn btn-primary float-right" data-backdrop="static" data-keyboard="false" data-toggle="modal" id="ajouter-maintenance" data-target="#modal-ajouter-maintenance"><span class="fa fa-plus mr-2"></span>Ajouter</button>
                         </div>
+
                         <!-- /.card-header -->
                         <div class="card-body">
                             <table id="maintenances" class="table table-bordered table-striped" >
@@ -139,42 +146,34 @@
                                             <td>
                                                 <span class="d-block mb-2"><b>TOTAL: </b>{{ formatMoney($maintenance->montantTotal()) }}</span>
                                                 <span class="d-block"><b>Main d'&oelig;uvre: </b> {{ formatMoney($maintenance->main_oeuvre) }}</span>
-                                                @if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
-                                                    <span class="d-block"><b>Pièces: </b></span>
-                                                    <ul>
-                                                        @foreach (json_decode($maintenance->pieces, true) as $nom => $piece)
-                                                            <li><b>{{ $nom }}: </b>{{ formatMoney($piece['pu'] * $piece['quantite']) }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                @endif
+
+                                                <span class="d-block"><b>Pièces: </b></span>
+                                                <ul>
+                                                    @foreach ($maintenance->pieces as $piece)
+                                                        <li><b>{{ $piece->designation }}: </b>{{ formatMoney($piece->pivot->pu * $piece->pivot->quantite) }}</li>
+                                                    @endforeach
+                                                </ul>
                                             </td>
                                             <td>{{ $maintenance->infosCamion() }}</td>
                                             <td>{{ $maintenance->nom_reparateur }}</td>
                                             <td>{{ $maintenance->commentaire }}</td>
                                             <td>
-                                                @if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
-                                                    <ul>
-                                                        @foreach (json_decode($maintenance->pieces, true) as $nom => $piece)
-                                                            <li>{{ $nom }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                @else
-                                                    Aucune pieces necessaires
-                                                @endif
+                                                <ul>
+                                                    @foreach ($maintenance->pieces as $piece)
+                                                        <li>{{ $piece->designation }}</li>
+                                                    @endforeach
+                                                </ul>
                                             </td>
                                             <td >
                                                 <div class="row">
                                                     <div class="col-sm-4 text-left">
                                                           <button class="btn btn-xs btn-info mr-2" id="voir-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-voir-maintenance" data-show-url="{{ route('maintenance.voir', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-eye"></i></button>
-
                                                     </div>
                                                     <div class="col-sm-4 text-center">
                                                         <button class="btn btn-xs btn-primary mr-2" id="modifier-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-modifier-maintenance" data-update-url="{{ route('maintenance.post.modifier', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-edit"></i></button>
-
                                                     </div>
                                                     <div class="col-sm-4 text-right">
                                                         <button class="btn btn-xs btn-danger" id="supprimer-maintenance" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-supprimer-maintenance" data-update-url="{{ route('maintenance.post.supprimer', ['maintenance' => $maintenance->id]) }}" data-show-url="{{ route('maintenance.modifier', ['maintenance' => $maintenance->id]) }}"><i class="fa fa-trash"></i></button>
-
                                                     </div>
                                                 </div>
 
@@ -221,21 +220,18 @@
             </div>
 
             <div class="modal-body" id="modal-ajouter-maintenance">
-
                 <form action="{{ route('maintenance.post.nouvelle') }}" method="post" role="form" id="form-ajouter-maintenance">
 
                     @csrf
 
                     <div class="row">
-
                         <div class="col-md-6 p-3">
-
                             <h5 class="text-uppercase mb-4 text-primary font-weight-bold">Information de la maintenance</h5>
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="type" class="form-label">Type de dépense</label>
-                                    <label for="">:</label>
+                                    <label for="type" class="form-label">Type de dépense <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <select onchange="resetStyle(this)" name="type" id="type" class="form-control">
@@ -250,7 +246,7 @@
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
                                     <label for="titre">Intitulé / Titre</label>
-                                    <label for="">:</label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" name="titre" class="form-control" id="titre" placeholder="Titre ou intitulé" />
@@ -259,8 +255,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="date_heure">Date et heure</label>
-                                    <label for="">:</label>
+                                    <label for="date_heure">Date et heure <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <div class="input-group date_heure" id="date_heure" data-target-input="nearest">
@@ -274,8 +270,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="camion">Camion</label>
-                                    <label for="">:</label>
+                                    <label for="camion">Camion <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <select onchange="resetStyle(this)" name="camion_id" id="camion" class="form-control">
@@ -289,8 +285,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="main_oeuvre">Main d'&oelig;uvre</label>
-                                    <label for="">:</label>
+                                    <label for="main_oeuvre">Main d'&oelig;uvre <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="number" name="main_oeuvre" class="form-control" id="main_oeuvre" placeholder="Montant de la main d'oeuvre" />
@@ -309,13 +305,12 @@
                         </div>
 
                         <div class="col-md-6 p-3">
-
                             <h5 class="text-uppercase mb-4 text-primary font-weight-bold">Information de l'agent</h5>
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="nom_reparateur" class="form-label">Nom de l'agent</label>
-                                    <label for="">:</label>
+                                    <label for="nom_reparateur" class="form-label">Nom de l'agent <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" class="form-control" name="nom_reparateur" id="nom_reparateur" placeholder="Nom et prénoms de l'agent">
@@ -324,8 +319,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="tel_reparateur" class="form-label">Téléphone</label>
-                                    <label for="">:</label>
+                                    <label for="tel_reparateur" class="form-label">Téléphone <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" class="form-control" name="tel_reparateur" id="tel_reparateur" placeholder="Téléphone de l'agent">
@@ -334,8 +329,8 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="adresse_reparateur" class="form-label">Adresse</label>
-                                    <label for="">:</label>
+                                    <label for="adresse_reparateur" class="form-label">Adresse <x-required-mark /></label>
+                                    <label for="">: </label>
                                 </div>
                                 <div class="col-sm-8">
                                     <input onchange="resetStyle(this)" type="text" class="form-control" name="adresse_reparateur" id="adresse_reparateur" placeholder="Adresse de l'agent">
@@ -344,11 +339,13 @@
                         </div>
 
                         <div class="col-md-12 mt-4 mb-4">
-                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles</h5>
+                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles (<span class="text-info">Facultatif</span>)</h5>
 
-                            <table class="table" style="width:100%">
+                            <table class="table w-100">
                                 <thead>
                                     <th>Nom du matériel</th>
+                                    <th>Fournisseur</th>
+                                    <th>Contact</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -357,6 +354,8 @@
                                 <tbody id="result">
                                     <tr>
                                         <td><input class="form-control" value="" type="text" id="nom" placeholder="Nom de la pièce"></td>
+                                        <td><input class="form-control" value="" type="text" id="frs" placeholder="Fournisseur"></td>
+                                        <td><input class="form-control" value="" type="text" id="contact-frs" placeholder="Contact du fournisseur"></td>
                                         <td><input class="form-control" value="" type="number" id="pu" placeholder="Prix unitaire"></td>
                                         <td><input class="form-control" value="" type="number" id="quantite" placeholder="Quantité "></td>
                                         <td><input class="form-control" value="" readonly type="number" id="total" placeholder="Montant total"></td>
@@ -409,7 +408,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="type" class="form-label">Type de dépense</label>
+                                    <label for="type" class="form-label">Type de dépense <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -434,7 +433,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="date_heure_edit">Date et heure</label>
+                                    <label for="date_heure_edit">Date et heure <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -449,7 +448,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="camion">Camion</label>
+                                    <label for="camion">Camion <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -464,7 +463,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="main_oeuvre">Main d'&oelig;uvre</label>
+                                    <label for="main_oeuvre">Main d'&oelig;uvre <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -489,7 +488,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="nom_reparateur" class="form-label">Nom de l'agent</label>
+                                    <label for="nom_reparateur" class="form-label">Nom de l'agent <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -499,7 +498,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="tel_reparateur" class="form-label">Téléphone</label>
+                                    <label for="tel_reparateur" class="form-label">Téléphone <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -509,7 +508,7 @@
 
                             <div class="row mt-1 mb-3">
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center">
-                                    <label for="adresse_reparateur" class="form-label">Adresse</label>
+                                    <label for="adresse_reparateur" class="form-label">Adresse <x-required-mark /></label>
                                     <label for="">:</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -519,11 +518,13 @@
                         </div>
 
                         <div class="col-md-12 mt-4 mb-4">
-                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles</h5>
+                            <h5 class="text-uppercase mb-4 text-center text-primary font-weight-bold">Détails des matérielles (<span class="text-info">Facultatif</span>)</h5>
 
                             <table class="table" style="width:100%">
                                 <thead>
                                     <th>Nom du matériel</th>
+                                    <th>Fournisseur</th>
+                                    <th>Contact du fournisseur</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -532,6 +533,8 @@
                                 <tbody id="result-edit">
                                     <tr id="inputs">
                                         <td><input class="form-control" value="" type="text" id="nom-edit" placeholder="Nom de la pièce"></td>
+                                        <td><input class="form-control" value="" type="text" id="frs-edit" placeholder="Fournisseur"></td>
+                                        <td><input class="form-control" value="" type="text" id="frs-contact-edit" placeholder="Contact de fournisseur"></td>
                                         <td><input class="form-control" value="" type="number" id="pu-edit" placeholder="Prix unitaire"></td>
                                         <td><input class="form-control" value="" type="number" id="quantite-edit" placeholder="Quantité "></td>
                                         <td><input class="form-control" value="" readonly type="number" id="total-edit" placeholder="Montant total"></td>
@@ -557,6 +560,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+{{-- Fin modifier maintenance --}}
 
 {{-- Supprimer un maintenance --}}
 
@@ -699,6 +704,8 @@
                             <table class="table" style="width:100%">
                                 <thead>
                                     <th>Nom du matériel</th>
+                                    <th>Fournisseur</th>
+                                    <th>Contact du fournisseur</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -722,6 +729,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+{{-- Fin supprimer maintenance --}}
 
 {{-- Voir une maintenance --}}
 
@@ -852,6 +861,8 @@
                             <table class="table" style="width:100%">
                                 <thead>
                                     <th>Nom de la matérielle</th>
+                                    <th>Fournisseur</th>
+                                    <th>Contact du fournisseur</th>
                                     <th>Prix unitaire</th>
                                     <th>Quantité</th>
                                     <th>Montant total</th>
@@ -894,7 +905,6 @@
     </div>
 </div>
 
-
 @endsection
 
 @section('scripts')
@@ -912,15 +922,63 @@
 
 <script>
 
+// Recupere tous les designations des pieces enregistré pour l'autocompletion
+let pcs = "{{ json_encode($pieces->pluck('designation'), JSON_HEX_TAG) }}"
+pcs = JSON.parse(pcs.replaceAll('&quot;', '\"'))
+
+// Recuperer tous les noms des fournisseurs nregistré pour l'autocompletion
+let fournisseurs = "{{ json_encode($fournisseurs->pluck('nom'), JSON_HEX_TAG) }}"
+fournisseurs = JSON.parse(fournisseurs.replaceAll('&quot;', '\"'))
+
+// Grefer la comportement d'autocompletion dans le champ de saisie du nom du materiel
+$("#nom").autocomplete({
+    source: pcs,
+})
+
+$("#nom-edit").autocomplete({
+    source: pcs,
+})
+
+// Grefer la comportement d'autocompletion dans le champ de saisie du nom du fournisseur du materiel
+$("#frs").autocomplete({
+    source: fournisseurs,
+    close: function (e) {
+        const value = e.target.value
+
+        if (value !== "") {
+            $.get("fournisseur", { name: value },
+                function (data, textStatus, jqXHR) {
+                    $("#contact-frs").val(data.contact);
+                },
+            );
+        }
+    }
+})
+
+$("#frs-edit").autocomplete({
+    source: fournisseurs,
+    close: function (e) {
+        const value = e.target.value
+
+        if (value !== "") {
+            $.get("fournisseur", { name: value },
+                function (data, textStatus, jqXHR) {
+                    $("#frs-contact-edit").val(data.contact);
+                },
+            );
+        }
+    }
+})
+
 $("#maintenances").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        "searching": true,
-        "paging": false,
-        "ordering": true,
-        "info": false ,
-        language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
-    });
+    "responsive": true,
+    "autoWidth": false,
+    "searching": true,
+    "paging": false,
+    "ordering": true,
+    "info": false ,
+    language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+});
 
 const resetStyle = (input) => {
     if ($(input).hasClass('border-danger')) $(input).removeClass('border-danger');
@@ -931,7 +989,7 @@ const resetStyle = (input) => {
 
 $(document).on("submit", "#form-ajouter-maintenance", function (e) {
     e.preventDefault()
-    
+
     let bouton = $("#button-ajouter-maintenance");
     spinning(bouton);
 
@@ -1090,7 +1148,7 @@ function resetForm (formId) {
     let elements = form.getElementsByClassName(class_name)
 
     for (let i = 0; i < elements.length; i++) {
-        
+
         let className = elements[i].classList;
 
         if( inArray("datetimepicker-input", className) ){
@@ -1127,13 +1185,16 @@ function editPiece (button) {
     if (editing) { $('#error p').html("Veuillez enregistrer la modification en cours"); $('#error').modal('show'); return; }
 
     let tr = button.parentElement.parentElement
-    let LIB = tr.firstElementChild
-    let PU = LIB.nextElementSibling
-    let Q = PU.nextElementSibling
-    let TOTAL = Q.nextElementSibling
+    let LIB = tr.firstElementChild // Non du matériel
+    let FRS = LIB.nextElementSibling // Nom du fournisseur
+    let FRSCONTACT = FRS.nextElementSibling // Contact de fournisseur
+    let PU = FRSCONTACT.nextElementSibling // Prix unitaire du pièce
+    let Q = PU.nextElementSibling // Quantité de la pièce
+    let TOTAL = Q.nextElementSibling // Total de pièce
 
-
-    LIB.innerHTML = "<input type='text' class='form-control' value='" + LIB.innerHTML.trim() + "'/>"
+    LIB.innerHTML = "<input type='text' id='editingLib' class='form-control' value='" + LIB.innerHTML.trim() + "'/>"
+    FRS.innerHTML = "<input type='text' id='editingFrs' class='form-control' value='" + FRS.innerHTML.trim() + "'/>"
+    FRSCONTACT.innerHTML = "<input type='text' id='editingContact' class='form-control' value='" + FRSCONTACT.innerHTML.trim() + "'/>"
     PU.innerHTML = "<input type='number' class='form-control' value='" + PU.innerHTML.replaceAll('Ar', '').trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
     Q.innerHTML = "<input type='number' class='form-control' value='" + Q.innerHTML.trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
     TOTAL.innerHTML = "<input type='number' class='form-control' disabled value='" + TOTAL.innerHTML.replaceAll('Ar', '').trim().replaceAll(",", "").replaceAll(" ", "") + "'/>"
@@ -1142,14 +1203,34 @@ function editPiece (button) {
     button.setAttribute("onclick", "savePiece(this)")
 
     editing = LIB.firstElementChild.value
+
+    $("#editingLib").autocomplete({
+        source: pcs
+    })
+
+    $("#editingFrs").autocomplete({
+        source: fournisseurs,
+        close: function (e) {
+            const value = e.target.value
+            if (value !== "") {
+                $.get("fournisseur", { name: value },
+                    function (data, textStatus, jqXHR) {
+                        $("#editingContact").val(data.contact);
+                    },
+                );
+            }
+        }
+    })
 }
 
 function savePiece (button) {
     window.event.preventDefault()
     let tr = button.parentElement.parentElement
-    let LIB = tr.firstElementChild
-    let PU = LIB.nextElementSibling
-    let Q = PU.nextElementSibling
+    let LIB = tr.firstElementChild // Nom de la pièce
+    let FRS = LIB.nextElementSibling // Nom du fournisseur
+    let FRSCONTACT = FRS.nextElementSibling // Contact de fournisseur
+    let PU = FRSCONTACT.nextElementSibling // Prix unitaire du pièce
+    let Q = PU.nextElementSibling // Quantité de la pièce
     let TOTAL = Q.nextElementSibling
 
     if (LIB.firstElementChild.value === "" || LIB.firstElementChild.value === undefined || parseInt(LIB.firstElementChild.value) >= 0) { $('#error p').html("Nom du matériel vide ou invalide"); $('#error').modal('show'); return; }
@@ -1161,12 +1242,16 @@ function savePiece (button) {
 
     pieces[LIB.firstElementChild.value] = {
         nom: LIB.firstElementChild.value,
+        frs: FRS.firstElementChild.value,
+        contactFrs: FRSCONTACT.firstElementChild.value,
         pu: PU.firstElementChild.value,
         quantite: Q.firstElementChild.value,
         total: PU.firstElementChild.value * Q.firstElementChild.value,
     }
 
     LIB.innerHTML = LIB.firstElementChild.value
+    FRS.innerHTML = FRS.firstElementChild.value
+    FRSCONTACT.innerHTML = FRSCONTACT.firstElementChild.value
     TOTAL.innerHTML = formatNumber(PU.firstElementChild.value * Q.firstElementChild.value, 2, "Ar").toString()
     PU.innerHTML = formatNumber(parseFloat(PU.firstElementChild.value), 2, "Ar").toString()
     Q.innerHTML = formatNumber(parseInt(Q.firstElementChild.value), 0).toString()

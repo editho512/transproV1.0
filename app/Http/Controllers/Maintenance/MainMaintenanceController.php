@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Maintenance;
 
+use App\Models\Piece;
 use App\Models\Camion;
+use App\Models\Fournisseur;
 use Illuminate\Http\Request;
-use App\Models\Depense\Depense;
 use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Maintenance\Maintenance;
+use App\Models\MaintenancePieceFrs;
 
 class MainMaintenanceController extends Controller
 {
@@ -32,15 +34,20 @@ class MainMaintenanceController extends Controller
     {
         $maintenances = Maintenance::all();
         $active_maintenance_index = "active";
-        $maintenancesGroups = Maintenance::all()->groupBy(function($data) {
+        $maintenancesGroups = $maintenances->groupBy(function($data) {
             return $data->type;
         });
+
+        $pieces = Piece::all();
+        $fournisseurs = Fournisseur::all();
 
         return view('maintenance.liste', [
             'maintenances' => $maintenances,
             'camions' => Camion::all(),
             'active_maintenance_index' => $active_maintenance_index,
             'maintenancesGroups' => $maintenancesGroups,
+            'pieces' => $pieces,
+            'fournisseurs' => $fournisseurs,
         ]);
     }
 
@@ -53,6 +60,8 @@ class MainMaintenanceController extends Controller
      */
     public function supprimer(Request $request, Maintenance $maintenance) : RedirectResponse
     {
+        MaintenancePieceFrs::where("maintenance", $maintenance->id)->delete();
+        
         if ($maintenance->delete())
             $request->session()->flash("notification", [
                 "value" => "Maintenance supprimé avec success" ,

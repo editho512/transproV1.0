@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Maintenance;
 
+use App\Models\Piece;
+use App\Models\Fournisseur;
 use Illuminate\Http\JsonResponse;
+use App\Models\MaintenancePieceFrs;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Maintenance\Maintenance;
 use App\Http\Requests\Maintenance\ModifierMaintenanceRequest;
-use Illuminate\Http\RedirectResponse;
 
 class ModifierMaintenanceController extends Controller
 {
@@ -21,7 +24,6 @@ class ModifierMaintenanceController extends Controller
         return response()->json($maintenance);
     }
 
-
     /**
      * Permet d'enregistrer une maintenance
      *
@@ -33,6 +35,53 @@ class ModifierMaintenanceController extends Controller
     {
         $data = $request->validated();
         $update = $maintenance->update($data);
+
+        $pieces = json_decode($data['pieces'], true);
+
+        foreach (MaintenancePieceFrs::all() as $d)
+        {
+            if (!in_array(Piece::find($d->piece)->designation, collect($pieces)->pluck('nom')->toArray()))
+            {
+                $d->delete();
+            }
+        }
+
+
+        foreach ($pieces as $key => $value) {
+            $piece = Piece::where('designation', $key)->first();
+            $fournisseur = Fournisseur::where('nom', $value['frs'])->first();
+
+            if ($piece === null) $piece = Piece::create(["designation" => $key]);
+
+            if ($fournisseur === null) {
+                $fournisseur = Fournisseur::create(["nom" => $value["frs"], "contact" => $value['contactFrs']]);
+            } else {
+                $fournisseur->contact = $value["contactFrs"];
+                $fournisseur->update();
+            }
+
+            $maintenancePieceFrs = MaintenancePieceFrs::where("piece", $piece->id)->where("maintenance", $maintenance->id)->where("fournisseur", $fournisseur->id)->first();
+
+            if ($maintenancePieceFrs !== null)
+            {
+                $maintenancePieceFrs->pu = $value["pu"];
+                $maintenancePieceFrs->quantite = $value["quantite"];
+                $maintenancePieceFrs->total = $value["total"];
+                $maintenancePieceFrs->save();
+            }
+            else
+            {
+                MaintenancePieceFrs::create([
+                    "piece" => $piece->id,
+                    "maintenance" => $maintenance->id,
+                    "fournisseur" => $fournisseur->id,
+                    "pu" => $value["pu"],
+                    "quantite" => $value["quantite"],
+                    "total" => $value["total"],
+                ]);
+            }
+
+        }
 
         if ($update)
             $request->session()->flash("notification", [

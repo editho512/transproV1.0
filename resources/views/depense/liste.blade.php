@@ -76,7 +76,7 @@
                 </div>
 
                 @php
-                $i++
+                    $i++
                 @endphp
 
                 @endforeach
@@ -200,7 +200,7 @@
 
                     <div class="row mt-1 mb-3">
                         <div class="col-sm-4">
-                            <label for="type" class="form-label">Type de dépense :</label>
+                            <label for="type" class="form-label">Type de dépense : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <select onchange="resetStyle(this)" name="type" id="type" class="form-control">
@@ -214,7 +214,7 @@
 
                     <div class="row mt-1 mb-3">
                         <div class="col-sm-4">
-                            <label for="date_heure">Date et heure :</label>
+                            <label for="date_heure">Date et heure : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date_heure" id="date_heure" data-target-input="nearest">
@@ -256,7 +256,7 @@
 
                     <div class="row mt-1 mb-3">
                         <div class="col-sm-4">
-                            <label for="montant">Montant :</label>
+                            <label for="montant">Montant : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input onchange="resetStyle(this)" type="number" name="montant" class="form-control" id="montant" placeholder="Montant de la dépense" />
@@ -304,7 +304,7 @@
 
                     <div class="row mt-1 mb-3">
                         <div class="col-sm-4">
-                            <label for="type" class="form-label">Type de dépense :</label>
+                            <label for="type" class="form-label">Type de dépense : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <select onchange="resetStyle(this)" name="type" id="type" class="form-control">
@@ -318,7 +318,7 @@
 
                     <div class="row mt-1 mb-3">
                         <div class="col-sm-4">
-                            <label for="date_heure_edit">Date et heure :</label>
+                            <label for="date_heure_edit">Date et heure : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <div class="input-group date_heure_edit" id="date_heure_edit" data-target-input="nearest">
@@ -360,7 +360,7 @@
 
                     <div class="row mt-1 mb-3">
                         <div class="col-sm-4">
-                            <label for="montant">Montant :</label>
+                            <label for="montant">Montant : <x-required-mark /></label>
                         </div>
                         <div class="col-sm-8">
                             <input onchange="resetStyle(this)" type="number" name="montant" class="form-control" id="montant" placeholder="Montant de la dépense" />
@@ -598,7 +598,7 @@
                     "searching": true,
                     "paging": false,
                     "ordering": true,
-                    "info": false ,            
+                    "info": false ,
                     language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
                 });
 
@@ -611,7 +611,7 @@
 
     $(document).on("submit", "#form-ajouter-depense", function (e) {
         e.preventDefault()
-        
+
         let bouton = $("#button-ajouter-depense");
         spinning(bouton);
 

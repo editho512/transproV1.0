@@ -1,13 +1,16 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Maintenance\PieceController;
 use App\Http\Controllers\Depense\MainDepenseController;
 use App\Http\Controllers\Depense\ModifierDepenseController;
 use App\Http\Controllers\Depense\NouvelleDepenseController;
-use App\Http\Controllers\Localisation\MainLocalisationController;
 use App\Http\Controllers\Maintenance\MainMaintenanceController;
+use App\Http\Controllers\Localisation\MainLocalisationController;
+use App\Http\Controllers\Maintenance\FournisseurController;
 use App\Http\Controllers\Maintenance\ModifierMaintenanceController;
 use App\Http\Controllers\Maintenance\NouvelleMaintenanceController;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -202,3 +205,6 @@ Route::prefix('localisation')->middleware('auth')->group(function () {
     Route::get('/trouver', [MainLocalisationController::class, 'trouver'])->name('localisation.trouver');
 
 });
+
+Route::middleware(['auth'])->get('piece', [PieceController::class, 'index']);
+Route::middleware(['auth'])->get('fournisseur', [FournisseurController::class, 'index']);
