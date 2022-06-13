@@ -46,9 +46,7 @@
                             <h5 class="mt-2">{{$camion->model ." - ". $camion->annee}} </h5>
                             <h6 class="mt-2">{{$camion->numero_chassis}}</h6>
                         </div>
-
                     </div>
-
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -112,11 +110,11 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="info-box">
-                        <span class="info-box-icon bg-warning" style="background-color: #ff9609 !important;"><img src="{{asset('assets/images/icons/assurance.png')}}" style="width:55px;" alt=""></span>
+                        <span class="info-box-icon bg-warning" style="background-color: #ff9609 !important;"><img src="{{ asset('assets/images/icons/assurance.png') }}" style="width:55px;" alt=""></span>
                         <div class="info-box-content" >
                             <span class="info-box-text">Assurance</span>
                             <p class="info-box-number voir-camion-statistique" >
-                                {{isset($assurance[0]->date_echeance) === true ? date("d/m/Y",strtotime($assurance[0]->date_echeance)) : "Aucune"}}
+                                {{ isset($assurance[0]->date_echeance) === true ? date("d/m/Y",strtotime($assurance[0]->date_echeance)) : "Aucune" }}
                             </p>
                         </div>
                         <!-- /.info-box-content -->
@@ -195,11 +193,6 @@
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
-</div>
-
 
 @include('Camion.modal')
 
@@ -265,7 +258,7 @@
         nb_itineraire_formulaire+"' class='row added'>"+itineraire_formulaire
         +"</div>").find(".row:last input").val("");
 
-        
+
     })
 
 
@@ -284,7 +277,7 @@
         _this.find("#itineraire_formulaire .row").each(function(){
 
                 let nom_itineraire = $(this).find("input:first").val();
-                
+
                 if(nom_itineraire != ''){
                     data_itineraire.push({
                         nom : nom_itineraire
@@ -304,7 +297,7 @@
         _this.find('#itineraire_formulaire .row').each(function(){
 
             let nom_itineraire = $(this).find("input:first").val();
-             
+
             if(nom_itineraire != ''){
                 data_itineraire.push({
                     nom : nom_itineraire
@@ -321,7 +314,7 @@
         "searching": true,
         "paging": false,
         "ordering": true,
-        "info": false ,            
+        "info": false ,
         language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
     });
 
@@ -366,7 +359,7 @@
         })
 
     })
-   
+
 
     $(document).on("click","#nav-trajet-tab", function(){
 
@@ -413,6 +406,7 @@
             $("#modification-trajet-remorque").val(remorques);
             $("#modification-trajet-remorque").change();
             
+
             itineraires.forEach((itineraire, index) => {
                 let element = "";
                 if(index === 0){
@@ -465,7 +459,7 @@
     })
 
     $(document).on("click", ".voir-trajet", function (e) {
-        
+
         $(this).next().next().trigger("click");
         $("#modal-supprimer-trajet").find(".modal-header").removeClass("modal-header-danger").find("h4").html("Voir un trajet");
         $("#button-supprimer-trajet").parent().hide();
@@ -512,9 +506,9 @@
 
     })
 
-    
 
-    
+
+
     $(document).on("click", "#button-ajouter-trajet", function(e){
         let me = $(this);
         spinning(me);
@@ -541,7 +535,7 @@
                         $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                         $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
 
-                        
+
                         if
                         (   data.value == "Camion non disponible entre les dates que vous avez selectionnées" ||
                             date.value == "Le camion a encore un trajet en cours" ||
@@ -553,7 +547,7 @@
                         }else{
                             $("#form-ajouter-trajet").parent().next().find(".alert").html("");
                             $("#form-ajouter-trajet").parent().next().hide(300);
-        
+
                         }
 
                         if(data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" || data.value == "Chauffeur non disponible entre les dates que vous avez selectionné"){
@@ -565,17 +559,17 @@
                         }
 
                         if
-                        (   data.value == "La date de depart doit être supérieur a ce moment précis si le statut est à prévoir" || 
+                        (   data.value == "La date de depart doit être supérieur a ce moment précis si le statut est à prévoir" ||
                             data.value == "La date de depart doit être inférieur a la date d'arrivée")
                         {
-                            
+
                             $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html(data.value).show(300)
                         }else{
                             $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                         }
 
                         if
-                        (   data.value == "Veuillez remplir la quantité de carburant restant" || 
+                        (   data.value == "Veuillez remplir la quantité de carburant restant" ||
                             data.value == "Le carburant du véhicule est encore insuffisant" ||
                             data.value == "La quantité de carburant que vous avez saisi est superieur au stock" ||
                             data.value == "La quantité de carburant que vous avez saisi est superieur au stock actuel")
@@ -600,17 +594,17 @@
 
                     }
 
-                    
+
 
 
                     spinning(me, 2);
                 },
                 error: function (data) {
                         donnee = $.parseJSON(data.responseText);
-                      
+
 
                         if(donnee.message == "The given data was invalid."){
-                           
+
                             console.log(donnee.errors.etat );
 
                             if(donnee.errors.hasOwnProperty("bon") === true){
@@ -648,22 +642,22 @@
 
                             if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
                                 $("#form-ajouter-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
-                                
+
                             }else{
                                     $("#form-ajouter-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                             }
 
                             if(donnee.errors.hasOwnProperty("date_heure_arrivee") === true ){
                                 $("#form-ajouter-trajet input[name=date_heure_arrivee]").addClass("is-invalid").next().next().html("La date d'arrivée approximative est obligatoire").show(300)
-                                
+
                             }else{
                                     $("#form-ajouter-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
                             }
 
                             if(donnee.errors.hasOwnProperty("poids") === true ){
-                                
+
                                 $("#form-ajouter-trajet input[name=poids]").addClass("is-invalid").next().html("Le poids doit être supérieur à zéro").show(300)
-                                
+
                             }else{
                                     $("#form-ajouter-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
                             }
@@ -680,7 +674,7 @@
                     }
                 }
             )
-        
+
     });
 
     $(document).on("click", "#button-modifier-trajet", function(e){
@@ -714,11 +708,11 @@
                     }else{
                         $("#form-modifier-trajet").parent().next().find(".alert").html("");
                         $("#form-modifier-trajet").parent().next().hide(300);
-        
+
                     }
 
                     if(
-                        data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" || 
+                        data.value == "Vous devez selectionner au moins un chauffeur pour un trajet a prévoir" ||
                         data.value == "Chauffeur non disponible entre les dates que vous avez selectionné"
                     ){
                             $("#chauffeur-modifier-feedback").prev().addClass("is-invalid");
@@ -744,7 +738,7 @@
                             data.value == "La date de depart doit être inférieur a la date d'arrivée"
                             )
                         {
-                            
+
                             $("#form-modifier-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html(data.value).show(300)
                         }else{
                             $("#form-modifier-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
@@ -752,7 +746,7 @@
 
 
                     if
-                    (   data.value == "Veuillez remplir la quantité de carburant restant" || 
+                    (   data.value == "Veuillez remplir la quantité de carburant restant" ||
                         data.value == "Le carburant du véhicule est encore insuffisant" ||
                         data.value == "La quantité de carburant que vous avez saisi est superieur au stock")
                     {
@@ -805,14 +799,14 @@
 
                 if(donnee.errors.hasOwnProperty("date_heure_depart") === true ){
                     $("#form-modifier-trajet input[name=date_heure_depart]").addClass("is-invalid").next().next().html("La date de départ est obligatoire").show(300)
-                                
+
                 }else{
                     $("#form-modifier-trajet input[name=date_heure_depart]").removeClass("is-invalid").next().next().html("").hide(300)
                 }
 
                 if(donnee.errors.hasOwnProperty("date_heure_arrivee") === true ){
                     $("#form-modifier-trajet input[name=date_heure_arrivee]").addClass("is-invalid").next().next().html("La date d'arrivée approximative est obligatoire").show(300)
-                                
+
                 }else{
                     $("#form-modifier-trajet input[name=date_heure_arrivee]").removeClass("is-invalid").next().next().html("").hide(300)
                 }
@@ -827,7 +821,7 @@
 
                 if(donnee.errors.hasOwnProperty("poids") === true ){
                     $("#form-modifier-trajet input[name=poids]").addClass("is-invalid").next().html("Le poids doit être supérieur à zéro").show(300)
-                                
+
                 }else{
                         $("#form-modifier-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
                 }
@@ -856,7 +850,7 @@
         action = action === undefined ? "#modal-trajet" : action ;
 
         let etat = select.value
-        let carburant = $(action + " .carburant") 
+        let carburant = $(action + " .carburant")
         let poids = $(action + " .poids-content")
         let bon_enlevement = $(action + " .bon_enlevement");
 
@@ -879,11 +873,11 @@
         }
     }
 
-   
+
 
 
     // -------------------- EVENEMENT LIEE AU PAPIER ------------------------ //
-  
+
     $(document).on("click", ".btn-papier-supprimer", function(e){
         let url = $(this).attr("data-show");
         let url_delete = $(this).attr("data-url");
@@ -901,8 +895,8 @@
             $("#modal-supprimer-papier").find("input[name=date_obtention]").val(data.date);
             $("#modal-supprimer-papier").find("input[name=date_echeance]").val(data.date_echeance);
             $("#modal-supprimer-papier").find("select[name=type]").val(data.type).change();
-           
-            
+
+
         });
     })
 
@@ -923,8 +917,8 @@
             $("#modal-modifier-papier").find("input[name=date_obtention]").val(data.date);
             $("#modal-modifier-papier").find("input[name=date_echeance]").val(data.date_echeance);
             $("#modal-modifier-papier").find("select[name=type]").val(data.type).change();
-           
-            
+
+
         });
     });
 
@@ -952,14 +946,14 @@
             error : function (data) {
                 let donnees = $.parseJSON(data.responseText);
                 name_list = Object.keys(donnees.errors);
-                
+
 
                 me.find(".form-control").each(function (value, index) {
                     let name = $(this).attr("name");
-                    if(donnees.errors.hasOwnProperty(name)){                        
+                    if(donnees.errors.hasOwnProperty(name)){
                         me.find("input[name="+name+"] , select[name="+name+"]").addClass("is-invalid")
                         .parent().find(".invalid-feedback").html(donnees.errors[name][0]).show(300);
-                        
+
                         if(name == "photo"){
                             me.find(".photo-feedback").html(donnees.errors[name][0]).show(300);
                         }
@@ -1015,7 +1009,7 @@
 
 
 
-    
+
 
 
 </script>

@@ -3,10 +3,12 @@
 namespace App\Models\Maintenance;
 
 use App\Models\Camion;
+use App\Models\Piece;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Maintenance extends Model
 {
@@ -18,10 +20,19 @@ class Maintenance extends Model
 
 
     protected $fillable = [
-        "titre", "date_heure", "camion_id", "type", "commentaire", "nom_reparateur", "tel_reparateur", "adresse_reparateur", "main_oeuvre", "pieces"
+        "titre", "date_heure", "camion_id", "type", "commentaire", "nom_reparateur", "tel_reparateur", "adresse_reparateur", "main_oeuvre",
     ];
 
+    protected $with = ['camion', 'pieces'];
 
+    protected $withSum = ['main_oeuvre'];
+
+
+    /**
+     * Montant total de la mainténance
+     *
+     * @return float
+     */
 
     public function mainOeuvre($page = 0){
 
@@ -41,17 +52,15 @@ class Maintenance extends Model
     {
         $montant = $this->main_oeuvre;
 
-        if ($this->pieces !== null AND json_decode($this->pieces, true) !== []) {
-            foreach (json_decode($this->pieces, true) as $piece)
-            {
-                $montant += $piece['pu'] * $piece['quantite'];
-            }
+        foreach ($this->pieces as $piece)
+        {
+            $montant += $piece->pivot->pu * $piece->pivot->quantite;
         }
 
         return doubleval($montant);
     }
 
-        /**
+    /**
      * Recuperer le camion concerné s'il existe
      *
      * @return BelongsTo
@@ -75,11 +84,28 @@ class Maintenance extends Model
         return $camion->name;
     }
 
-    public static function getAllType()
+
+    /**
+     * recuperer tous les types
+     *
+     * @return array
+     */
+    public static function getAllType() : array
     {
         return self::ALL_TYPE;
     }
 
+
+    /**
+     * Recuperer tous les pièces associé a la maintenance
+     *
+     * @return BelongsToMany
+     */
+    public function pieces() : BelongsToMany
+    {
+        return $this->belongsToMany(Piece::class, 'maintenance_piece_frs', 'maintenance', 'piece')
+            ->withPivot(['pu', 'quantite', 'total']);
+    }
     public static function dashboard($debut = null, $fin = null){
 
         $req = self::join("camions", "camions.id", "=", "maintenances.camion_id")

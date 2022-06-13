@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\Chauffeur;
 use App\Models\Itineraire;
 use App\Models\Remorque;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,18 +19,18 @@ class Trajet extends Model
 
     protected $fillable = [
         'depart',
-        'date_heure_depart', 
-        'arrivee', 
+        'date_heure_depart',
+        'arrivee',
         'date_heure_arrivee',
-         'etat', 
-         'camion_id', 
-         'chauffeur_id', 
-         'carburant_depart', 
-         'carburant_total', 
-         'carburant_id', 
-         'poids', 
-         'chargement' , 
-         'bon', 
+         'etat',
+         'camion_id',
+         'chauffeur_id',
+         'carburant_depart',
+         'carburant_total',
+         'carburant_id',
+         'poids',
+         'chargement' ,
+         'bon',
          'bon_enlevement'
     ];
 
@@ -247,8 +248,25 @@ class Trajet extends Model
         return $this->hasOne(Carburant::class, "id", "carburant_id");
     }
 
-    public static function trajetsAPrevoir()
+
+    /**
+     * Collection des trajets a prévoir
+     *
+     * @var Collection|null
+     */
+    protected static ?Collection $trajetsPrevoir = null;
+
+    /**
+     * Recuperer tous les trajets a precoir
+     *
+     * @return Collection
+     */
+    public static function trajetsAPrevoir() : Collection
     {
-        return self::where('etat', self::getEtat(0))->get('id');
+        if (static::$trajetsPrevoir === null)
+        {
+            static::$trajetsPrevoir = self::where('etat', self::getEtat(0))->get('id');
+        }
+        return static::$trajetsPrevoir;
     }
 }

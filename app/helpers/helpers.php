@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 if(!function_exists("nombre_fr")){
     /***
-     * Fonction permetant de formater les nombre en format français
-     *
-     * @return double
-     */
+    * Fonction permetant de formater les nombre en format français
+    *
+    * @return double
+    */
 
     function nombre_fr($nombre){
         return number_format($nombre, 0, ",", " ");
@@ -22,17 +22,16 @@ if(!function_exists("nombre_fr")){
 
 if(!function_exists("prix_mg")){
     /***
-     * Fonction permetant de formater les nombre en format français
-     *
-     * @return double
-     */
+    * Fonction permetant de formater les nombre en format français
+    *
+    * @return double
+    */
 
     function prix_mg($nombre){
         return nombre_fr($nombre) . " Ar";
     }
 
 }
-
 
 function allTrajetsAPrevoir()
 {
@@ -144,17 +143,24 @@ function totalDepense() : float
     return doubleval(Depense::sum('montant'));
 }
 
-function totalMaintenance() : float
-{
-    $montant = doubleval(Maintenance::sum('main_oeuvre'));
 
-    foreach (Maintenance::all() as $maintenance)
+/**
+ * Montant total de tous les maintenances
+ *
+ * @param Collection|null $maintenances
+ * @return float
+ */
+function totalMaintenance(?Collection $maintenances = null) : float
+{
+    if ($maintenances === null) $maintenances = Maintenance::all();
+
+    $montant = doubleval($maintenances->sum('main_oeuvre'));
+
+    foreach ($maintenances as $maintenance)
     {
-        if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
+        foreach ($maintenance->pieces as $piece)
         {
-            foreach (json_decode($maintenance->pieces, true) as $piece) {
-                $montant += $piece["pu"] * $piece["quantite"];
-            }
+            $montant += $piece->pivot->pu * $piece->pivot->quantite;
         }
     }
 
@@ -255,11 +261,9 @@ function montantPieces(Collection $maintenances) : float
 
     foreach ($maintenances as $maintenance)
     {
-        if ($maintenance->pieces !== null AND json_decode($maintenance->pieces, true) !== [])
+        foreach ($maintenance->pieces as $piece)
         {
-            foreach (json_decode($maintenance->pieces, true) as $piece) {
-                $montant += $piece["pu"] * $piece["quantite"];
-            }
+            $montant += $piece->pivot->pu * $piece->pivot->quantite;
         }
     }
 

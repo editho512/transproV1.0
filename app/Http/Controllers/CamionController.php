@@ -71,10 +71,9 @@ class CamionController extends Controller
             $messages = [
                 'required' => 'Le :attribute est obligatoire.',
                 'mimes' => 'Seul jpeg, png, bmp,tiff  est accepté.'
-                ]
-            );
+            ]);
 
-            if ($validator->passes()){
+            if (!$validator->fails()){
 
                 $name = $request->file('photo')->getClientOriginalName();
                 $path = $request->file('photo')->store('camions', 'public');
@@ -82,41 +81,38 @@ class CamionController extends Controller
                 $camion->photo = $path;
                 $camion->update();
             }
-
-
         }
 
         $request->session()->flash("notification", [
             "value" => "Camion ajouté" ,
             "status" => "success"
-            ]
-        );
+        ]);
 
         return redirect()->back();
     }
 
 
     /**
-     * Methode pour modifier un camion
-     *
-     * @param Camion $camion
-     * @return JsonResponse
-     */
+    * Methode pour modifier un camion
+    *
+    * @param Camion $camion
+    * @return JsonResponse
+    */
     public function modifier(Camion $camion) : JsonResponse
     {
         return response()->json($camion);
     }
 
     /**
-     * Enregistrer les modifications d'un camion
-     *
-     * @param Request $request
-     * @param Camion $camion
-     * @return void
-     */
+    * Enregistrer les modifications d'un camion
+    *
+    * @param Request $request
+    * @param Camion $camion
+    * @return void
+    */
     public function update(Request $request, Camion $camion)
     {
-        
+
         $data = $request->except("photo");
         $camion->name = $data["marque"] . "-" .  $data["model"] . "-" . $data["plaque"];
         $camion->marque = $data["marque"];
@@ -125,20 +121,17 @@ class CamionController extends Controller
         $camion->plaque = $data["plaque"];
         $camion->numero_chassis = $data["numero_chassis"];
 
-
-        if( $request->file('photo') !== null){
-
-
+        if( $request->file('photo') !== null)
+        {
             $validator = Validator::make($request->all(), [
                 'photo' => 'mimes:jpeg,png,bmp,tiff |max:4096',
             ],
             $messages = [
                 'required' => 'Le :attribute est obligatoire.',
                 'mimes' => 'Seul jpeg, png, bmp,tiff est accepté.'
-                ]
-            );
+            ]);
 
-            if ($validator->passes()) {
+            if (!$validator->fails()) {
 
                 if(File::exists(public_path('storage/'.$camion->photo))){
                     File::delete(public_path('storage/'.$camion->photo));
@@ -147,8 +140,6 @@ class CamionController extends Controller
                 $path = $request->file('photo')->store('camions', 'public');
                 $camion->photo = $path;
             }
-
-
         }
         $camion->update();
         Session::put("notification", ["value" => "Camion modifié" , "status" => "success" ]);
@@ -186,13 +177,12 @@ class CamionController extends Controller
 
     public function voir(Camion $camion, $tab = 1)
     {
-        if($camion->blocked == false){
-
+        if($camion->blocked == false)
+        {
             $active_camion_index = "active";
 
-            $carburants = $camion->carburants;
+            $carburants = $camion->carburants; // La liste des carburants du camion
             $chauffeurs = Chauffeur::orderBy('name', 'asc')->get();
-
             $stock_carburant = $camion->CarburantRestant();
 
             $papiers = $camion->papiers;
@@ -204,7 +194,6 @@ class CamionController extends Controller
             $patenteTransport = Papier::EnCours(Papier::TYPE[3], $camion->id);
 
             $remorques = Remorque::all();
-
 
             return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique", "carteGrise", "patenteTransport", "remorques"));
         }
