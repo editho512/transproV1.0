@@ -36,10 +36,10 @@ class Maintenance extends Model
 
     public function mainOeuvre($page = 0){
 
-        $req = self::selectRaw('year(created_at) year, extract(month from created_at) month, sum(main_oeuvre) quantite')
+        $req = self::selectRaw('year(date_heure) year, extract(month from date_heure) month, sum(main_oeuvre) quantite')
                     ->groupBy('year', 'month')
                     ->orderBy('year', 'desc')
-                    ->orderBy('month', 'desc')
+                    ->orderBy('month', 'asc')
                     ->skip($page)
                     ->take(5)
                     ->get();

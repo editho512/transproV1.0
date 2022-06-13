@@ -6,6 +6,7 @@ use Exception;
 use Carbon\Carbon;
 use App\Models\Chauffeur;
 use App\Models\Itineraire;
+use App\Models\Remorque;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -61,6 +62,11 @@ class Trajet extends Model
     public function nomItineraire() : string
     {
         return $this->id . ' - ' . $this->depart . ' - ' . $this->arrivee;
+    }
+
+    public function remorques() : HasMany
+    {
+        return $this->belongsToMany(Remorque::class);
     }
 
 

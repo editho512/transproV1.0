@@ -5,7 +5,10 @@
 @endsection
 
 @section('styles')
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container--default .select2-selection--multiple .select2-selection__choice{background-color:#3490c1;}
+</style>
 @endsection
 
 @section('content')
@@ -178,1202 +181,20 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show {{( isset($tab) === false || $tab == 1 ) ? ' show active ' : '' }}" id="nav-carburant" role="tabpanel" aria-labelledby="nav-carburant-tab">
-                        <div class="card-header">
-                            <h3 class="card-title" style="color: gray;display:none;" >Flux des carburants</h3>
-                            <button class="float-right btn btn-success" id="btn-modal-carburant" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-carburant"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <table id="flux-carburants" class="table table-bordered table-striped dataTable">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Quantité</th>
-                                        <th>Prix unitaire</th>
-                                        <th>Montant total</th>
-                                        <th>Flux</th>
-                                        <th style="text-align: center;">Actions</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (isset($carburants) === true && $carburants->count() > 0)
-                                    @foreach ($carburants as $carburant)
-
-                                    <tr>
-                                        <td>{{$carburant->date}}</td>
-                                        <td class="text-left" >{{nombre_fr($carburant->quantite)."L"}}</td>
-                                        <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix)}}</td>
-                                        <td class="text-left" >{{$carburant->prix == null ? "--" : prix_mg($carburant->prix * $carburant->quantite, 0, ",", ".")}}</td>
-                                        <td>{{$carburant->flux == false ? "Entrée" : "Sortie"}}</td>
-                                        <td >
-                                            <div class="row">
-                                                <div class="col-sm-12" style="text-align: center">
-                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-sm btn-primary modifier-carburant" data-url="{{route('carburant.update', ['carburant' => $carburant->id])}}" data-show-url="{{route('carburant.modifier', ['carburant' => $carburant->id])}}"><span class="fa fa-edit"></span></button>
-                                                    <button @if ($carburant->flux == true) disabled @endif class="btn  btn-sm btn-danger  supprimer-carburant" data-url="{{route('carburant.delete', ['carburant' => $carburant->id])}}"><span class="fa fa-trash"></span></button>
-                                                </div>
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-
-                                    @endforeach
-
-                                    @else
-
-                                    @endif
-
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Quantité</th>
-                                        <th>Prix unitaire</th>
-                                        <th>Montant total</th>
-                                        <th>Flux</th>
-                                        <th style="text-align: center;">Actions</th>
-
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <!-- /.card-body -->
+                        @include('Camion.carburant')
                     </div>
 
                     {{-- Pour les trajets --}}
                     <div class="tab-pane fade {{ ( isset($tab) === true && intval($tab) === 2 ) ? ' show active ' : ''}} " id="nav-trajet" role="tabpanel" aria-labelledby="nav-trajet-tab">
-                        <div class="card-header">
-                            <h3 class="card-title" style="color: gray;display:none;" >Liste des trajets</h3>
-                            <button class="float-right btn btn-success" id="btn-modal-trajet" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-trajet"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <table id="trajets" class="table table-bordered table-striped dataTable">
-                                <thead>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Chargement</th>
-                                        <th>Itinéraire</th>
-                                        <th>Date & heure départ</th>
-                                        <th>Date & heure arrivée</th>
-                                        <th>Chauffeur</th>
-                                        <th>Statut</th>
-                                        <th>Détail</th>
-                                        <th style="text-align:center;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($camion->trajets()->orderBy('date_heure_depart', 'ASC')->get() as $trajet)
-                                    <tr>
-                                        <td @if ($trajet->ordreExecution() !== null) style="background-color:{{ $trajet->couleurs() }}" @endif>{{ $trajet->id }}</td>
-                                        <td>{{$trajet->chargement}}</td>
-                                        <td>{{ $trajet->nomItineraire() }}</td>
-                                        <td>{{ formatDate($trajet->date_heure_depart) }}</td>
-                                        <td>{{ formatDate($trajet->date_heure_arrivee) }}</td>
-                                        <td>{{ $trajet->chauffeur === null ? "Pas encore de chauffeur assigné" : $trajet->chauffeur->name }}</td>
-                                        <td>
-                                            @if ($trajet->enRetard())
-                                                <div class="badge badge-danger">En rétard</div>
-                                            @else
-                                                <div class="
-                                                    @if ($trajet->etat === App\Models\Trajet::getEtat(1)) badge badge-info
-                                                    @elseif ($trajet->etat === App\Models\Trajet::getEtat(0)) badge badge-warning
-                                                    @else badge badge-success
-                                                    @endif
-                                                ">
-                                                    {{ $trajet->etat }}
-                                                </div>
-
-                                                @if ($trajet->ordreExecution() !== null AND $trajet->etat !== App\Models\Trajet::getEtat(2))
-                                                    <b>&nbsp;-&nbsp;Ordre:&nbsp;<span>{{ $trajet->ordreExecution() }}</span></b>
-                                                @endif
-                                            @endif
-                                        </td>
-                                        <td >
-                                            <div class="row">
-
-                                                <div class="col-sm-12 text-center" >
-                                                    <b> <span>{{$trajet->carburantUtilise() > 0 ? $trajet->carburantUtilise() . "L" : "--"}}</span>&nbsp;/&nbsp;<span>{{doubleval($trajet->poids) > 0 ? doubleval($trajet->poids) . "T" : "--"}}</span></b>
-                                                </div>
-                                                <div class="col-sm-12 text-center d-none" >
-                                                    <b>{{doubleval($trajet->poids) > 0 ? doubleval($trajet->poids) . "T" : "--"}}</b>
-                                                </div>
-
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info voir-trajet"><span class="fa fa-eye"></span></button>
-                                            <button @if ($trajet->IsLastFinished() === false ) disabled @endif  class="btn btn-sm btn-primary modifier-trajet"  data-update-url="{{route('trajet.update', ['trajet' => $trajet->id])}}" data-show-url="{{route('trajet.modifier', ['trajet' => $trajet->id])}}"><span class="fa fa-edit"></span></button>
-                                            <button {{ isset($trajet->reservation->id) === true ? "disabled": "" }} class="btn btn-sm btn-danger supprimer-trajet" data-url="{{route('trajet.supprimer', ['trajet' => $trajet->id])}}" data-delete-url="{{route('trajet.delete', ['trajet' => $trajet->id])}}"><span class="fa fa-trash"></span></button>
-                                        </td>
-                                    </tr>
-                                    @empty
-
-                                    @endforelse
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Chargement</th>
-                                        <th>Itinéraire</th>
-                                        <th>Date & heure départ</th>
-                                        <th>Date & heure arrivée</th>
-                                        <th>Chauffeur</th>
-                                        <th>Statut</th>
-                                        <th>Détail</th>
-                                        <th style="text-align:center;">Actions</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <!-- /.card-body -->
+                        @include('Camion.trajet')
                     </div>
                     <div class="tab-pane fade {{( isset($tab) === true && $tab == 3 ) ? ' show active ' : '' }}" id="nav-papier" role="tabpanel" aria-labelledby="nav-papier-tab">
-                        <div class="card-header">
-                            <h3 class="card-title" style="color: gray;display:none;" ></h3>
-                            <button class="float-right btn btn-success" id="btn-modal-papier" data-backdrop="static" data-keyboard="false" data-toggle="modal" data-target="#modal-papier"><span class="fa fa-plus"></span>&nbsp;Ajouter</button>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <table id="papiers" class="table table-bordered table-striped dataTable">
-                                <thead>
-                                    <tr>
-                                        <th>Désignation</th>
-                                        <th>Type</th>
-                                        <th>Date d'obtention</th>
-                                        <th>Date d'échéance</th>
-                                        <th style="text-align: center;">Actions</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (isset($papiers) === true && $papiers->count() > 0)
-                                    @foreach ($papiers as $papier)
-
-                                    <tr>
-                                        <td>{{$papier->designation}}</td>
-                                        <td>{{$papier->type}}</td>
-                                        <td>{{$papier->date}}</td>
-                                        <td>{{$papier->date_echeance}}</td>
-                                        <td >
-                                            <div class="row">
-                                                <div class="col-sm-12" style="text-align: center">
-                                                    <a  href="{{$papier->photo == null ? "#" : asset('storage/'.$papier->photo)}}" target="_blank">
-                                                        <button class="btn btn-sm btn-info"><span class="fa fa-eye"></span></button>
-                                                    </a>
-                                                    <button class="btn btn-sm btn-primary btn-papier-modifier" data-url="{{route('papier.update', ["papier" => $papier->id])}}"  data-show="{{route('papier.modifier', ["papier" => $papier->id])}}" ><span class="fa fa-edit"></span></button>
-                                                    <button class="btn btn-sm btn-danger btn-papier-supprimer" data-url="{{route('papier.supprimer', ["papier" => $papier->id])}}" data-show="{{route('papier.modifier', ["papier" => $papier->id])}}"><span class="fa fa-trash"></span></button>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-
-                                    @endforeach
-
-                                    @else
-
-                                    @endif
-
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Désignation</th>
-                                        <th>Type</th>
-                                        <th>Date d'obtention</th>
-                                        <th>Date d'échéance</th>
-                                        <th style="text-align: center;">Actions</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <!-- /.card-body -->
+                        @include('Camion.papier')
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
-</div>
 
-
-<!---- modal pour ajouter carburants --->
-<div class="modal fade" id="modal-carburant">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-success">
-                <h4 class="modal-title">Approvisionner en carburant</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-ajouter-carburant">
-                <form action="{{route('carburant.ajouter')}}" method="post" role="form" id="form-ajouter-carburant" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="camion_id" value={{$camion->id}}>
-
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Date : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date" data-target-input="nearest">
-                                <input type="text" placeholder="Date" class="form-control datetimepicker-input" data-target="#date" name="date" required="">
-                                <div class="input-group-append" data-target="#date" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="quantite">Quantité (Litre) : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number"  placeholder="Quantité" class="form-control" name="quantite" required>
-                        </div>
-                    </div>
-
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="prix">Prix unitaire : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
-                        </div>
-                    </div>
-
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="flux">Flux : <x-not-editable-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select readonly="readonly" name="flux" class="form-control" id="">
-                                <option value=0 selected>Entrée</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="submit" id="button-ajouter-carburant" form="form-ajouter-carburant" class="float-right btn btn-success">Valider</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!---- / modal pour ajouter carburant-->
-
-<!---- modal pour modification carburant --->
-<div class="modal fade" id="modal-modifier-carburant">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Modifier un flux de carburant</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body"  >
-                <form action="#" method="post" id="form-modifier-carburant" enctype="multipart/form-data">
-                    @csrf
-                    @method('patch')
-                    <input type="hidden" name="camion_id" value={{$camion->id}}>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Date : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date_modifier" data-target-input="nearest">
-                                <input type="text" placeholder="Date" class="form-control datetimepicker-input" data-target="#date_modifier" id="modifier_date" name="date" required="">
-                                <div class="input-group-append" data-target="#date_modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="quantite">Quantité (Litre ): <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" placeholder="Quantité" class="form-control" name="quantite" id="modifier_quantite" required>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="prix">Prix unitaire : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="flux">Flux : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select name="flux" class="form-control" id="modifier_flux">
-                                <option value=0 selected>Entrée</option>
-                                <option value=1>Sortie</option>
-                            </select>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="submit" form="form-modifier-carburant" id="button-modifier-carburant" class="float-right btn btn-primary">Modifier</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!---- / modal pour modification camion-->
-
-<!---- modal pour modification carburant --->
-<div class="modal fade" id="modal-supprimer-carburant">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-danger">
-                <h4 class="modal-title">Supprimer un flux de carburant</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body"  >
-                <form action="#" method="post" id="form-supprimer-carburant" >
-                    @csrf
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Date : <x-not-editable-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date_modifier" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#date_modifier" id="supprimer_date" name="date" required="">
-                                <div class="input-group-append" data-target="#date_modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="quantite">Quantité : <x-not-editable-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" name="quantite" id="supprimer_quantite" required>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="prix">Prix unitaire : <x-not-editable-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="number"  placeholder="Prix unitaire" class="form-control" name="prix" required>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 5px; ">
-                        <div class="col-sm-4">
-                            <label for="flux">Flux : <x-not-editable-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select name="flux" disabled class="form-control" id="supprimer_flux">
-                                <option value=0 selected>Entrée</option>
-                                <option value=1>Sortie</option>
-                            </select>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <a href="">
-                    <button type="button" form="form-supprimer-carburant" id="button-supprimer-carburant" class="float-right btn btn-danger">Supprimer</button>
-                </a>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!---- / modal pour modification camion-->
-
-
-{{-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- --}}
-{{-- -Tous ce qui concerne les trajets --}}
-
-<div class="modal fade" id="modal-trajet">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-success">
-                <h4 class="modal-title">Enregistrer un trajet</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-ajouter-trajet">
-                <div class="row">
-                    <form class="col-sm-12" action="{{route('trajet.ajouter')}}" method="post" role="form" id="form-ajouter-trajet" enctype="multipart/form-data">
-
-                        @csrf
-
-                        <input type="hidden" name="camion_id" value={{ $camion->id }}>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="chargement" class="form-label">Chargement : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input placeholder="Chargement" type="text" class="form-control" name="chargement" >
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="bon" class="form-label">Bon N° : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input placeholder="Numéro de bon" type="text"  class="form-control" name="bon" >
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 bon_enlevement" style="margin-top: 3px;display:none; ">
-                            <div class="col-sm-4">
-                                <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input placeholder="Bon d'enlevement" type="text"  class="form-control" name="bon_enlevement" >
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="chauffeur" class="form-label">Chauffeur :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <select name="chauffeur" class="form-control" id="chauffeur">
-                                    <option value="">Selectionner un chauffeur</option>
-                                    @forelse ($chauffeurs as $chauffeur)
-                                        <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
-                                    @empty
-                                        <option value="">Aucun chauffeur disponible pour le moment</option>
-                                    @endforelse
-                                </select>
-                                <div id="chauffeur-feedback"  class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="date">Départ : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
-                                    <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                    </div>
-                                    <div  class="invalid-feedback"></div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="date">Arrivée : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
-                                    <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                    </div>
-                                    <div  class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="etat">Statut : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-
-                                <select name="etat" class="form-control " id="etat" onchange="checkCarburant(this)" required>
-                                    <option value="">Selectionner le statut</option>
-                                    @foreach (App\Models\Trajet::getEtat() as $status)
-                                    <option value="{{ $status }}">{{ $status }}</option>
-                                    @endforeach
-                                </select>
-                                <div  id="status-feedback" class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-
-
-                        <div class="row mb-3 mt-3  carburant" id="carburant" style="display: none;">
-                            <div class="col-sm-4">
-                                <label for="carburant-restant">Carburant restant :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" name="carburantRestant" id="carburant-restant" placeholder="Quantité de carburant restant">
-                                <div   class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
-                            <div class="col-sm-4">
-                                <label for="poids">Poids :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
-                                <div class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-
-
-                        {{-- Bloc pour gerer les itinéraires --}}
-                        <div id="content-itineraire" class="mb-3">
-                            <input type="hidden" name="itineraire" class="itineraire_data" value="">
-                            <div class="form-group">
-                                <label for="nombre_itineraire">Itinéraires : <x-required-mark /></label>
-                                <div id="itineraire_formulaire">
-                                    <div class="row">
-                                        <div class="col-sm-12" style="padding-top:1%;">
-                                            <input type="text" placeholder="Nom de l'itinéraire" class='form-control' required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-1 row">
-                                    <div class="col-sm-12" style="text-align:right;">
-                                        <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
-                                        <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                <div class="row" style="display: none;">
-                    <div class="col-sm-12">
-                        <p class="alert alert-danger text-center"></p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="button" id="button-ajouter-trajet" form="form-ajouter-trajet" class="float-right btn btn-success"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-<div class="modal fade" id="modal-modifier-trajet">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Modifier un  trajet</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-
-                    <form action="#" class="col-sm-12" method="post" id="form-modifier-trajet" enctype="multipart/form-data">
-                        @csrf
-                        @method('patch')
-
-                        <input type="hidden" name="camion_id" value={{ $camion->id }}>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="chargement" class="form-label">Chargement : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input placeholder="Chargement" type="text" class="form-control" name="chargement" >
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="bon" class="form-label">Bon N° : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input placeholder="Numéro de bon" type="text"  class="form-control" name="bon" >
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 bon_enlevement" style="margin-top: 3px;display:none; ">
-                            <div class="col-sm-4">
-                                <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input placeholder="Bon d'enlevement" type="text"  class="form-control" name="bon_enlevement" >
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="chauffeur" class="form-label">Chauffeur :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <select name="chauffeur" class="form-control" id="modifier-chauffeur">
-                                    <option value="">Selectionner un chauffeur</option>
-                                    @forelse ($chauffeurs as $chauffeur)
-                                        <option value="{{ $chauffeur->id }}">{{ $chauffeur->name }}</option>
-                                    @empty
-                                        <option value="">Aucun chauffeur disponible pour le moment</option>
-                                    @endforelse
-                                </select>
-                                <div id="chauffeur-modifier-feedback"  class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="date">Départ : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <div class="input-group date" id="date_heure_depart_modifier" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
-                                    <div class="input-group-append" data-target="#date_heure_depart_modifier" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                    </div>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="date">Arrivée : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <div class="input-group date_heure_arrivee" id="date_heure_arrivee_modifier" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" id="modifier_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
-                                    <div class="input-group-append" data-target="#date_heure_arrivee_modifier" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                    </div>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <div class="row mb-3" style="margin-top: 3px; ">
-                            <div class="col-sm-4">
-                                <label for="etat">Statut : <x-required-mark /></label>
-                            </div>
-                            <div class="col-sm-8">
-                                <select name="etat" class="form-control " id="modifier-etat" required onchange="checkCarburant(this, '#modal-modifier-trajet')">
-                                    <option value="">Selectionner le statut</option>
-                                    @foreach (App\Models\Trajet::getEtat() as $status)
-                                        <option value="{{ $status }}">{{ $status }}</option>
-                                    @endforeach
-                                </select>
-                                <div  id="status-modifier-feedback" class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 mt-3  carburant" style="display: none;">
-                            <div class="col-sm-4">
-                                <label for="carburant-restant">Carburant restant :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" name="carburantRestant" id="carburant-restant" placeholder="Quantité de carburant restant">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3 mt-3  poids-content" style="display: none;" id="poids-content">
-                            <div class="col-sm-4">
-                                <label for="poids">Poids :</label>
-                            </div>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" name="poids" id="poids" placeholder="Poids">
-                                <div class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-
-                        {{-- Bloc pour gerer les itinéraires --}}
-                        <div id="content-itineraire" class="mb-3">
-                            <input type="hidden" name="itineraire" id="data-itineraire" class="itineraire_data" value="">
-                            <div class="form-group">
-                                <label for="nombre_itineraire">Itinéraires : <x-required-mark /></label>
-                                <div id="itineraire_formulaire">
-
-                                </div>
-                                <div class="mt-1 row">
-                                    <div class="col-sm-12" style="text-align:right;">
-                                        <button  type="button" class="btn btn-sm btn-itineraire-moins" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);display:none;"><span class="fa fa-minus"></span></button>
-                                        <button  type="button" class="btn btn-sm btn-itineraire-plus" style="border:solid 1px rgba(147,155,162,0.8);color:rgba(147,155,162,0.8);"><span class="fa fa-plus"></span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                <div class="row" style="display: none;">
-                    <div class="col-sm-12">
-                        <p class="alert alert-danger text-center"></p>
-                    </div>
-                </div>
-
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="button" form="form-modifier-trajet" id="button-modifier-trajet" class="float-right btn btn-primary"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Modifier</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-<div class="modal fade" id="modal-supprimer-trajet">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-danger">
-                <h4 class="modal-title">Supprimer un trajet</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body"  >
-                <form action="#" method="post" id="form-supprimer-trajet" >
-                    @csrf
-
-                    <input type="hidden" name="camion_id" value={{ $camion->id }}>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="chargement" class="form-label">Chargement :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input placeholder="Chargement" type="text" disabled class="form-control" name="chargement" >
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="bon" class="form-label">Bon N° :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input placeholder="Numéro de bon" type="text" disabled class="form-control" name="bon" >
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3 " style="margin-top: 3px;">
-                        <div class="col-sm-4">
-                            <label for="bon_enlevement" class="form-label">Bon d'enlevement :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input placeholder="Bon d'enlevement" type="text" disabled class="form-control" name="bon_enlevement" >
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="chauffeur" class="form-label">Chauffeur :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <label class="form-control" id="supprimer-chauffeur"></label>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Départ :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date_heure_depart" data-target-input="nearest">
-                                <input disabled type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_depart" data-target="#date_heure_depart" name="date_heure_depart" required="false" placeholder="Date et heure départ">
-                                <div class="input-group-append" data-target="#date_heure_depart" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="date">Arrivée :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date_heure_arrivee" id="date_heure_arrivee" data-target-input="nearest">
-                                <input disabled type="text" class="form-control datetimepicker-input" id="supprimer_date_heure_arrivee" data-target="#date_heure_arrivee" name="date_heure_arrivee" placeholder="Date et heure arrivée">
-                                <div class="input-group-append" data-target="#date_heure_arrivee" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3" style="margin-top: 3px; ">
-                        <div class="col-sm-4">
-                            <label for="etat">Statut :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <label class="form-control" id="supprimer-etat"></label>
-                        </div>
-                    </div>
-
-                    {{-- Bloc pour gerer les itinéraires --}}
-                    <div id="content-delete-itineraire" class="mb-3">
-                        <div class="form-group">
-                            <label for="nombre_itineraire">Itinéraires :</label>
-                            <div id="itineraire_delete_formulaire">
-                                <div class="row">
-                                    <div class="col-sm-12" style="padding-top:1%;" id="list-delete-itineraire">
-                                        <input type="text" placeholder="Nom de l'itinéraire" class='form-control' value="test">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <div class="d-flex justify-content-between">
-                    <a href="" class="d-none btn btn-warning mr-2">Bloquer</a>
-                    <a href="">
-                        <button type="button" form="form-supprimer-trajet" id="button-supprimer-trajet" class="float-right btn btn-danger">Supprimer</button>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-
-{{-- Fin trajets --}}
-{{-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- --}}
-
-
-{{-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- --}}
-
-{{-- Debut papier --}}
-<!---- modal pour ajouter papier --->
-<div class="modal fade" id="modal-papier">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-success">
-                <h4 class="modal-title">Ajouter un papier</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-ajouter-papier">
-                <form action="{{route('papier.ajouter')}}" method="post" role="form" id="form-ajouter-papier" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="camion_id" value={{$camion->id}}>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="designation">Désignation : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" name="designation" placeholder="Désignation">
-                            <div  class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="date">Date d'obtention : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date-obtention" data-target-input="nearest">
-                                <input type="text" placeholder="Date d'obtention du papier" class="form-control datetimepicker-input" data-target="#date-obtention" name="date_obtention" required="">
-                                <div class="input-group-append" data-target="#date-obtention" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                                <div  class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="date">Date d'échéance : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date-echeance" data-target-input="nearest">
-                                <input type="text" placeholder="Date d'échéance du papier" class="form-control datetimepicker-input" data-target="#date-echeance" name="date_echeance" required="">
-                                <div class="input-group-append" data-target="#date-echeance" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                                <div  class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="quantite">Type : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select name="type" id="" class="form-control">
-                                <option value="">Type</option>
-                                @foreach (App\Models\Papier::TYPE as $item)
-                                <option value="{{$item}}">{{ucwords($item)}}</option>
-                                @endforeach
-                            </select>
-                            <div  class="invalid-feedback"></div>
-
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-4">
-                            <label for="photo">Photo</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
-                                </div>
-                                <div class="custom-file">
-                                  <input type="file" name="photo" class="custom-file-input form-control" id="inputGroupFile01"
-                                    aria-describedby="inputGroupFileAddon01">
-                                  <label class="custom-file-label" for="inputGroupFile01">Photo</label>
-                                </div>
-                            </div>
-                            <div  class="invalid-feedback photo-feedback"></div>
-
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="button" id="button-ajouter-papier" form="form-ajouter-papier" class="float-right btn btn-success"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!---- / modal pour ajouter papier-->
-
-
-<!---- modal pour modifier papier --->
-<div class="modal fade" id="modal-modifier-papier">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Modifier un papier</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-ajouter-papier">
-                <form action="#" method="post" role="form" id="form-modifier-papier" enctype="multipart/form-data">
-                    @csrf
-                    @method("patch")
-                    <input type="hidden" name="camion_id" value={{$camion->id}}>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="designation">Désignation : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" name="designation" placeholder="Désignation">
-                            <div  class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="date">Date d'obtention : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date-obtention-modifier" data-target-input="nearest">
-                                <input type="text" placeholder="Date d'obtention du papier" class="form-control datetimepicker-input" data-target="#date-obtention-modifier" name="date_obtention" required="">
-                                <div class="input-group-append" data-target="#date-obtention-modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                                <div  class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="date">Date d'échéance : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date-echeance-modifier" data-target-input="nearest">
-                                <input type="text" placeholder="Date d'échéance du papier" class="form-control datetimepicker-input" data-target="#date-echeance-modifier" name="date_echeance" required="">
-                                <div class="input-group-append" data-target="#date-echeance-modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                                <div  class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="quantite">Type : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select name="type" id="" class="form-control">
-                                <option value="">Type</option>
-                                @foreach (App\Models\Papier::TYPE as $item)
-                                <option value="{{$item}}">{{ucwords($item)}}</option>
-                                @endforeach
-                            </select>
-                            <div  class="invalid-feedback"></div>
-
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-4">
-                            <label for="photo">Photo</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
-                                </div>
-                                <div class="custom-file">
-                                  <input type="file" name="photo" class="custom-file-input form-control" id="inputGroupFile01"
-                                    aria-describedby="inputGroupFileAddon01">
-                                  <label class="custom-file-label" for="inputGroupFile01">Photo</label>
-                                </div>
-                            </div>
-                            <div  class="invalid-feedback photo-feedback"></div>
-
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="button" id="button-modifier-papier" form="form-modifier-papier" class="float-right btn btn-primary"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!---- / modal pour modifier papier-->
-
-<!---- modal pour supprimer papier --->
-<div class="modal fade" id="modal-supprimer-papier">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-danger">
-                <h4 class="modal-title">Supprimer un papier</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-supprimer-papier">
-                <form action="#" method="post" role="form" id="form-supprimer-papier" enctype="multipart/form-data">
-                    @csrf
-                    @method("patch")
-                    <input type="hidden" name="camion_id" value={{$camion->id}}>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="designation">Désignation:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input disabled type="text" class="form-control" name="designation" placeholder="Désignation">
-                            <div  class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="date">Date d'obtention:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date-obtention-modifier" data-target-input="nearest">
-                                <input disabled type="text" placeholder="Date d'obtention du papier" class="form-control datetimepicker-input" data-target="#date-obtention-modifier" name="date_obtention" required="">
-                                <div class="input-group-append" data-target="#date-obtention-modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                                <div  class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="date">Date d'échéance:</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group date" id="date-echeance-modifier" data-target-input="nearest">
-                                <input disabled type="text" placeholder="Date d'échéance du papier" class="form-control datetimepicker-input" data-target="#date-echeance-modifier" name="date_echeance" required="">
-                                <div class="input-group-append" data-target="#date-echeance-modifier" data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                                <div  class="invalid-feedback"></div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3" >
-                        <div class="col-sm-4">
-                            <label for="quantite">Type :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <select disabled name="type" id="" class="form-control">
-                                <option value="">Type</option>
-                                @foreach (App\Models\Papier::TYPE as $item)
-                                <option value="{{$item}}">{{ucwords($item)}}</option>
-                                @endforeach
-                            </select>
-                            <div  class="invalid-feedback"></div>
-
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <a href="">
-                    <button type="button" id="button-supprimer-papier" form="form-supprimer-papier" class="float-right btn btn-danger"><span class="fa fa-check"></span><span style="display: none;" class="spinner-border spinner-border-sm"></span>&nbsp;Valider</button>
-
-                </a>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!---- / modal pour modifier papier-->
-
-{{-- Fin papier --}}
+@include('Camion.modal')
 
 <!-- page script -->
 @endsection
@@ -1387,7 +208,29 @@
 <!-- InputMask -->
 <script src="{{asset('assets/adminlte/plugins/moment/moment.min.js')}}"></script>
 <script src="{{asset('assets/adminlte/plugins/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+
+    // Remorques
+
+    $("#ajout-trajet-remorque , #modification-trajet-remorque").select2({
+        placeholder: "Remorque",
+        allowClear: true
+    })
+
+ 
+    
+    $(document).on("click", "#btn-modal-trajet", function(e){
+        setTimeout(function(){
+
+            $.get("{{route('remorque.dernier', ['camion' => $camion->id])}}", {}, dataType = "JSON").done(function(data){
+
+                $("#ajout-trajet-remorque").val(data);
+                $("#ajout-trajet-remorque").change();
+            })
+        }, 900)
+    })
+
     // Limitation de nombre de lettre sur les statistique
 
     $(".voir-camion-statistique").each(function(value){
@@ -1507,6 +350,7 @@
         });
 
         $.get(url, {}, dataType="JSON").done(function (data) {
+
             $("#modal-supprimer-carburant #supprimer_date").val(data.date).attr("disabled", true);
             $("#modal-supprimer-carburant #supprimer_quantite").val(data.quantite).attr("disabled", true);
             $("#modal-supprimer-carburant input[name=prix]").val(data.prix).attr("disabled", true);
@@ -1545,11 +389,23 @@
         $("#form-modifier-trajet").attr("action", url_update);
 
         $.get(url, {}, dataType="JSON").done(function (data) {
+
             let lists = document.getElementById('list-itineraire')
             let itineraires =  data.itineraires.sort( (teamA, teamB) => teamA.id - teamB.id  );
 
             $("#form-modifier-trajet").find("input[name=poids]").val(data.trajet.poids);
             $("#form-modifier-trajet").find(".added").remove();
+
+            let remorques = [];
+
+            data.remorque.forEach(function(value){
+                remorques.push(value.remorque_id)
+            })
+
+
+            $("#modification-trajet-remorque").val(remorques);
+            $("#modification-trajet-remorque").change();
+            
 
             itineraires.forEach((itineraire, index) => {
                 let element = "";
@@ -1562,7 +418,6 @@
                     element +=      '   <input type="text" placeholder="Nom de l\'itinéraire" class="form-control" value="' + itineraire.nom + '" required="">';
                     element +=  '   </div>';
                     element += '</div>';
-
 
                 }
                 $("#form-modifier-trajet").find("#itineraire_formulaire").append(element);
@@ -1716,13 +571,26 @@
                         if
                         (   data.value == "Veuillez remplir la quantité de carburant restant" ||
                             data.value == "Le carburant du véhicule est encore insuffisant" ||
-                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock")
+                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock" ||
+                            data.value == "La quantité de carburant que vous avez saisi est superieur au stock actuel")
                         {
                             $("#form-ajouter-trajet input[name=carburantRestant]").addClass("is-invalid").next().html(data.value).show(300);
                         }else{
                             $("#form-ajouter-trajet input[name=carburantRestant]").removeClass("is-invalid").next().html("").hide(300);
 
                         }
+
+                        if(data.value == "Remorque non disponible entre les dates que vous avez selectionnées"){
+                            $("#ajouter-remorque-trajet").prev().addClass("is-invalid");
+                            $("#ajouter-remorque-trajet").html(data.value).show(300);
+                        }else{
+                            $("#ajouter-remorque-trajet").prev().removeClass("is-invalid");
+                            $("#ajouter-remorque-trajet").html("").hide(300);
+                        }
+
+                        
+
+                        
 
                     }
 
@@ -1792,6 +660,14 @@
 
                             }else{
                                     $("#form-ajouter-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
+                            }
+
+                            if(donnee.errors.hasOwnProperty("remorque") === true){
+                                $("#ajouter-remorque-trajet").prev().addClass("is-invalid");
+                                $("#ajouter-remorque-trajet").html("Le remorque est obligatoire").show(300);
+                            }else{
+                                $("#ajouter-remorque-trajet").prev().removeClass("is-invalid");
+                                $("#ajouter-remorque-trajet").html("").hide(300);
                             }
                         }
                         spinning(me, 2);
@@ -1880,6 +756,14 @@
 
                     }
 
+                    if(data.value == "Remorque non disponible entre les dates que vous avez selectionnées"){
+                            $("#modifier-remorque-trajet").prev().addClass("is-invalid");
+                            $("#modifier-remorque-trajet").html(data.value).show(300);
+                    }else{
+                            $("#modifier-remorque-trajet").prev().removeClass("is-invalid");
+                            $("#modifier-remorque-trajet").html("").hide(300);
+                    }
+
                 }
 
                 spinning(me, 2);
@@ -1941,6 +825,14 @@
                 }else{
                         $("#form-modifier-trajet input[name=poids]").removeClass("is-invalid").next().html("").hide(300)
                 }
+
+                if(donnee.errors.hasOwnProperty("remorque") === true){
+                                $("#modifier-remorque-trajet").prev().addClass("is-invalid");
+                                $("#modifier-remorque-trajet").html("Le remorque est obligatoire").show(300);
+                            }else{
+                                $("#modifier-remorque-trajet").prev().removeClass("is-invalid");
+                                $("#modifier-remorque-trajet").html("").hide(300);
+                            }
 
                 spinning(me, 2);
             }

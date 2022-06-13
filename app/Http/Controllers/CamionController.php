@@ -6,6 +6,7 @@ use App\Models\Camion;
 use App\Models\Papier;
 use App\Models\Carburant;
 use App\Models\Chauffeur;
+use App\Models\Remorque;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
@@ -192,7 +193,9 @@ class CamionController extends Controller
             $carteGrise = Papier::EnCours(Papier::TYPE[2], $camion->id);
             $patenteTransport = Papier::EnCours(Papier::TYPE[3], $camion->id);
 
-            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique", "carteGrise", "patenteTransport"));
+            $remorques = Remorque::all();
+
+            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique", "carteGrise", "patenteTransport", "remorques"));
         }
     }
 
