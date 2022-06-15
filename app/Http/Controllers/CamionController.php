@@ -57,10 +57,24 @@ class CamionController extends Controller
     */
     public function add(Request $request) : RedirectResponse
     {
-        $data = $request->except("photo");
+        $data = $request->except(["photo" , "su"]);
         
         $data["name"] = $data["marque"] . "-" .  $data["model"] . "-" . $data["plaque"];
        
+        if($data["gps"] != ""){
+
+            switch ($data["gps"]) {
+                case 'Dago-it':
+                    # code...
+                    $data["gps_content"] = json_encode(["su" => $request->su]);
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+
         $camion = Camion::create($data);
 
         if( $request->file('photo') !== null){
@@ -120,6 +134,21 @@ class CamionController extends Controller
         $camion->annee = $data["annee"];
         $camion->plaque = $data["plaque"];
         $camion->numero_chassis = $data["numero_chassis"];
+        $camion->gps = $data["gps"];
+
+        if($data["gps"] != ""){
+
+            switch ($data["gps"]) {
+                case 'Dago-it':
+                    # code...
+                    $camion->gps_content = json_encode(["su" => $request->su]);
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
 
         if( $request->file('photo') !== null)
         {
@@ -193,9 +222,12 @@ class CamionController extends Controller
             $carteGrise = Papier::EnCours(Papier::TYPE[2], $camion->id);
             $patenteTransport = Papier::EnCours(Papier::TYPE[3], $camion->id);
 
+            $dernierRemorque = Remorque::whereIn("id",$camion->dernierRemorque())->get();
+
+
             $remorques = Remorque::all();
 
-            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique", "carteGrise", "patenteTransport", "remorques"));
+            return view("Camion.voirCamion", compact("active_camion_index", "tab", "camion", "carburants", "stock_carburant", "chauffeurs", "papiers", "assurance", "visiteTechnique", "carteGrise", "patenteTransport", "remorques", "dernierRemorque"));
         }
     }
 

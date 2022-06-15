@@ -13,7 +13,7 @@ class Camion extends Model
     use HasFactory;
 
     protected $fillable = [
-       'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo', 'plaque'
+       'name', 'annee', 'model', 'marque', 'numero_chassis', 'photo', 'plaque', 'gps', 'gps_content'
     ];
 
     protected $with = [];
@@ -188,9 +188,21 @@ class Camion extends Model
         return doubleval($this->carburants()->where('flux', 0)->sum('quantite') - $this->carburants()->where('flux', 1)->sum('quantite'));
     }
 
-    public function papiers() : HasMany
-    {
-        return $this->hasMany(Papier::class);
+    public function dernierRemorque(){
+        $data = [];
+        $trajet = $this->dernierTrajet(false, true);
+
+            
+        if($trajet != null){
+            
+            $remorques = TrajetRemorque::where("trajet_id", $trajet->id)->get("remorque_id")->toArray();
+            foreach ($remorques as $key => $value) {
+                array_push($data, $value['remorque_id']);
+            }
+        }
+
+        return $data;
     }
+   
 
 }

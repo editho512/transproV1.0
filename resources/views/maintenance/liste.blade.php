@@ -148,7 +148,7 @@ ul.ui-autocomplete {
                                                 <span class="d-block"><b>Main d'&oelig;uvre: </b> {{ formatMoney($maintenance->main_oeuvre) }}</span>
 
                                                 <span class="d-block"><b>Pièces: </b></span>
-                                                <ul>
+                                               <ul>
                                                     @foreach ($maintenance->pieces as $piece)
                                                         <li><b>{{ $piece->designation }}: </b>{{ formatMoney($piece->pivot->pu * $piece->pivot->quantite) }}</li>
                                                     @endforeach
@@ -158,7 +158,7 @@ ul.ui-autocomplete {
                                             <td>{{ $maintenance->nom_reparateur }}</td>
                                             <td>{{ $maintenance->commentaire }}</td>
                                             <td>
-                                                <ul>
+                                             <ul>
                                                     @foreach ($maintenance->pieces as $piece)
                                                         <li>{{ $piece->designation }}</li>
                                                     @endforeach

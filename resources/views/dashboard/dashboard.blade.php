@@ -454,9 +454,9 @@
                     
                     let depenseCamionLabel = []
                     let depenseCamionData = []
-
+                    
                     depenseCamion.forEach(function(dep){
-                        depenseCamionLabel.push(dep.chauffeur)
+                        depenseCamionLabel.push(dep.camion)
                         depenseCamionData.push(parseFloat(dep.montant))
                     })
 
@@ -618,7 +618,7 @@
                     let depenseCamionData = [];
 
                     data.forEach(function(dep){
-                        depenseCamionLabel.push(dep.chauffeur);
+                        depenseCamionLabel.push(dep.camion);
                         depenseCamionData.push(parseFloat(dep.montant));
                     })
                     

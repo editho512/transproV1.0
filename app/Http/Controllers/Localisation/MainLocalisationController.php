@@ -18,7 +18,9 @@ class MainLocalisationController extends Controller
         ]);
     }
 
-    public function trouver(){
-        return view('localisation.trouver');
+    public function trouver(Camion $camion){
+        $active_localisation_index = 'active';
+
+        return view('localisation.trouver', compact('camion', 'active_localisation_index'));
     }
 }

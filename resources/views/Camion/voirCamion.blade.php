@@ -162,6 +162,22 @@
                     </div>
                     <!-- /.info-box -->
                 </div>
+                <div class="col-lg-6">
+                    <div class="info-box"  >
+                        <span class="info-box-icon " style="background-color:purple;color: white;"><i class="fas fa-truck-loading"></i></span>
+                        <div class="info-box-content" >
+                            <span class="info-box-text">Remorques</span>
+                            <p class="info-box-number voir-camion-statistique">
+                                @foreach ($dernierRemorque as $item)
+                                    <span>{{$item->name}}</span>
+                                @endforeach
+
+                            </p>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
             </div>
         </div>
 

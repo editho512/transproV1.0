@@ -254,7 +254,7 @@ class Trajet extends Model
      *
      * @var Collection|null
      */
-    protected static ?Collection $trajetsPrevoir = null;
+    protected static  $trajetsPrevoir = null;
 
     /**
      * Recuperer tous les trajets a precoir

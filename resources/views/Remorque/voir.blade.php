@@ -27,6 +27,63 @@
                         </ol>
                     </div>
                 </div>
+
+                <div class="row mt-2 mb-2">
+                    <div class="col-lg-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-warning" style="background-color: #ff9609 !important;"><img src="{{ asset('assets/images/icons/assurance.png') }}" style="width:55px;" alt=""></span>
+                            <div class="info-box-content" >
+                                <span class="info-box-text">Assurance</span>
+                                <p class="info-box-number voir-camion-statistique" >
+                                    {{ isset($assurance[0]->date_echeance) === true ? date("d/m/Y",strtotime($assurance[0]->date_echeance)) : "Aucune" }}
+                                </p>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success"><img  style="width:55px;" src="{{asset('assets/images/icons/visit.png')}}" alt=""></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Visite technique</span>
+                                <p class="info-box-number voir-camion-statistique">
+                                    {{isset($visiteTechnique[0]->date_echeance) === true ? date("d/m/Y", strtotime($visiteTechnique[0]->date_echeance)) : "Aucune"}}
+                                </p>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-secondary"><i class="fas fa-info"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Carte grise</span>
+                                <p class="info-box-number voir-camion-statistique">
+                                    {{isset($carteGrise[0]->date_echeance) === true ? date("d/m/Y", strtotime($carteGrise[0]->date_echeance)) : "Aucune"}}
+    
+                                </p>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="info-box"  >
+                            <span class="info-box-icon " style="background-color:#3490c1;color: white;"><i class="fas fa-landmark"></i></span>
+                            <div class="info-box-content" >
+                                <span class="info-box-text">Patente transport</span>
+                                <p class="info-box-number voir-camion-statistique">
+                                    {{isset($patenteTransport[0]->date_echeance) === true ? date("d/m/Y", strtotime($patenteTransport[0]->date_echeance)) : "Aucune"}}
+    
+                                </p>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                </div>
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content-header -->

@@ -7,6 +7,7 @@ use App\Models\Remorque;
 use App\Models\Camion;
 use Illuminate\Support\Facades\Validator;
 use App\Rules\TypePapier;
+use App\Models\Papier;
 use App\Models\RemorquePapier;
 use App\Models\TrajetRemorque;
 
@@ -106,8 +107,15 @@ class RemorqueController extends Controller
     public function voir(Remorque $remorque){
         $papiers = RemorquePapier::all();
         $active_remorque_index = "active";
+
+
+        $assurance = RemorquePapier::EnCours(Papier::TYPE[0], $remorque->id);
+        $visiteTechnique = RemorquePapier::EnCours(Papier::TYPE[1], $remorque->id);
+
+        $carteGrise = RemorquePapier::EnCours(Papier::TYPE[2], $remorque->id);
+        $patenteTransport = RemorquePapier::EnCours(Papier::TYPE[3], $remorque->id);
        
-        return view('Remorque.voir', compact('active_remorque_index', 'remorque', 'papiers'));
+        return view('Remorque.voir', compact('active_remorque_index', 'remorque', 'papiers' , 'assurance', 'visiteTechnique', 'carteGrise', 'patenteTransport'));
     }
 
     public function ajouter_papier(Request $request){
@@ -212,16 +220,7 @@ class RemorqueController extends Controller
         }
 
         public function dernier_remorque(Camion $camion){
-            $data = [];
-            $trajet = $camion->dernierTrajet(false, true);
-            
-            if($trajet != null){
-                
-                $remorques = TrajetRemorque::where("trajet_id", $trajet->id)->get("remorque_id")->toArray();
-                foreach ($remorques as $key => $value) {
-                    array_push($data, $value['remorque_id']);
-                }
-            }
+            $data = $camion->dernierRemorque();
 
             return response()->json($data);
         }

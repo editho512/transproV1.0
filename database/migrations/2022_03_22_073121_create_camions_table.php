@@ -21,6 +21,8 @@ class CreateCamionsTable extends Migration
             $table->string('model')->nullable();
             $table->string('marque')->nullable();
             $table->string('numero_chassis')->nullable();
+            $table->string('gps')->nullable();
+            $table->text('gps_content')->nullable();
             $table->text('photo')->nullable();
             $table->boolean('blocked')->default(false);
             $table->timestamps();

@@ -24,7 +24,6 @@ class CreateMaintenancesTable extends Migration
             $table->string('tel_reparateur', 255)->nullable();
             $table->string('adresse_reparateur', 255)->nullable();
             $table->double('main_oeuvre')->nullable();
-            $table->json('pieces')->nullable();
             $table->timestamps();
         });
     }

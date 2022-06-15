@@ -38,49 +38,53 @@ class ModifierMaintenanceController extends Controller
 
         $pieces = json_decode($data['pieces'], true);
 
-        foreach (MaintenancePieceFrs::all() as $d)
+        
+        foreach (MaintenancePieceFrs::where("maintenance", $maintenance->id)->get() as $d)
         {
             if (!in_array(Piece::find($d->piece)->designation, collect($pieces)->pluck('nom')->toArray()))
             {
                 $d->delete();
+               
             }
         }
 
+        if(is_array($pieces) === true && count($pieces) > 0){
 
-        foreach ($pieces as $key => $value) {
-            $piece = Piece::where('designation', $key)->first();
-            $fournisseur = Fournisseur::where('nom', $value['frs'])->first();
-
-            if ($piece === null) $piece = Piece::create(["designation" => $key]);
-
-            if ($fournisseur === null) {
-                $fournisseur = Fournisseur::create(["nom" => $value["frs"], "contact" => $value['contactFrs']]);
-            } else {
-                $fournisseur->contact = $value["contactFrs"];
-                $fournisseur->update();
+            foreach ($pieces as $key => $value) {
+                $piece = Piece::where('designation', $key)->first();
+                $fournisseur = Fournisseur::where('nom', $value['frs'])->first();
+    
+                if ($piece === null) $piece = Piece::create(["designation" => $key]);
+    
+                if ($fournisseur === null) {
+                    $fournisseur = Fournisseur::create(["nom" => $value["frs"], "contact" => $value['contactFrs']]);
+                } else {
+                    $fournisseur->contact = $value["contactFrs"];
+                    $fournisseur->update();
+                }
+    
+                $maintenancePieceFrs = MaintenancePieceFrs::where("piece", $piece->id)->where("maintenance", $maintenance->id)->where("fournisseur", $fournisseur->id)->first();
+    
+                if ($maintenancePieceFrs !== null)
+                {
+                    $maintenancePieceFrs->pu = $value["pu"];
+                    $maintenancePieceFrs->quantite = $value["quantite"];
+                    $maintenancePieceFrs->total = $value["total"];
+                    $maintenancePieceFrs->save();
+                }
+                else
+                {
+                    MaintenancePieceFrs::create([
+                        "piece" => $piece->id,
+                        "maintenance" => $maintenance->id,
+                        "fournisseur" => $fournisseur->id,
+                        "pu" => $value["pu"],
+                        "quantite" => $value["quantite"],
+                        "total" => $value["total"],
+                    ]);
+                }
+    
             }
-
-            $maintenancePieceFrs = MaintenancePieceFrs::where("piece", $piece->id)->where("maintenance", $maintenance->id)->where("fournisseur", $fournisseur->id)->first();
-
-            if ($maintenancePieceFrs !== null)
-            {
-                $maintenancePieceFrs->pu = $value["pu"];
-                $maintenancePieceFrs->quantite = $value["quantite"];
-                $maintenancePieceFrs->total = $value["total"];
-                $maintenancePieceFrs->save();
-            }
-            else
-            {
-                MaintenancePieceFrs::create([
-                    "piece" => $piece->id,
-                    "maintenance" => $maintenance->id,
-                    "fournisseur" => $fournisseur->id,
-                    "pu" => $value["pu"],
-                    "quantite" => $value["quantite"],
-                    "total" => $value["total"],
-                ]);
-            }
-
         }
 
         if ($update)

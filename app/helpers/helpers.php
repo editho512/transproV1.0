@@ -255,7 +255,7 @@ function asLetters($number, $separateur = ".")
 }
 
 
-function montantPieces(Collection $maintenances) : float
+function montantPieces($maintenances) : float
 {
     $montant = 0;
 

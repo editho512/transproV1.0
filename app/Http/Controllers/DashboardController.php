@@ -20,13 +20,11 @@ class DashboardController extends Controller
         $active_dashboard_index = true;
 
         $carburants = Carburant::consomation();  
-
         $depense = Depense::depensePerDriver();
-
-        $depenseCamion = Depense::depensePerCamion();
         
+        $depenseCamion = Depense::depensePerCamion();
         $maintenance = Maintenance::dashboard();
-
+        
         $mainOeuvre = maintenance::mainOeuvre();
 
         return view("dashboard.dashboard", compact("active_dashboard_index", "carburants", "depense", "depenseCamion", "maintenance", "mainOeuvre"));

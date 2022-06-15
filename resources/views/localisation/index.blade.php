@@ -27,13 +27,13 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
-                                <h3 class="card-title">Liste des Camions localisable</h3>
-                                <a href="" class="btn btn-primary"><i class="fa fa-location-arrow mr-2"></i>Localiser tous les camions</a>
+                                <h3 class="card-title">Liste des Camions </h3>
+                                <a style="display:none;" href="" class="btn btn-primary"><i class="fa fa-location-arrow mr-2"></i>Localiser tous les camions</a>
                             </div>
                         </div>
 
                         <div class="card-body">
-                            <table id="camions" class="table table-bordered table-striped">
+                            <table id="localisation" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>Désignation</th>
@@ -53,8 +53,7 @@
                                             <td>{{ $camion->marque }}</td>
                                             <td>{{ $camion->annee }}</td>
                                             <td class="d-flex justify-content-center">
-                                                <a href="{{route('localisation.trouver')}}"  class="btn btn-primary mr-2" data-toggle="tooltip" data-placement="top" title="Localiser le camion"><i class="fa fa-map-marker-alt"></i></a>
-                                                <a href="" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Obtenir le lien de localisation du camion"><i class="fa fa-link"></i></a>
+                                                <a href="{{route('localisation.trouver', ['camion' => $camion->id])}}"  class="btn btn-primary mr-2" data-toggle="tooltip" data-placement="top" title="Localiser le camion"><i class="fa fa-map-marker-alt"></i></a>
                                             </td>
                                         </tr>
                                     @empty
@@ -89,4 +88,19 @@
     </section>
 </div>
 
+@endsection
+@section('scripts')
+<script>
+    
+    $("#localisation").DataTable({
+    "responsive": true,
+    "autoWidth": false,
+    "searching": true,
+    "paging": false,
+    "ordering": true,
+    "info": false ,
+    language: { url: "{{asset('assets/json/json_fr_fr.json')}}" }
+});
+
+</script>
 @endsection

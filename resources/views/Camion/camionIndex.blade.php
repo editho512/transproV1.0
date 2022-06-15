@@ -154,7 +154,7 @@
                         -->
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="plaque">Plaque :</label>
+                                <label for="plaque">Plaque :<x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="plaque" placeholder="Plaque" class="form-control" required>
@@ -162,61 +162,54 @@
                         </div>
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="marque">Marque :</label>
+                                <label for="marque">Marque :<x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="marque" placeholder="Marque" class="form-control" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="marque">Marque : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="marque" placeholder="Marque" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="model">Modèle :<x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="model" placeholder="Modèle" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="annee">Année :<x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="annee" placeholder="année" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="numero_chassis">Numéro châssis :<x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="numero_chassis" placeholder="Numéro châssis" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-4">
-                            <label for="photo">Photo :</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" name="photo" class="custom-file-input" id="inputGroupFile01"
-                                    aria-describedby="inputGroupFileAddon01">
-                                    <label class="custom-file-label" for="inputGroupFile01">Photo</label>
-                                </div>
+                    
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="model">Modèle :<x-required-mark /></label>
                             </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="model" placeholder="Modèle" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="annee">Année :<x-required-mark /></label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="annee" placeholder="année" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="numero_chassis">Numéro châssis :<x-required-mark /></label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="numero_chassis" placeholder="Numéro châssis" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-4">
+                                <label for="photo">Photo :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" name="photo" class="custom-file-input" id="inputGroupFile01"
+                                        aria-describedby="inputGroupFileAddon01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Photo</label>
+                                    </div>
+                                </div>
 
+                            </div>
                         </div>
 
                         <div class="row mt-3">
@@ -224,12 +217,21 @@
                                 <label for="gps">Fournisseur GPS :</label>
                             </div>
                             <div class="col-sm-8">
-                                <select class="form-control" name="gps" id="gps" autocomplete="off">
+                                <select id="ajouter-camion-gps" class="form-control" name="gps" id="gps" autocomplete="off">
                                     <option value="">Aucun</option>
                                     @foreach (App\Models\Camion::TYPEGPS as $gps)                                        
                                         <option value="{{$gps}}">{{$gps}}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1" style="display:none;">
+                            <div class="col-sm-4">
+                                <label for="su">SU :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="su" placeholder="SU" class="form-control" >
                             </div>
                         </div>
                     </form>
@@ -271,7 +273,7 @@
 
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="plaque">Plaque :</label>
+                                <label for="plaque">Plaque :<x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="plaque" id="plaque" placeholder="Plaque" class="form-control" required>
@@ -280,63 +282,78 @@
 
                         <div class="row mt-1">
                             <div class="col-sm-4">
-                                <label for="marque">Marque :</label>
+                                <label for="marque">Marque :<x-required-mark /></label>
                             </div>
                             <div class="col-sm-8">
                                 <input type="text" name="marque" id="marque" placeholder="Marque" class="form-control" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="marque">Marque : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="marque" id="marque" placeholder="Marque" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="model">Modèle : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="model" id="model" placeholder="Modèle" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="annee">Année : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="annee" id="annee"  placeholder="année" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-sm-4">
-                            <label for="numero_chassis">Numéro châssis : <x-required-mark /></label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" name="numero_chassis" id="numero_chassis" placeholder="Numéro châssis" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-4">
-                            <label for="photo">Photo</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" name="photo" class="custom-file-input" id="inputGroupFile01"
-                                    aria-describedby="inputGroupFileAddon01">
-                                    <label class="custom-file-label" for="inputGroupFile01">Photo</label>
-                                </div>
+                    
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="model">Modèle : <x-required-mark /></label>
                             </div>
-
+                            <div class="col-sm-8">
+                                <input type="text" name="model" id="model" placeholder="Modèle" class="form-control" required>
+                            </div>
                         </div>
-                    </div>
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="annee">Année : <x-required-mark /></label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="annee" id="annee"  placeholder="année" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <label for="numero_chassis">Numéro châssis : <x-required-mark /></label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="numero_chassis" id="numero_chassis" placeholder="Numéro châssis" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-4">
+                                <label for="photo">Photo</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroupFileAddon01">Choisir</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" name="photo" class="custom-file-input" id="inputGroupFile01"
+                                        aria-describedby="inputGroupFileAddon01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Photo</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-sm-4">
+                                <label for="gps">Fournisseur GPS :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <select id="modifier-camion-gps" class="form-control" name="gps" id="gps" autocomplete="off">
+                                    <option value="">Aucun</option>
+                                    @foreach (App\Models\Camion::TYPEGPS as $gps)                                        
+                                        <option value="{{$gps}}">{{$gps}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1 gps_content" style="display:none;">
+                            <div class="col-sm-4">
+                                <label for="su">SU :</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" name="su" placeholder="SU" class="form-control" >
+                            </div>
+                        </div>
 
                 </form>
             </div>
@@ -474,26 +491,56 @@
             $("#modal-supprimer-camion #supprimer_numero_chassis").val(data.numero_chassis).attr("disabled", true);
         })
 
+    })
 
-        $(document).on("click", ".modifier-camion", function (e) {
-            url = $(this).attr("data-show-url");
-            url_update = $(this).attr("data-update-url");
-            $("#modal-modifier-camion").modal("show");
-            $("#form-modifier-camion").attr("action", url_update);
+    $(document).on("click", ".modifier-camion", function (e) {
 
-            $.ajax(url, {}, dataType ="HTML").done(function (data) {
-                console.log(data);
+        url = $(this).attr("data-show-url");
 
-                //$("#modal-modifier-camion #name").val(data.name);
 
-                $("#modal-modifier-camion #plaque").val(data.plaque);
-                $("#modal-modifier-camion #marque").val(data.marque);
-                $("#modal-modifier-camion #model").val(data.model);
-                $("#modal-modifier-camion #annee").val(data.annee);
-                $("#modal-modifier-camion #numero_chassis").val(data.numero_chassis);
-            })
+        url_update = $(this).attr("data-update-url");
 
+        $("#modal-modifier-camion .gps_content").hide();
+
+        $("#modal-modifier-camion").modal("show");
+        $("#form-modifier-camion").attr("action", url_update);
+
+        $.ajax(url, {}, dataType ="HTML").done(function (data) {
+
+            $("#modal-modifier-camion #plaque").val(data.plaque);
+            $("#modal-modifier-camion #marque").val(data.marque);
+            $("#modal-modifier-camion #model").val(data.model);
+            $("#modal-modifier-camion #annee").val(data.annee);
+            $("#modal-modifier-camion #numero_chassis").val(data.numero_chassis);
+
+            $("#modal-modifier-camion #modifier-camion-gps").val(data.gps);
+            $("#modal-modifier-camion #modifier-camion-gps").change();
+
+            if(data.gps_content != "" && data.gps_content != null){
+                let gps_content = JSON.parse(data.gps_content)
+
+                for (const [key, value] of Object.entries(gps_content)) {
+                    $("#modal-modifier-camion input[name='" + key + "']").val(value).parent().parent().show(200);
+                }
+             
+            }
         })
+
+    })
+
+    $(document).on("change", "#ajouter-camion-gps , #modifier-camion-gps", function(e){
+        let gps = $(this).find("option:selected").val()
+
+        if(gps == 'Dago-it'){
+            $(this).parent().parent().parent().find("input[name='su']").parent().parent().show(200)
+        }else{
+            $(this).parent().parent().parent().find("input[name='su']").parent().parent().hide(200)
+        }
+    })
+
+    $(document).on("click", "#nouveau-camion", function(e){
+        $("#modal-ajouter-camion .gps_content").hide();
+        $("#ajouter-camion-gps").val("").change()
     })
 
 </script>

@@ -17,6 +17,10 @@ class CreateMaintenancePieceFrsTable extends Migration
             $table->foreignId('piece')->references('id')->on('pieces');
             $table->foreignId('fournisseur')->references('id')->on('fournisseurs');
             $table->foreignId('maintenance')->references('id')->on('maintenances');
+            $table->double('pu')->nullable();
+            $table->double('quantite')->nullable();
+            $table->double('total')->nullable();
+
 
             $table->primary(['piece', 'fournisseur', 'maintenance'], 'pk_frs_piece_maintenance');
         });

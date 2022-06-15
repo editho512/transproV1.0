@@ -202,7 +202,7 @@ Route::prefix('localisation')->middleware('auth')->group(function () {
 
     // Page d'accueil de la localisation
     Route::get('/', [MainLocalisationController::class, 'index'])->name('localisation.index');
-    Route::get('/trouver', [MainLocalisationController::class, 'trouver'])->name('localisation.trouver');
+    Route::get('/trouver/{camion}', [MainLocalisationController::class, 'trouver'])->name('localisation.trouver');
 
 });
 
